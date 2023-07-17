@@ -11,7 +11,7 @@ trait `FunctionsMethodParams`
 object `FunctionsMethodParams`:
 
   // = foreach caseClasses
-  case class `CaseClass`(path: String) extends `FunctionsMethodParams`
+  case class `CaseClass`(`params`: String) extends `FunctionsMethodParams`
   // = end caseClasses
   private def avroSerialize[A](b: AvroOutputStreamBuilder[A], value: A): Array[Byte] =
     val bos = new ByteArrayOutputStream(4096)

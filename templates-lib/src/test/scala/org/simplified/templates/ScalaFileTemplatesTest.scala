@@ -2,6 +2,7 @@ package org.simplified.templates
 
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers.*
+import org.simplified.templates.model.{Param, Params}
 
 class ScalaFileTemplatesTest extends AnyFunSuiteLike:
   val templates = ScalaFileTemplates()
@@ -23,7 +24,7 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
     case class LoopVals(x: String, y: Int)
     case class Vals(loop: Seq[LoopVals])
     templates(
-      s"""
+      """
          |// = foreach loop
          |val `x`=`y`
          |// = end loop
@@ -39,7 +40,7 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
     case class LoopVals(x: String, y: Int)
     case class Vals(loop: Seq[LoopVals])
     templates(
-      s"""
+      """
          |beforeForEachCode
          |// = foreach loop
          |val `x`=`y`
@@ -59,7 +60,7 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
     case class LoopVals(x: String)
     case class Vals(x: String, loop: Seq[LoopVals])
     templates(
-      s"""
+      """
          |val `x`=1
          |// = foreach loop
          |val `x`=2
@@ -73,4 +74,12 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
         |val fb=2
         |val a=3
         |""".stripMargin.trim)
+  }
+
+  test("method params replacement") {
+    case class Vals(params: Params)
+    templates(
+      "def f(`params`:Int):Int",
+      Vals(Params.of(Param("a", "Int"), Param("b", "Long")))
+    ) should be("def f(a:Int,b:Long):Int")
   }
