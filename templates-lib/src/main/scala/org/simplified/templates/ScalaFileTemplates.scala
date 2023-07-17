@@ -15,20 +15,21 @@ class ScalaFileTemplates:
       case Nil                                   => Nil
       case line :: l if line.startsWith(ForEach) =>
         val forVal     = StringUtils.substringAfter(line.trim, ForEach).trim
-        val forBlock   = l.takeWhile(_.trim != ForEach + forVal).dropRight(1)
-        val afterBlock = l.dropWhile(_.trim != End + forVal).drop(1)
-        vals.productElementNames
+        val endAt      = End + forVal
+        val forBlock   = l.takeWhile(_.trim != endAt)
+        val afterBlock = l.dropWhile(_.trim != endAt).drop(1)
+        val block      = vals.productElementNames
           .zip(vals.productIterator)
           .find(_._1 == forVal)
           .getOrElse(throw new IllegalArgumentException(s"foreach $forVal : $forVal not found in $vals"))
           ._2 match
-          case it: Iterable[Product] =>
+          case it: Iterable[Product] @unchecked =>
             it.toList.flatMap: forVals =>
               val (forSearch, forReplace) = searchReplace(forVals)
               applyToBlock(forBlock, search ++ forSearch, replace ++ forReplace, vals)
-          case x                     => throw new IllegalStateException(s"foreach $forVal : not an iterable value $x")
-
-      case line :: l =>
+          case x                                => throw new IllegalStateException(s"foreach $forVal : not an iterable value $x")
+        block ++ applyToBlock(afterBlock, search, replace, vals)
+      case line :: l                             =>
         StringUtils.replaceEach(line, search, replace) :: applyToBlock(l, search, replace, vals)
 
   private def searchReplace(vals: Product) =
