@@ -14,25 +14,25 @@ class ScalaFileTemplates:
     lines match
       case Nil                                   => Nil
       case line :: l if line.startsWith(ForEach) =>
-        applyForEach(line,l,search,replace,vals)
+        applyForEach(line, l, search, replace, vals)
       case line :: l                             =>
         StringUtils.replaceEach(line, search, replace) :: applyToBlock(l, search, replace, vals)
 
-  private def applyForEach(forEachLine:String, nextLines:List[String], search: Array[String], replace: Array[String], vals: Product):List[String] =
-    val forVal = StringUtils.substringAfter(forEachLine, ForEach).trim
-    val endAt = End + forVal
-    val forBlock = nextLines.takeWhile(_.trim != endAt)
+  private def applyForEach(forEachLine: String, nextLines: List[String], search: Array[String], replace: Array[String], vals: Product): List[String] =
+    val forVal     = StringUtils.substringAfter(forEachLine, ForEach).trim
+    val endAt      = End + forVal
+    val forBlock   = nextLines.takeWhile(_.trim != endAt)
     val afterBlock = nextLines.dropWhile(_.trim != endAt).drop(1)
-    val block = vals.productElementNames
+    val block      = vals.productElementNames
       .zip(vals.productIterator)
       .find(_._1 == forVal)
       .getOrElse(throw new IllegalArgumentException(s"foreach $forVal : $forVal not found in $vals"))
       ._2 match
-      case it: Iterable[Product]@unchecked =>
+      case it: Iterable[Product] @unchecked =>
         it.toList.flatMap: forVals =>
           val (forSearch, forReplace) = searchReplace(forVals)
-          applyToBlock(forBlock, search ++ forSearch, replace ++ forReplace, vals)
-      case x => throw new IllegalStateException(s"foreach $forVal : not an iterable value $x")
+          applyToBlock(forBlock, forSearch ++ search, forReplace ++ replace, vals)
+      case x                                => throw new IllegalStateException(s"foreach $forVal : not an iterable value $x")
     block ++ applyToBlock(afterBlock, search, replace, vals)
 
   private def searchReplace(vals: Product) =

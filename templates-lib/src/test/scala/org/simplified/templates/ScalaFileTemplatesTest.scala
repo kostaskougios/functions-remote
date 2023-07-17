@@ -54,3 +54,23 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
         |afterForEachCode
         |""".stripMargin.trim)
   }
+
+  test("// = foreach vals precedence") {
+    case class LoopVals(x: String)
+    case class Vals(x: String, loop: Seq[LoopVals])
+    templates(
+      s"""
+         |val `x`=1
+         |// = foreach loop
+         |val `x`=2
+         |// = end loop
+         |val `x`=3
+         |""".stripMargin.trim,
+      Vals("a", Seq(LoopVals("fa"), LoopVals("fb")))
+    ) should be("""
+        |val a=1
+        |val fa=2
+        |val fb=2
+        |val a=3
+        |""".stripMargin.trim)
+  }
