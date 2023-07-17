@@ -35,11 +35,12 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
         |""".stripMargin.trim)
   }
 
-  test("// = foreach processes code after the foreach") {
+  test("// = foreach processes code abefore and fter the foreach") {
     case class LoopVals(x: String, y: Int)
     case class Vals(loop: Seq[LoopVals])
     templates(
       s"""
+         |beforeForEachCode
          |// = foreach loop
          |val `x`=`y`
          |// = end loop
@@ -47,6 +48,7 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
          |""".stripMargin.trim,
       Vals(Seq(LoopVals("a", 1), LoopVals("b", 2)))
     ) should be("""
+        |beforeForEachCode
         |val a=1
         |val b=2
         |afterForEachCode
