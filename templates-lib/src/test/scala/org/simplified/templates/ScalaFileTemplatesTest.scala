@@ -81,5 +81,5 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
     templates(
       "def f(`params`:Int):Int",
       Vals(Params.of(Param("a", "Int"), Param("b", "Long")))
-    ) should be("def f(a:Int,b:Long):Int")
+    ) should be("def f(a:Int, b:Long):Int")
   }

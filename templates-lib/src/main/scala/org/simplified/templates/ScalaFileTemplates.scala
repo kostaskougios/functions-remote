@@ -1,6 +1,7 @@
 package org.simplified.templates
 
 import org.apache.commons.lang3.StringUtils
+import org.simplified.templates.model.Params
 
 class ScalaFileTemplates:
   private val ForEach                            = "// = foreach "
@@ -37,7 +38,12 @@ class ScalaFileTemplates:
 
   private def searchReplace(vals: Product) =
     val search  = vals.productElementNames.map(k => s"`$k`").toArray
-    val replace = vals.productIterator.map(_.toString).toArray
+    val replace = vals.productIterator
+      .map:
+        case p: Params => p.toCode
+        case v         => v
+      .map(_.toString)
+      .toArray
     (search, replace)
 
 object ScalaFileTemplates:
