@@ -1,8 +1,8 @@
-package packagename
+package `packagename`
 
 class FunctionsCaller(toByteArray: `FunctionsMethodParams` => Array[Byte], callFunction: Array[Byte] => Any):
 
-  // = for functions
+  // = foreach functions
   def `functionN`(path: String): `ResultN` =
     val c  = `CaseClass`(path)
     val r1 = toByteArray(c)
