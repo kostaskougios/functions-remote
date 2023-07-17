@@ -24,7 +24,7 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
     case class Vals(loop: Seq[LoopVals])
     templates(
       s"""
-         |// = for loop
+         |// = foreach loop
          |val `x`=`y`
          |// = end loop
          |""".stripMargin.trim,
