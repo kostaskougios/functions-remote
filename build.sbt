@@ -1,4 +1,4 @@
-val scala3Version = "3.2.2"
+val scala3Version = "3.3.0"
 
 ThisBuild / version := "1.0"
 
@@ -35,6 +35,11 @@ lazy val macros = project
     libraryDependencies ++= Seq(Scala3Tasty, ScalaTest, CommonsIO, CommonsText) ++ Diffx
   )
 
+lazy val `templates-lib` = project.settings(
+  commonSettings,
+  libraryDependencies ++= Seq(ScalaTest, CommonsIO, CommonsText) ++ Diffx
+)
+
 lazy val `ls-exports` = project
   .in(file("example-commands/ls-exports"))
   .settings(
@@ -51,3 +56,7 @@ lazy val `ls` = project
   )
   .dependsOn(`ls-exports`)
   .enablePlugins(PackPlugin)
+
+lazy val `proxy-templates` = project.settings(
+  libraryDependencies ++= Seq(Avro4s)
+)
