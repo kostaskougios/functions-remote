@@ -6,7 +6,8 @@ import org.scalatest.matchers.should.Matchers.*
 class ScalaFileTemplatesTest extends AnyFunSuiteLike:
   val templates = ScalaFileTemplates()
   test("replaces vals") {
-    val vals = Map("x" -> "a", "y" -> "b")
+    case class Vals(x: String, y: String)
+    val vals = Vals("a", "b")
     templates(
       """
          |val `x`=5
