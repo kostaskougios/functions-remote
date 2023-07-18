@@ -20,11 +20,15 @@ class ScalaFileTemplates:
         StringUtils.replaceEach(line, search, replace) :: applyToBlock(l, vals)
 
   private def applyForEach(forEachLine: String, nextLines: List[String], vals: List[Product]): List[String] =
+    // find the foreach variable name
     val forVal     = StringUtils.substringAfter(forEachLine, ForEach).trim
     val endAt      = End + forVal
+    // find the block that the foreach apply
     val forBlock   = nextLines.takeWhile(_.trim != endAt)
+    // find the rest of the lines after the foreach block
     val afterBlock = nextLines.dropWhile(_.trim != endAt).drop(1)
     val currVals   = vals.head
+    // find the vals for the foreach var name
     val block      = currVals.productElementNames
       .zip(currVals.productIterator)
       .find(_._1 == forVal)
