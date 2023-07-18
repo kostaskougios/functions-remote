@@ -16,8 +16,24 @@ class ScalaFileTemplates:
       case line :: l if line.startsWith(ForEach) =>
         applyForEach(line, l, vals)
       case line :: l                             =>
-        val (search, replace) = searchReplace(vals)
-        StringUtils.replaceEach(line, search, replace) :: applyToBlock(l, vals)
+        val (search, replace, params) = searchReplace(vals)
+        val newLine                   = replaceParams(line, params)
+        StringUtils.replaceEach(newLine, search, replace) :: applyToBlock(l, vals)
+
+  def replaceParams(line: String, params: List[(String, Params)]): String =
+    params match {
+      case Nil         => line
+      case (n, p) :: l =>
+        line.indexOf(n) match
+          case -1 => replaceParams(line, l)
+          case i  =>
+            val c       = line.indexOf(',', i + 1)
+            val par     = line.indexOf(')', i + 1)
+            if (par == -1) throw new IllegalStateException(s"There is no closing parenthesis for param args $n at line `$line`")
+            val d       = List(c, par).filter(_ > -1).min
+            val newLine = line.substring(0, i) + s"${p.toCode}" + line.substring(d)
+            replaceParams(newLine, params)
+    }
 
   private def applyForEach(forEachLine: String, nextLines: List[String], vals: List[Product]): List[String] =
     // find the foreach variable name
@@ -40,16 +56,18 @@ class ScalaFileTemplates:
       case x                                => throw new IllegalStateException(s"foreach $forVal : not an iterable value $x")
     block ++ applyToBlock(afterBlock, vals)
 
-  private def searchReplace(vals: List[Product]) =
-    val search  = vals.flatMap(_.productElementNames).map(k => s"`$k`").toArray
-    val replace = vals
-      .flatMap(_.productIterator)
-      .map:
-        case p: Params => p.toCode
-        case v         => v
-      .map(_.toString)
-      .toArray
-    (search, replace)
+  private def searchReplace(vals: List[Product]): (Array[String], Array[String], List[(String, Params)]) =
+    val kvs    = vals.flatMap(_.productElementNames.map(k => s"`$k`")).zip(vals.flatMap(_.productIterator))
+    val params = kvs.collect:
+      case (k, v: Params) => (k, v)
+
+    val normal = kvs.filter:
+      case (_, _: Params) => false
+      case _              => true
+
+    val search  = normal.map(_._1).toArray
+    val replace = normal.map(_._2.toString).toArray
+    (search, replace, params)
 
 object ScalaFileTemplates:
   def apply() = new ScalaFileTemplates
