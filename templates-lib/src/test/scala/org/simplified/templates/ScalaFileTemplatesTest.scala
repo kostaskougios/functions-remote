@@ -83,3 +83,11 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
       Vals(Params.of(Param("a", "Int"), Param("b", "Long")))
     ) should be("def f(a:Int, b:Long):Int")
   }
+
+  test("method params replacement, custom user params") {
+    case class Vals(params: Params)
+    templates(
+      "def f(`params`:Int, p:String):Int",
+      Vals(Params.of(Param("a", "Int"), Param("b", "Long")))
+    ) should be("def f(a:Int, b:Long, p:String):Int")
+  }
