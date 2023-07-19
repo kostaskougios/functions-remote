@@ -1,20 +1,19 @@
 package console.macros
 
-import console.macros.model.{Code, EMethod, EPackage, EParam, EType}
+import console.macros.model.*
 import console.macros.utils.Cleanup
 import console.macros.utils.Cleanup.removeColours
 import dotty.tools.dotc.ast.Trees.*
 import dotty.tools.dotc.config.Printers.Printer
+import dotty.tools.dotc.core.Decorators.show
 import dotty.tools.dotc.core.Names.{TermName, TypeName, typeName}
 import dotty.tools.dotc.printing.PlainPrinter
-
-import scala.collection.mutable
-import scala.quoted.*
-import scala.tasty.inspector.*
-import dotty.tools.dotc.core.Decorators.show
 import org.apache.commons.lang3.StringUtils
 
+import scala.collection.mutable
 import scala.io.AnsiColor
+import scala.quoted.*
+import scala.tasty.inspector.*
 
 private class StructureExtractorInspector extends Inspector:
   val packages = mutable.ListBuffer.empty[EPackage]

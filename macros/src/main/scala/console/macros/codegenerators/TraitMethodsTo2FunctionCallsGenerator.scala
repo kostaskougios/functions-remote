@@ -1,7 +1,7 @@
 package console.macros.codegenerators
 
 import console.macros.codegenerators.CodeFormatter.tabs
-import console.macros.model.{Code, CodeFile, EPackage, EType, NewCodeFile}
+import console.macros.model.*
 import org.simplified.templates.ScalaFileTemplate
 import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Param, Params}
 
@@ -17,13 +17,13 @@ class TraitMethodsTo2FunctionCallsGenerator(
     function2Name: String,
     scalaFileTemplate: ScalaFileTemplate
 ):
-  def apply(packages: Seq[EPackage]): Seq[NewCodeFile] =
+  def apply(packages: Seq[EPackage]): Seq[Code] =
     packages.flatMap(generate)
 
-  private def generate(`package`: EPackage): Seq[NewCodeFile] =
+  private def generate(`package`: EPackage): Seq[Code] =
     `package`.types.map(generate(`package`, _))
 
-  private def generate(`package`: EPackage, `type`: EType): NewCodeFile =
+  private def generate(`package`: EPackage, `type`: EType): Code =
     case class Func(functionN: String, params: Params, resultN: String, caseClass: String)
     case class Vals(
         packagename: String,
@@ -46,7 +46,7 @@ class TraitMethodsTo2FunctionCallsGenerator(
         caseClassNamingConventions.caseClassHolderObject(`type`) + "." + caseClassNamingConventions.methodArgsCaseClassName(`type`, m)
       )
     val code      = scalaFileTemplate(Vals(`package`.name, Imports(imports), sn, function1Name, mpt, function1ReturnType, function2Name, functions))
-    NewCodeFile(
+    Code(
       s"${`package`.toPath}/$sn.scala",
       code
     )

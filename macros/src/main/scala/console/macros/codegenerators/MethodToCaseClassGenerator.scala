@@ -2,7 +2,7 @@ package console.macros.codegenerators
 
 import console.macros.codegenerators.CodeFormatter.tabs
 import console.macros.codegenerators.model.MethodCaseClass
-import console.macros.model.{Code, CodeFile, EMethod, EPackage, EType, InnerCode, NewCodeFile}
+import console.macros.model.*
 import org.simplified.templates.ScalaFileTemplate
 import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Params}
 
@@ -10,17 +10,17 @@ class MethodToCaseClassGenerator(
     namingConventions: MethodToCaseClassGenerator.NamingConventions,
     scalaFileTemplate: ScalaFileTemplate
 ):
-  def apply(packages: Seq[EPackage]): Seq[NewCodeFile]                = packages.flatMap(p => apply(p, p.types))
-  def apply(`package`: EPackage, types: Seq[EType]): Seq[NewCodeFile] = types.map(apply(`package`, _))
+  def apply(packages: Seq[EPackage]): Seq[Code]                = packages.flatMap(p => apply(p, p.types))
+  def apply(`package`: EPackage, types: Seq[EType]): Seq[Code] = types.map(apply(`package`, _))
 
-  def apply(`package`: EPackage, `type`: EType): NewCodeFile =
+  def apply(`package`: EPackage, `type`: EType): Code =
     val caseClasses = `type`.methods.map(MethodCaseClass.toCaseClass(namingConventions, `package`, `type`, _))
     val n           = namingConventions.caseClassHolderObject(`type`)
     val imports     = caseClasses.flatMap(_.imports).toSet
 
     case class Vals(packagename: String, imports: Imports, functionsMethodParams: String, caseClasses: Seq[MethodCaseClass])
     val code = scalaFileTemplate(Vals(`package`.name, Imports(imports), n, caseClasses))
-    NewCodeFile(
+    Code(
       s"${`package`.toPath}/$n.scala",
       code
     )

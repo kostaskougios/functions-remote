@@ -8,16 +8,16 @@ import org.simplified.templates.ScalaFileTemplate
 import org.simplified.templates.model.FileTemplatesSourceLocation
 
 class AvroCaseClassSchemaGenerator(namingConventions: MethodToCaseClassGenerator.NamingConventions, scalaFileTemplate: ScalaFileTemplate):
-  def apply(packages: Seq[EPackage]): Seq[NewCodeFile] = packages.flatMap(apply)
-  def apply(`package`: EPackage): Seq[NewCodeFile]     = `package`.types.map(apply(`package`, _))
+  def apply(packages: Seq[EPackage]): Seq[Code] = packages.flatMap(apply)
+  def apply(`package`: EPackage): Seq[Code]     = `package`.types.map(apply(`package`, _))
 
-  def apply(`package`: EPackage, `type`: EType): NewCodeFile =
+  def apply(`package`: EPackage, `type`: EType): Code =
     val mpt         = namingConventions.methodParamsTrait(`type`)
     val caseClasses = `type`.methods.map(MethodCaseClass.toCaseClass(namingConventions, `package`, `type`, _))
 
     case class Vals(packagename: String, functionsMethodAvroSerializer: String, functionsMethodParams: String, caseClasses: Seq[MethodCaseClass])
     val n = namingConventions.caseClassHolderObject(`type`) + "AvroSerializer"
-    NewCodeFile(
+    Code(
       `package`.toPath,
       scalaFileTemplate(Vals(`package`.name, n, mpt, caseClasses))
     )
