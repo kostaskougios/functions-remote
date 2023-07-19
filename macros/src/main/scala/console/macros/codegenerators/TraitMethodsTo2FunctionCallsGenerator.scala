@@ -53,7 +53,8 @@ class TraitMethodsTo2FunctionCallsGenerator(
 
 object TraitMethodsTo2FunctionCallsGenerator:
   trait NamingConventions:
-    /** @param `type`
+    /** The name of the generated caller class
+      * @param `type`
       *   the type where the method belongs to
       * @return
       *   the case class name for the method
