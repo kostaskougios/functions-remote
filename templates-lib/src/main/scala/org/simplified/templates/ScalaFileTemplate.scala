@@ -13,7 +13,7 @@ class ScalaFileTemplate(code: String):
   private val End     = "// end "
 
   def apply(vals: Product): String =
-    val lines = applyToBlock(StringUtils.split(code, '\n').toList, vals :: Nil)
+    val lines = applyToBlock(code.split('\n').toList, vals :: Nil)
     lines.mkString("\n")
 
   private def applyToBlock(lines: List[String], vals: List[Product]): List[String] =
