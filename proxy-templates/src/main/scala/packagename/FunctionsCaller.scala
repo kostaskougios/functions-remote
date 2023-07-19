@@ -2,12 +2,12 @@ package `packagename`
 
 // = imports
 
-class `functionsCaller`(toByteArray: `functionsMethodParams` => Array[Byte], callFunction: Array[Byte] => Any):
+class `functionsCaller`(`function1`: `functionsMethodParams` => `function1ReturnType`, `function2`: `function1ReturnType` => Any):
 
   // foreach functions
   def `functionN`(`params`: String): `resultN` =
     val c  = `caseClass`(`params`)
-    val r1 = toByteArray(c)
-    val r2 = callFunction(r1)
+    val r1 = `function1`(c)
+    val r2 = `function2`(r1)
     r2.asInstanceOf[`resultN`]
   // end functions

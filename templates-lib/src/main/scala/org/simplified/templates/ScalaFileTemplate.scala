@@ -2,8 +2,7 @@ package org.simplified.templates
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
-import org.simplified.templates.ScalaFileTemplate.{FileTemplatesSourceLocation, TemplatesSourceLocation}
-import org.simplified.templates.model.Params
+import org.simplified.templates.model.{FileTemplatesSourceLocation, Params, TemplatesSourceLocation}
 
 import java.io.File
 import scala.io.Source
@@ -91,6 +90,3 @@ object ScalaFileTemplate:
       case FileTemplatesSourceLocation(path) =>
         Using.resource(Source.fromFile(s"$path/${className.replace('.', '/')}.scala")): in =>
           new ScalaFileTemplate(in.mkString)
-
-  sealed trait TemplatesSourceLocation
-  case class FileTemplatesSourceLocation(path: String) extends TemplatesSourceLocation

@@ -3,9 +3,7 @@ package console.macros.codegenerators
 import console.macros.codegenerators.CodeFormatter.tabs
 import console.macros.model.{Code, CodeFile, EPackage, EType, NewCodeFile}
 import org.simplified.templates.ScalaFileTemplate
-import org.simplified.templates.ScalaFileTemplate.FileTemplatesSourceLocation
-import org.simplified.templates.model.Params
-import org.simplified.templates.model.Param
+import org.simplified.templates.model.{FileTemplatesSourceLocation, Param, Params}
 
 /** Converts a trait A to a class that proxies A's methods. Each proxy converts the method's args to a case class and passes it through 2 functions.
   *
@@ -27,7 +25,16 @@ class TraitMethodsTo2FunctionCallsGenerator(
 
   private def generate(`package`: EPackage, `type`: EType): NewCodeFile =
     case class Func(functionN: String, params: Params, resultN: String, caseClass: String)
-    case class Vals(packagename: String, imports: String, functionsCaller: String, functionsMethodParams: String, functions: Seq[Func])
+    case class Vals(
+        packagename: String,
+        imports: String,
+        functionsCaller: String,
+        function1: String,
+        functionsMethodParams: String,
+        function1ReturnType: String,
+        function2: String,
+        functions: Seq[Func]
+    )
     val imports   = `type`.typesInMethods.toSet
     val sn        = namingConventions.className(`type`)
     val mpt       = caseClassNamingConventions.methodParamsTrait(`type`)
@@ -38,7 +45,7 @@ class TraitMethodsTo2FunctionCallsGenerator(
         m.returnType.name,
         caseClassNamingConventions.caseClassHolderObject(`type`) + "." + caseClassNamingConventions.methodArgsCaseClassName(`type`, m)
       )
-    val code      = scalaFileTemplate(Vals(`package`.name, imports.mkString("\n"), sn, mpt, functions))
+    val code      = scalaFileTemplate(Vals(`package`.name, imports.mkString("\n"), sn, function1Name, mpt, function1ReturnType, function2Name, functions))
     NewCodeFile(
       s"${`package`.toPath}/$sn.scala",
       code

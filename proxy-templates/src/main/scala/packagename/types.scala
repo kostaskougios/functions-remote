@@ -5,3 +5,5 @@ package packagename
 trait resultN
 
 case class caseClass(s: String) extends functionsMethodParams
+
+trait function1ReturnType
