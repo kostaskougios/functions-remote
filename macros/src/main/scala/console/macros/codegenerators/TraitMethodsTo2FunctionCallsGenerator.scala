@@ -1,7 +1,9 @@
 package console.macros.codegenerators
 
 import console.macros.codegenerators.CodeFormatter.tabs
-import console.macros.model.{Code, CodeFile, EPackage, EType}
+import console.macros.model.{Code, CodeFile, EPackage, EType, NewCodeFile}
+import org.simplified.templates.ScalaFileTemplate
+import org.simplified.templates.ScalaFileTemplate.FileTemplatesSourceLocation
 
 /** Converts a trait A to a class that proxies A's methods. Each proxy converts the method's args to a case class and passes it through 2 functions.
   *
@@ -12,38 +14,51 @@ class TraitMethodsTo2FunctionCallsGenerator(
     caseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions,
     function1Name: String,
     function1ReturnType: String,
-    function2Name: String
+    function2Name: String,
+    scalaFileTemplate: ScalaFileTemplate
 ):
-  def apply(packages: Seq[EPackage]): Seq[CodeFile] =
+  def apply(packages: Seq[EPackage]): Seq[NewCodeFile] =
     packages.flatMap(generate)
 
-  private def generate(`package`: EPackage): Seq[CodeFile] =
-    `package`.types.flatMap(generate(`package`, _))
+  private def generate(`package`: EPackage): Seq[NewCodeFile] =
+    `package`.types.map(generate(`package`, _))
 
-  private def generate(`package`: EPackage, `type`: EType): Seq[CodeFile] =
-    val imports           = `type`.typesInMethods.toSet
-    val overriddenMethods = `type`.methods.map { m =>
-      s"""
-         |def ${m.name}${m.paramsCodeUnqualified} : ${m.returnType.name} =
-         |  val c  = ${caseClassNamingConventions.caseClassHolderObject(`type`)}.${caseClassNamingConventions.methodArgsCaseClassName(`type`, m)}${m.paramsAsArgs}
-         |  val r1 = $function1Name(c)
-         |  val r2 = $function2Name(r1)
-         |  r2.asInstanceOf[${m.returnType.name}]
-         |""".stripMargin
-    }
-    val sn                = namingConventions.className(`type`)
-    val mpt               = caseClassNamingConventions.methodParamsTrait(`type`)
-    Seq(
-      CodeFile(
-        s"${`package`.toPath}/$sn.scala",
-        `package`,
-        imports,
-        s"""
-         |class $sn($function1Name: $mpt => $function1ReturnType, $function2Name: $function1ReturnType => Any):
-         |${tabs(1, overriddenMethods).mkString("\n")}
-         |""".stripMargin.trim
-      )
+  private def generate(`package`: EPackage, `type`: EType): NewCodeFile =
+    case class Vals(packagename: String, imports: String, functionsCaller: String, functionsMethodParams: String)
+    val imports = `type`.typesInMethods.toSet
+    val sn      = namingConventions.className(`type`)
+    val mpt     = caseClassNamingConventions.methodParamsTrait(`type`)
+    val code    = scalaFileTemplate(Vals(`package`.name, imports.mkString("\n"), sn, mpt))
+    NewCodeFile(
+      s"${`package`.toPath}/$sn.scala",
+      code
     )
+
+//    val overriddenMethods = `type`.methods.map { m =>
+//      s"""
+//         |def ${m.name}${m.paramsCodeUnqualified} : ${m.returnType.name} =
+//         |  val c  = ${caseClassNamingConventions.caseClassHolderObject(`type`)}.${
+//        caseClassNamingConventions.methodArgsCaseClassName(
+//          `type`,
+//          m
+//        )
+//      }${m.paramsAsArgs}
+//         |  val r1 = $function1Name(c)
+//         |  val r2 = $function2Name(r1)
+//         |  r2.asInstanceOf[${m.returnType.name}]
+//         |""".stripMargin
+//    }
+//    Seq(
+//      CodeFile(
+//        s"${`package`.toPath}/$sn.scala",
+//        `package`,
+//        imports,
+//        s"""
+//         |class $sn($function1Name: $mpt => $function1ReturnType, $function2Name: $function1ReturnType => Any):
+//         |${tabs(1, overriddenMethods).mkString("\n")}
+//         |""".stripMargin.trim
+//      )
+//    )
 object TraitMethodsTo2FunctionCallsGenerator:
   trait NamingConventions:
     /** @param `type`
@@ -66,5 +81,6 @@ object TraitMethodsTo2FunctionCallsGenerator:
     methodToCaseClassNamingConventions,
     function1Name,
     function1ReturnType,
-    function2Name
+    function2Name,
+    ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "packagename.FunctionsCaller")
   )

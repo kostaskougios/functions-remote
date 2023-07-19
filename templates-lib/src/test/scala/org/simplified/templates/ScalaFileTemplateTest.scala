@@ -4,15 +4,15 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers.*
 import org.simplified.templates.model.{Param, Params}
 
-class ScalaFileTemplatesTest extends AnyFunSuiteLike:
-  val templates = ScalaFileTemplates()
+class ScalaFileTemplateTest extends AnyFunSuiteLike:
   test("replaces vals") {
     case class Vals(x: String, y: String)
-    templates(
+    ScalaFileTemplate(
       """
         |val `x`=5
         |val `y`=6
-        |""".stripMargin.trim,
+        |""".stripMargin.trim
+    ).apply(
       Vals("a", "b")
     ) should be("""
         |val a=5
@@ -20,15 +20,16 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
         |""".stripMargin.trim)
   }
 
-  test("// = foreach") {
+  test("// foreach") {
     case class LoopVals(x: String, y: Int)
     case class Vals(loop: Seq[LoopVals])
-    templates(
+    ScalaFileTemplate(
       """
-         |// = foreach loop
+         |// foreach loop
          |val `x`=`y`
-         |// = end loop
-         |""".stripMargin.trim,
+         |// end loop
+         |""".stripMargin.trim
+    ).apply(
       Vals(Seq(LoopVals("a", 1), LoopVals("b", 2)))
     ) should be("""
         |val a=1
@@ -36,17 +37,18 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
         |""".stripMargin.trim)
   }
 
-  test("// = foreach processes code abefore and fter the foreach") {
+  test("// foreach processes code abefore and fter the foreach") {
     case class LoopVals(x: String, y: Int)
     case class Vals(loop: Seq[LoopVals])
-    templates(
+    ScalaFileTemplate(
       """
          |beforeForEachCode
-         |// = foreach loop
+         |// foreach loop
          |val `x`=`y`
-         |// = end loop
+         |// end loop
          |afterForEachCode
-         |""".stripMargin.trim,
+         |""".stripMargin.trim
+    ).apply(
       Vals(Seq(LoopVals("a", 1), LoopVals("b", 2)))
     ) should be("""
         |beforeForEachCode
@@ -56,17 +58,18 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
         |""".stripMargin.trim)
   }
 
-  test("// = foreach vals precedence") {
+  test("// foreach vals precedence") {
     case class LoopVals(x: String)
     case class Vals(x: String, loop: Seq[LoopVals])
-    templates(
+    ScalaFileTemplate(
       """
          |val `x`=1
-         |// = foreach loop
+         |// foreach loop
          |val `x`=2
-         |// = end loop
+         |// end loop
          |val `x`=3
-         |""".stripMargin.trim,
+         |""".stripMargin.trim
+    ).apply(
       Vals("a", Seq(LoopVals("fa"), LoopVals("fb")))
     ) should be("""
         |val a=1
@@ -78,16 +81,18 @@ class ScalaFileTemplatesTest extends AnyFunSuiteLike:
 
   test("method params replacement") {
     case class Vals(params: Params)
-    templates(
-      "def f(`params`:Int):Int",
+    ScalaFileTemplate(
+      "def f(`params`:Int):Int"
+    ).apply(
       Vals(Params.of(Param("a", "Int"), Param("b", "Long")))
     ) should be("def f(a:Int, b:Long):Int")
   }
 
   test("method params replacement, custom user params") {
     case class Vals(params: Params)
-    templates(
-      "def f(`params`:Int, p:String):Int",
+    ScalaFileTemplate(
+      "def f(`params`:Int, p:String):Int"
+    ).apply(
       Vals(Params.of(Param("a", "Int"), Param("b", "Long")))
     ) should be("def f(a:Int, b:Long, p:String):Int")
   }

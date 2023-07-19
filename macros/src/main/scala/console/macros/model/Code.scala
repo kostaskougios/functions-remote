@@ -9,6 +9,8 @@ trait Code:
   def main: String
   def toCode: String
 
+case class NewCodeFile(file: String, code: String)
+
 /** A full code file belonging to a package, having imports and code
   */
 case class CodeFile(file: String, `package`: EPackage, imports: Set[String], main: String) extends Code:

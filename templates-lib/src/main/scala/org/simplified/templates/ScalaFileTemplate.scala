@@ -1,12 +1,19 @@
 package org.simplified.templates
 
+import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
+import org.simplified.templates.ScalaFileTemplate.{FileTemplatesSourceLocation, TemplatesSourceLocation}
 import org.simplified.templates.model.Params
 
-class ScalaFileTemplates:
-  private val ForEach                            = "// = foreach "
-  private val End                                = "// = end "
-  def apply(code: String, vals: Product): String =
+import java.io.File
+import scala.io.Source
+import scala.util.Using
+
+class ScalaFileTemplate(code: String):
+  private val ForEach = "// foreach "
+  private val End     = "// end "
+
+  def apply(vals: Product): String =
     val lines = applyToBlock(StringUtils.split(code, '\n').toList, vals :: Nil)
     lines.mkString("\n")
 
@@ -20,7 +27,7 @@ class ScalaFileTemplates:
         val newLine                   = replaceParams(line, params)
         StringUtils.replaceEach(newLine, search, replace) :: applyToBlock(l, vals)
 
-  def replaceParams(line: String, params: List[(String, Params)]): String =
+  private def replaceParams(line: String, params: List[(String, Params)]): String =
     params match {
       case Nil         => line
       case (n, p) :: l =>
@@ -69,5 +76,15 @@ class ScalaFileTemplates:
     val replace = normal.map(_._2.toString).toArray
     (search, replace, params)
 
-object ScalaFileTemplates:
-  def apply() = new ScalaFileTemplates
+object ScalaFileTemplate:
+
+  def apply(code: String): ScalaFileTemplate = new ScalaFileTemplate(code)
+
+  def apply(templatesSourceLocation: TemplatesSourceLocation, className: String): ScalaFileTemplate =
+    templatesSourceLocation match
+      case FileTemplatesSourceLocation(path) =>
+        Using.resource(Source.fromFile(s"$path/${className.replace('.', '/')}.scala")): in =>
+          new ScalaFileTemplate(in.mkString)
+
+  sealed trait TemplatesSourceLocation
+  case class FileTemplatesSourceLocation(path: String) extends TemplatesSourceLocation

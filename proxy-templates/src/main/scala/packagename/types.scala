@@ -4,4 +4,4 @@ package packagename
 
 trait ResultN
 
-case class CaseClass(s: String) extends FunctionsMethodParams
+case class CaseClass(s: String) extends functionsMethodParams
