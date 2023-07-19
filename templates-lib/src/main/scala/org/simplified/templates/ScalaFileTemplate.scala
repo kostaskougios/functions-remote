@@ -20,7 +20,7 @@ class ScalaFileTemplate(code: String):
   private def applyToBlock(lines: List[String], vals: List[Product]): List[String] =
     lines match
       case Nil                                   => Nil
-      case line :: l if line.startsWith(ForEach) =>
+      case line :: l if line.trim.startsWith(ForEach) =>
         applyForEach(line, l, vals)
       case line :: l                             =>
         val (search, replace, params) = searchReplace(vals)

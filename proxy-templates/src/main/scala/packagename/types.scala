@@ -2,6 +2,6 @@ package packagename
 
 // This is not a template, it just mocks some types to make the templates compile
 
-trait ResultN
+trait resultN
 
-case class CaseClass(s: String) extends functionsMethodParams
+case class caseClass(s: String) extends functionsMethodParams
