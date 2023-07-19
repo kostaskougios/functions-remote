@@ -1,6 +1,6 @@
 package console.macros.codegenerators
 
-import console.macros.codegenerators.CodeFormatter.tabs
+import console.macros.codegenerators.TraitMethodsTo2FunctionCallsGenerator.Config
 import console.macros.model.*
 import org.simplified.templates.ScalaFileTemplate
 import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Param, Params}
@@ -10,11 +10,7 @@ import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Par
   * Example: function 1 converts the case class to json and function 2 does a rest api call
   */
 class TraitMethodsTo2FunctionCallsGenerator(
-    namingConventions: TraitMethodsTo2FunctionCallsGenerator.NamingConventions,
-    caseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions,
-    function1Name: String,
-    function1ReturnType: String,
-    function2Name: String,
+    config: Config,
     scalaFileTemplate: ScalaFileTemplate
 ):
   def apply(packages: Seq[EPackage]): Seq[Code] =
@@ -36,22 +32,33 @@ class TraitMethodsTo2FunctionCallsGenerator(
         functions: Seq[Func]
     )
     val imports   = `type`.typesInMethods.toSet
-    val sn        = namingConventions.className(`type`)
-    val mpt       = caseClassNamingConventions.methodParamsTraitName(`type`)
+    val sn        = config.traitToSenderNamingConventions.className(`type`)
+    val mpt       = config.methodToCaseClassNamingConventions.methodParamsTraitName(`type`)
     val functions = `type`.methods.map: m =>
       Func(
         m.name,
         m.toParams,
         m.returnType.name,
-        caseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassNamingConventions.methodArgsCaseClassName(`type`, m)
+        config.methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + config.methodToCaseClassNamingConventions.methodArgsCaseClassName(
+          `type`,
+          m
+        )
       )
-    val code      = scalaFileTemplate(Vals(`package`.name, Imports(imports), sn, function1Name, mpt, function1ReturnType, function2Name, functions))
+    val vals      = Vals(`package`.name, Imports(imports), sn, config.function1Name, mpt, config.function1ReturnType, config.function2Name, functions)
+    val code      = scalaFileTemplate(vals)
     Code(
       s"${`package`.toPath}/$sn.scala",
       code
     )
 
 object TraitMethodsTo2FunctionCallsGenerator:
+  case class Config(
+      methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions,
+      traitToSenderNamingConventions: TraitMethodsTo2FunctionCallsGenerator.NamingConventions = DefaultNamingConventions,
+      function1Name: String = "toByteArray",
+      function1ReturnType: String = "Array[Byte]",
+      function2Name: String = "callFunction"
+  )
   trait NamingConventions:
     /** The name of the generated caller class
       * @param `type`
@@ -64,16 +71,8 @@ object TraitMethodsTo2FunctionCallsGenerator:
   object DefaultNamingConventions extends NamingConventions
 
   def apply(
-      methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions,
-      traitToSenderNamingConventions: TraitMethodsTo2FunctionCallsGenerator.NamingConventions = DefaultNamingConventions,
-      function1Name: String = "toByteArray",
-      function1ReturnType: String = "Array[Byte]",
-      function2Name: String = "callFunction"
+      config: Config = Config()
   ) = new TraitMethodsTo2FunctionCallsGenerator(
-    traitToSenderNamingConventions,
-    methodToCaseClassNamingConventions,
-    function1Name,
-    function1ReturnType,
-    function2Name,
+    config,
     ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "proxypackage.FunctionsCaller")
   )
