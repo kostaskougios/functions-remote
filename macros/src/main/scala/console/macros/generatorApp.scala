@@ -11,10 +11,7 @@ import console.macros.codegenerators.{AvroCaseClassSchemaGenerator, MethodToCase
   val TargetRoot              = s"$ProjectRoot/src/main/generated"
   val tastyFiles              = List(s"$ProjectRoot/target/scala-3.3.0/classes/ls/LsFunctions.tasty")
   val packages                = structureExtractor(tastyFiles)
-  val codes                   = callerGenerator(packages) ++ caseClassGenerator(packages)
+  val codes                   = callerGenerator(packages) ++ caseClassGenerator(packages) ++ avroSerializerGenerator(packages)
 
-//  println(callerGenerator(packages).map(_.code).mkString("\n"))
-//  println(caseClassGenerator(packages).map(_.code).mkString("\n"))
-  println(avroSerializerGenerator(packages).map(_.code).mkString("\n"))
-//  println(codes.map(c => s"file:${c.file}\n\n${c.toCode}").mkString("\n-----------\n\n"))
-//  for c <- codes do c.writeTo(TargetRoot)
+  println(codes.map(c => s"file:${c.file}\n\n${c.code}").mkString("\n-----------\n\n"))
+  for c <- codes do c.writeTo(TargetRoot)

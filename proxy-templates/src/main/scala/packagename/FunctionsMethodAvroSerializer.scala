@@ -6,6 +6,8 @@ import com.sksamuel.avro4s.AvroOutputStreamBuilder
 import java.io.ByteArrayOutputStream
 import scala.util.Using
 
+/*=imports*/
+
 object `functionsMethodAvroSerializer`:
   private def avroSerialize[A](b: AvroOutputStreamBuilder[A], value: A): Array[Byte] =
     val bos = new ByteArrayOutputStream(4096)
