@@ -19,10 +19,10 @@ class ScalaFileTemplate(code: String):
 
   private def applyToBlock(lines: List[String], vals: List[Product]): List[String] =
     lines match
-      case Nil                                   => Nil
+      case Nil                                        => Nil
       case line :: l if line.trim.startsWith(ForEach) =>
         applyForEach(line, l, vals)
-      case line :: l                             =>
+      case line :: l                                  =>
         val (search, replace, params) = searchReplace(vals)
         val newLine                   = replaceParams(line, params)
         StringUtils.replaceEach(newLine, search, replace) :: applyToBlock(l, vals)
@@ -34,11 +34,17 @@ class ScalaFileTemplate(code: String):
         line.indexOf(n) match
           case -1 => replaceParams(line, l)
           case i  =>
-            val c       = line.indexOf(',', i + 1)
-            val par     = line.indexOf(')', i + 1)
+            val c            = line.indexOf(',', i + 1)
+            val par          = line.indexOf(')', i + 1)
             if (par == -1) throw new IllegalStateException(s"There is no closing parenthesis for param args $n at line `$line`")
-            val d       = List(c, par).filter(_ > -1).min
-            val newLine = line.substring(0, i) + s"${p.toCode}" + line.substring(d)
+            val d            = List(c, par).filter(_ > -1).min
+            // we need to find out if the params are used when calling a method like f(a,b) or when declaring a method
+            // like def f(a:Int,b:Int)
+            val collon       = line.indexOf(':', i + 1)
+            val isMethodDecl = collon > i && collon < par
+            val code         = if isMethodDecl then p.toCode else p.toMethodArg
+
+            val newLine = line.substring(0, i) + code + line.substring(d)
             replaceParams(newLine, params)
     }
 
