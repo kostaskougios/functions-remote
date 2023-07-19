@@ -3,7 +3,7 @@ package console.macros.codegenerators
 import console.macros.codegenerators.CodeFormatter.tabs
 import console.macros.model.{Code, CodeFile, EPackage, EType, NewCodeFile}
 import org.simplified.templates.ScalaFileTemplate
-import org.simplified.templates.model.{FileTemplatesSourceLocation, Param, Params}
+import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Param, Params}
 
 /** Converts a trait A to a class that proxies A's methods. Each proxy converts the method's args to a case class and passes it through 2 functions.
   *
@@ -27,7 +27,7 @@ class TraitMethodsTo2FunctionCallsGenerator(
     case class Func(functionN: String, params: Params, resultN: String, caseClass: String)
     case class Vals(
         packagename: String,
-        imports: String,
+        imports: Imports,
         functionsCaller: String,
         function1: String,
         functionsMethodParams: String,
@@ -45,7 +45,7 @@ class TraitMethodsTo2FunctionCallsGenerator(
         m.returnType.name,
         caseClassNamingConventions.caseClassHolderObject(`type`) + "." + caseClassNamingConventions.methodArgsCaseClassName(`type`, m)
       )
-    val code      = scalaFileTemplate(Vals(`package`.name, imports.mkString("\n"), sn, function1Name, mpt, function1ReturnType, function2Name, functions))
+    val code      = scalaFileTemplate(Vals(`package`.name, Imports(imports), sn, function1Name, mpt, function1ReturnType, function2Name, functions))
     NewCodeFile(
       s"${`package`.toPath}/$sn.scala",
       code
