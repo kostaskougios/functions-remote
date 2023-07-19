@@ -11,9 +11,9 @@ import scala.util.Using
 object `functionsMethodAvroSerializer`:
   private def avroSerialize[A](b: AvroOutputStreamBuilder[A], value: A): Array[Byte] =
     val bos = new ByteArrayOutputStream(4096)
-    Using.resource(b.to(bos).build()) { os =>
+    Using.resource(b.to(bos).build()): os =>
       os.write(value)
-    }
+
     bos.toByteArray
 
   val avroSerializer: PartialFunction[`methodParams`, Array[Byte]] =
