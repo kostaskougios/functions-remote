@@ -16,7 +16,7 @@ object `functionsMethodAvroSerializer`:
     }
     bos.toByteArray
 
-  val avroSerializer: PartialFunction[`functionsMethodParams`, Array[Byte]] =
+  val avroSerializer: PartialFunction[`methodParams`, Array[Byte]] =
     // foreach caseClasses
     case value: `caseClass` =>
       avroSerialize(AvroOutputStream.data[`caseClass`], value)

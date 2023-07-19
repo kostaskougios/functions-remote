@@ -4,6 +4,6 @@ package proxypackage
 
 trait resultN
 
-case class caseClass(s: String) extends functionsMethodParams
+case class caseClass(s: String) extends `methodParams`
 
 trait function1ReturnType

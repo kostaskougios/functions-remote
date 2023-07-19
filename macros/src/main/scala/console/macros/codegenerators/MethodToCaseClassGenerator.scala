@@ -2,6 +2,7 @@ package console.macros.codegenerators
 
 import console.macros.codegenerators.CodeFormatter.tabs
 import console.macros.codegenerators.model.MethodCaseClass
+import console.macros.codegenerators.model.MethodCaseClass.toCaseClass
 import console.macros.model.*
 import org.simplified.templates.ScalaFileTemplate
 import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Params}
@@ -14,11 +15,12 @@ class MethodToCaseClassGenerator(
   def apply(`package`: EPackage, types: Seq[EType]): Seq[Code] = types.map(apply(`package`, _))
 
   def apply(`package`: EPackage, `type`: EType): Code =
-    val caseClasses = `type`.methods.map(MethodCaseClass.toCaseClass(namingConventions, `package`, `type`, _))
-    val n           = namingConventions.caseClassHolderObject(`type`)
+    val caseClasses = `type`.methods.map(toCaseClass(namingConventions, `package`, `type`, _))
+    val n           = namingConventions.caseClassHolderObjectName(`type`)
     val imports     = caseClasses.flatMap(_.imports).toSet
 
-    case class Vals(proxypackage: String, imports: Imports, functionsMethodParams: String, caseClasses: Seq[MethodCaseClass])
+    case class Vals(proxypackage: String, imports: Imports, methodParams: String, caseClasses: Seq[MethodCaseClass])
+
     val code = scalaFileTemplate(Vals(`package`.name, Imports(imports), n, caseClasses))
     Code(
       s"${`package`.toPath}/$n.scala",
@@ -27,7 +29,8 @@ class MethodToCaseClassGenerator(
 
 object MethodToCaseClassGenerator:
   trait NamingConventions:
-    /** @param `type`
+    /** The name of the generated case class for a method args.
+      * @param `type`
       *   the type where the method belongs to
       * @param method
       *   the method
@@ -35,8 +38,14 @@ object MethodToCaseClassGenerator:
       *   the case class name for the method
       */
     def methodArgsCaseClassName(`type`: EType, method: EMethod): String = method.name.capitalize
-    def methodParamsTrait(`type`: EType): String                        = s"${`type`.name}MethodParams"
-    def caseClassHolderObject(`type`: EType): String                    = methodParamsTrait(`type`)
+
+    /** The name of a trait that will be the super class of all generated case classes
+      */
+    def methodParamsTraitName(`type`: EType): String = s"${`type`.name}MethodParams"
+
+    /** The name of the object that will hold all case classes
+      */
+    def caseClassHolderObjectName(`type`: EType): String = methodParamsTraitName(`type`)
 
   object DefaultNamingConventions extends NamingConventions
 

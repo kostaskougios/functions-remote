@@ -12,17 +12,17 @@ class AvroCaseClassSchemaGenerator(namingConventions: MethodToCaseClassGenerator
   def apply(`package`: EPackage): Seq[Code]     = `package`.types.map(apply(`package`, _))
 
   def apply(`package`: EPackage, `type`: EType): Code =
-    val mpt         = namingConventions.methodParamsTrait(`type`)
+    val mpt         = namingConventions.methodParamsTraitName(`type`)
     val caseClasses = `type`.methods.map(MethodCaseClass.toCaseClass(namingConventions, `package`, `type`, _))
 
     case class Vals(
         proxypackage: String,
         imports: Imports,
         functionsMethodAvroSerializer: String,
-        functionsMethodParams: String,
+        methodParams: String,
         caseClasses: Seq[MethodCaseClass]
     )
-    val n = namingConventions.caseClassHolderObject(`type`) + "AvroSerializer"
+    val n = namingConventions.caseClassHolderObjectName(`type`) + "AvroSerializer"
     Code(
       s"${`package`.toPath}/$n.scala",
       scalaFileTemplate(Vals(`package`.name, Imports(Set(mpt + ".*")), n, mpt, caseClasses))

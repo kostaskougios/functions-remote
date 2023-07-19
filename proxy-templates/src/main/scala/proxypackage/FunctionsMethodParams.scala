@@ -2,10 +2,10 @@ package `proxypackage`
 
 /*=imports*/
 
-trait `functionsMethodParams`
+trait `methodParams`
 
-object `functionsMethodParams`:
+object `methodParams`:
 
   // foreach caseClasses
-  case class `caseClass`(`params`: String) extends `functionsMethodParams`
+  case class `caseClass`(`params`: String) extends `methodParams`
   // end caseClasses

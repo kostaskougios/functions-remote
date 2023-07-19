@@ -2,7 +2,7 @@ package `proxypackage`
 
 /*=imports*/
 
-class `functionsCaller`(`function1`: `functionsMethodParams` => `function1ReturnType`, `function2`: `function1ReturnType` => Any):
+class `functionsCaller`(`function1`: `methodParams` => `function1ReturnType`, `function2`: `function1ReturnType` => Any):
 
   // foreach functions
   def `functionN`(`params`: String): `resultN` =
