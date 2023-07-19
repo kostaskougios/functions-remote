@@ -2,7 +2,7 @@ package org.simplified.templates
 
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers.*
-import org.simplified.templates.model.{Param, Params}
+import org.simplified.templates.model.{Imports, Param, Params}
 
 class ScalaFileTemplateTest extends AnyFunSuiteLike:
   test("replaces vals") {
@@ -102,4 +102,16 @@ class ScalaFileTemplateTest extends AnyFunSuiteLike:
     val vals = Vals(Params.of(Param("a", "Int"), Param("b", "Long")))
     ScalaFileTemplate("f(`params`)").apply(vals) should be("f(a, b)")
     ScalaFileTemplate("f(`params`):Int").apply(vals) should be("f(a, b):Int")
+  }
+
+  test("/*=x*/") {
+    case class Vals(x: Int)
+    ScalaFileTemplate("a/*=x*/b").apply(Vals(1)) should be("a1b")
+  }
+  test("imports") {
+    case class Vals(imports: Imports)
+    ScalaFileTemplate("/*=imports*/").apply(Vals(Imports(Set("com.x1", "com.x2")))) should be("""
+        |import com.x1
+        |import com.x2
+        |""".stripMargin.trim)
   }

@@ -1,6 +1,6 @@
 package `packagename`
 
-// = imports
+/*=imports*/
 
 class `functionsCaller`(`function1`: `functionsMethodParams` => `function1ReturnType`, `function2`: `function1ReturnType` => Any):
 

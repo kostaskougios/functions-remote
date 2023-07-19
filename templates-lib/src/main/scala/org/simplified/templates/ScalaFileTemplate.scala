@@ -2,7 +2,7 @@ package org.simplified.templates
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
-import org.simplified.templates.model.{FileTemplatesSourceLocation, Params, TemplatesSourceLocation}
+import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Params, TemplatesSourceLocation}
 
 import java.io.File
 import scala.io.Source
@@ -22,9 +22,9 @@ class ScalaFileTemplate(code: String):
       case line :: l if line.trim.startsWith(ForEach) =>
         applyForEach(line, l, vals)
       case line :: l                                  =>
-        val (search, replace, params) = searchReplace(vals)
-        val newLine                   = replaceParams(line, params)
-        StringUtils.replaceEach(newLine, search, replace) :: applyToBlock(l, vals)
+        val eVals   = evalVals(vals)
+        val newLine = replaceParams(line, eVals.params)
+        StringUtils.replaceEach(newLine, eVals.search, eVals.replace) :: applyToBlock(l, vals)
 
   private def replaceParams(line: String, params: List[(String, Params)]): String =
     params match {
@@ -68,18 +68,24 @@ class ScalaFileTemplate(code: String):
       case x                                => throw new IllegalStateException(s"foreach $forVal : not an iterable value $x")
     block ++ applyToBlock(afterBlock, vals)
 
-  private def searchReplace(vals: List[Product]): (Array[String], Array[String], List[(String, Params)]) =
-    val kvs    = vals.flatMap(_.productElementNames.map(k => s"`$k`")).zip(vals.flatMap(_.productIterator))
+  case class Vals(search: Array[String], replace: Array[String], params: List[(String, Params)])
+  private def evalVals(vals: List[Product]): Vals =
+    val kvs    = vals.flatMap(_.productElementNames).zip(vals.flatMap(_.productIterator))
     val params = kvs.collect:
-      case (k, v: Params) => (k, v)
+      case (k, v: Params) => (s"`$k`", v)
 
     val normal = kvs.filter:
       case (_, _: Params) => false
       case _              => true
 
-    val search  = normal.map(_._1).toArray
-    val replace = normal.map(_._2.toString).toArray
-    (search, replace, params)
+    val search     = normal.map(_._1).map(k => s"`$k`").toArray
+    val replace    = normal
+      .map:
+        case (_, Imports(imports)) => imports.map(i => s"import $i").mkString("\n")
+        case (_, v)                => v.toString
+      .toArray
+    val replSearch = normal.map(_._1).map(k => s"/*=$k*/").toArray
+    Vals(search ++ replSearch, replace ++ replace, params)
 
 object ScalaFileTemplate:
 
