@@ -3,7 +3,7 @@ package console.macros.codegenerators
 import console.macros.codegenerators.CodeFormatter.tabs
 import console.macros.model.{Code, CodeFile, EMethod, EPackage, EType, InnerCode, NewCodeFile}
 import org.simplified.templates.ScalaFileTemplate
-import org.simplified.templates.model.{FileTemplatesSourceLocation, Params}
+import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Params}
 
 class MethodToCaseClassGenerator(
     namingConventions: MethodToCaseClassGenerator.NamingConventions,
@@ -20,8 +20,8 @@ class MethodToCaseClassGenerator(
     val extraCode   = caseClassGenerationPlugins.map(_.extraCode(`package`, `type`))
     val imports     = caseClasses.flatMap(_.imports) ++ extraCode.flatMap(_.imports)
 
-    case class Vals(packagename: String, functionsMethodParams: String, caseClasses: Seq[CaseClass])
-    val code = scalaFileTemplate(Vals(`package`.name, n, caseClasses))
+    case class Vals(packagename: String, imports: Imports, functionsMethodParams: String, caseClasses: Seq[CaseClass])
+    val code = scalaFileTemplate(Vals(`package`.name, Imports(imports.toSet), n, caseClasses))
     NewCodeFile(
       s"${`package`.toPath}/$n.scala",
       code

@@ -15,13 +15,7 @@ class AvroCaseClassSchemaGenerator(namingConventions: MethodToCaseClassGenerator
         | avroSerialize(AvroOutputStream.data[$caseClassName], value)
         |""".stripMargin.trim
     InnerCode(
-      Set(
-        "com.sksamuel.avro4s.AvroOutputStream",
-        "com.sksamuel.avro4s.AvroSchema",
-        "com.sksamuel.avro4s.AvroOutputStreamBuilder",
-        "java.io.ByteArrayOutputStream",
-        "scala.util.Using"
-      ),
+      Set.empty,
       s"""
        |  private def avroSerialize[A](b : AvroOutputStreamBuilder[A], value: A): Array[Byte] =
        |    val bos = new ByteArrayOutputStream(4096)
