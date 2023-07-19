@@ -1,6 +1,5 @@
 package console.macros.codegenerators
 
-import console.macros.codegenerators.CodeFormatter.tabs
 import console.macros.codegenerators.model.MethodCaseClass
 import console.macros.codegenerators.model.MethodCaseClass.toCaseClass
 import console.macros.model.*
