@@ -13,6 +13,7 @@ import console.macros.codegenerators.{MethodToCaseClassGenerator, TraitMethodsTo
   val packages           = structureExtractor(tastyFiles)
   val codes              = callerGenerator(packages) ++ caseClassGenerator(packages)
 
-  println(callerGenerator(packages).map(_.code).mkString("\n"))
+//  println(callerGenerator(packages).map(_.code).mkString("\n"))
+  println(caseClassGenerator(packages).map(_.code).mkString("\n"))
 //  println(codes.map(c => s"file:${c.file}\n\n${c.toCode}").mkString("\n-----------\n\n"))
 //  for c <- codes do c.writeTo(TargetRoot)

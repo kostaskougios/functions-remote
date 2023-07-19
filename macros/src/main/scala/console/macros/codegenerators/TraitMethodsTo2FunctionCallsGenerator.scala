@@ -41,7 +41,7 @@ class TraitMethodsTo2FunctionCallsGenerator(
     val functions = `type`.methods.map: m =>
       Func(
         m.name,
-        Params(m.paramss.flatten.map(ep => Param(ep.name, ep.typeUnqualified))),
+        m.toParams,
         m.returnType.name,
         caseClassNamingConventions.caseClassHolderObject(`type`) + "." + caseClassNamingConventions.methodArgsCaseClassName(`type`, m)
       )
@@ -51,31 +51,6 @@ class TraitMethodsTo2FunctionCallsGenerator(
       code
     )
 
-//    val overriddenMethods = `type`.methods.map { m =>
-//      s"""
-//         |def ${m.name}${m.paramsCodeUnqualified} : ${m.returnType.name} =
-//         |  val c  = ${caseClassNamingConventions.caseClassHolderObject(`type`)}.${
-//        caseClassNamingConventions.methodArgsCaseClassName(
-//          `type`,
-//          m
-//        )
-//      }${m.paramsAsArgs}
-//         |  val r1 = $function1Name(c)
-//         |  val r2 = $function2Name(r1)
-//         |  r2.asInstanceOf[${m.returnType.name}]
-//         |""".stripMargin
-//    }
-//    Seq(
-//      CodeFile(
-//        s"${`package`.toPath}/$sn.scala",
-//        `package`,
-//        imports,
-//        s"""
-//         |class $sn($function1Name: $mpt => $function1ReturnType, $function2Name: $function1ReturnType => Any):
-//         |${tabs(1, overriddenMethods).mkString("\n")}
-//         |""".stripMargin.trim
-//      )
-//    )
 object TraitMethodsTo2FunctionCallsGenerator:
   trait NamingConventions:
     /** @param `type`

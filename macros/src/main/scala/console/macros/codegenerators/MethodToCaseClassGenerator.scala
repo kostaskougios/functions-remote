@@ -1,35 +1,33 @@
 package console.macros.codegenerators
 
 import console.macros.codegenerators.CodeFormatter.tabs
-import console.macros.model.{Code, CodeFile, EMethod, EPackage, EType, InnerCode}
+import console.macros.model.{Code, CodeFile, EMethod, EPackage, EType, InnerCode, NewCodeFile}
+import org.simplified.templates.ScalaFileTemplate
+import org.simplified.templates.model.{FileTemplatesSourceLocation, Params}
 
 class MethodToCaseClassGenerator(
     namingConventions: MethodToCaseClassGenerator.NamingConventions,
-    caseClassGenerationPlugins: Seq[MethodToCaseClassGenerator.CaseClassGenerationPlugin]
+    caseClassGenerationPlugins: Seq[MethodToCaseClassGenerator.CaseClassGenerationPlugin],
+    scalaFileTemplate: ScalaFileTemplate
 ):
-  def apply(packages: Seq[EPackage]): Seq[CodeFile]                = packages.flatMap(p => apply(p, p.types))
-  def apply(`package`: EPackage, types: Seq[EType]): Seq[CodeFile] = types.flatMap(apply(`package`, _))
+  def apply(packages: Seq[EPackage]): Seq[NewCodeFile]                = packages.flatMap(p => apply(p, p.types))
+  def apply(`package`: EPackage, types: Seq[EType]): Seq[NewCodeFile] = types.map(apply(`package`, _))
 
-  def apply(`package`: EPackage, `type`: EType): Seq[CodeFile] =
+  def apply(`package`: EPackage, `type`: EType): NewCodeFile =
     val caseClasses = `type`.methods.map(toCaseClass(`package`, `type`, _))
     val n           = namingConventions.caseClassHolderObject(`type`)
     val mpt         = namingConventions.methodParamsTrait(`type`)
     val extraCode   = caseClassGenerationPlugins.map(_.extraCode(`package`, `type`))
     val imports     = caseClasses.flatMap(_.imports) ++ extraCode.flatMap(_.imports)
-    Seq(
-      CodeFile(
-        s"${`package`.toPath}/$n.scala",
-        `package`,
-        imports.toSet,
-        s"""
-       |trait $mpt
-       |
-       |object $n:
-       |${tabs(1, caseClasses.map(_.main)).mkString("\n")}
-       |${extraCode.map(_.main).mkString("\n")}
-       |""".stripMargin
-      )
+
+    case class Vals(packagename: String, functionsMethodParams: String, caseClasses: Seq[CaseClass])
+    val code = scalaFileTemplate(Vals(`package`.name, n, caseClasses))
+    NewCodeFile(
+      s"${`package`.toPath}/$n.scala",
+      code
     )
+
+  private case class CaseClass(imports: Set[String], caseClass: String, params: Params)
 
   /** @param `package`
     *   the package where the method is declared
@@ -39,19 +37,12 @@ class MethodToCaseClassGenerator(
     *   the method itself to be converted to case class
     * @return
     */
-  private def toCaseClass(`package`: EPackage, `type`: EType, method: EMethod): InnerCode =
-    val params  = method.paramsCodeUnqualified
+  private def toCaseClass(`package`: EPackage, `type`: EType, method: EMethod): CaseClass =
+    val params  = method.toParams
     val n       = namingConventions.methodArgsCaseClassName(`type`, method)
     val imports = `type`.typesInMethods.toSet
 
-    caseClassGenerationPlugins.foldLeft(
-      InnerCode(
-        imports,
-        s"""
-         |case class $n$params extends ${namingConventions.methodParamsTrait(`type`)}
-         |""".stripMargin.trim
-      )
-    ) { (c, p) => c + p.extraCodeForMethod(n, `package`, `type`, method) }
+    CaseClass(imports, n, params)
 
 object MethodToCaseClassGenerator:
   trait NamingConventions:
@@ -71,7 +62,11 @@ object MethodToCaseClassGenerator:
   def apply(
       methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = DefaultNamingConventions,
       caseClassGenerationPlugins: Seq[MethodToCaseClassGenerator.CaseClassGenerationPlugin] = Nil
-  ) = new MethodToCaseClassGenerator(methodToCaseClassNamingConventions, caseClassGenerationPlugins)
+  ) = new MethodToCaseClassGenerator(
+    methodToCaseClassNamingConventions,
+    caseClassGenerationPlugins,
+    ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "packagename.FunctionsMethodParams")
+  )
 
   trait CaseClassGenerationPlugin:
     def extraCode(`package`: EPackage, `type`: EType): InnerCode                                                     = InnerCode.Empty
