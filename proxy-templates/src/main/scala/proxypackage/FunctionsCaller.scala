@@ -1,4 +1,4 @@
-package `packagename`
+package `proxypackage`
 
 /*=imports*/
 

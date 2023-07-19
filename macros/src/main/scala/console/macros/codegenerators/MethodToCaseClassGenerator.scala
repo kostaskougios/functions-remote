@@ -18,7 +18,7 @@ class MethodToCaseClassGenerator(
     val n           = namingConventions.caseClassHolderObject(`type`)
     val imports     = caseClasses.flatMap(_.imports).toSet
 
-    case class Vals(packagename: String, imports: Imports, functionsMethodParams: String, caseClasses: Seq[MethodCaseClass])
+    case class Vals(proxypackage: String, imports: Imports, functionsMethodParams: String, caseClasses: Seq[MethodCaseClass])
     val code = scalaFileTemplate(Vals(`package`.name, Imports(imports), n, caseClasses))
     Code(
       s"${`package`.toPath}/$n.scala",
@@ -44,5 +44,5 @@ object MethodToCaseClassGenerator:
       methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = DefaultNamingConventions
   ) = new MethodToCaseClassGenerator(
     methodToCaseClassNamingConventions,
-    ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "packagename.FunctionsMethodParams")
+    ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "proxypackage.FunctionsMethodParams")
   )

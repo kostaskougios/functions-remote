@@ -16,7 +16,7 @@ class AvroCaseClassSchemaGenerator(namingConventions: MethodToCaseClassGenerator
     val caseClasses = `type`.methods.map(MethodCaseClass.toCaseClass(namingConventions, `package`, `type`, _))
 
     case class Vals(
-        packagename: String,
+        proxypackage: String,
         imports: Imports,
         functionsMethodAvroSerializer: String,
         functionsMethodParams: String,
@@ -32,5 +32,5 @@ object AvroCaseClassSchemaGenerator:
   def apply(namingConventions: MethodToCaseClassGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions) =
     new AvroCaseClassSchemaGenerator(
       namingConventions,
-      ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "packagename.FunctionsMethodAvroSerializer")
+      ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "proxypackage.FunctionsMethodAvroSerializer")
     )

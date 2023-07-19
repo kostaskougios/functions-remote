@@ -1,4 +1,4 @@
-package `packagename`
+package `proxypackage`
 
 import com.sksamuel.avro4s.AvroOutputStream
 import com.sksamuel.avro4s.AvroSchema

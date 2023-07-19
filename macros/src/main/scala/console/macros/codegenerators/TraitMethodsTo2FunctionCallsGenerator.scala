@@ -26,7 +26,7 @@ class TraitMethodsTo2FunctionCallsGenerator(
   private def generate(`package`: EPackage, `type`: EType): Code =
     case class Func(functionN: String, params: Params, resultN: String, caseClass: String)
     case class Vals(
-        packagename: String,
+        proxypackage: String,
         imports: Imports,
         functionsCaller: String,
         function1: String,
@@ -74,5 +74,5 @@ object TraitMethodsTo2FunctionCallsGenerator:
     function1Name,
     function1ReturnType,
     function2Name,
-    ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "packagename.FunctionsCaller")
+    ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "proxypackage.FunctionsCaller")
   )
