@@ -42,7 +42,7 @@ class ScalaFileTemplate(code: String):
             // like def f(a:Int,b:Int)
             val collon       = line.indexOf(':', i + 1)
             val isMethodDecl = collon > i && collon < par
-            val code         = if isMethodDecl then p.toCode else p.toMethodArg
+            val code         = if isMethodDecl then p.toMethodDeclArguments else p.toMethodCallArguments
 
             val newLine = line.substring(0, i) + code + line.substring(d)
             replaceParams(newLine, params)
