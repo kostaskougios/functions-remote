@@ -12,14 +12,14 @@ import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Par
 class TraitMethodsTo2FunctionCallsGenerator(
     config: Config,
     scalaFileTemplate: ScalaFileTemplate
-):
-  def apply(packages: Seq[EPackage]): Seq[Code] =
-    packages.flatMap(generate)
+) extends CodeGenerator:
+  override def apply(packages: Seq[EPackage]): Seq[Code] =
+    packages.flatMap(apply)
 
-  private def generate(`package`: EPackage): Seq[Code] =
-    `package`.types.map(generate(`package`, _))
+  def apply(`package`: EPackage): Seq[Code] =
+    `package`.types.map(apply(`package`, _))
 
-  private def generate(`package`: EPackage, `type`: EType): Code =
+  def apply(`package`: EPackage, `type`: EType): Code =
     case class Func(functionN: String, params: Params, resultN: String, caseClass: String)
     case class Vals(
         proxypackage: String,

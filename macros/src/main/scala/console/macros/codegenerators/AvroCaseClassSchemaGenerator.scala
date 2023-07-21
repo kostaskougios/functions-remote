@@ -6,9 +6,9 @@ import console.macros.model.*
 import org.simplified.templates.ScalaFileTemplate
 import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports}
 
-class AvroCaseClassSchemaGenerator(namingConventions: MethodToCaseClassGenerator.NamingConventions, scalaFileTemplate: ScalaFileTemplate):
-  def apply(packages: Seq[EPackage]): Seq[Code] = packages.flatMap(apply)
-  def apply(`package`: EPackage): Seq[Code]     = `package`.types.map(apply(`package`, _))
+class AvroCaseClassSchemaGenerator(namingConventions: MethodToCaseClassGenerator.NamingConventions, scalaFileTemplate: ScalaFileTemplate) extends CodeGenerator:
+  override def apply(packages: Seq[EPackage]): Seq[Code] = packages.flatMap(apply)
+  def apply(`package`: EPackage): Seq[Code]              = `package`.types.map(apply(`package`, _))
 
   def apply(`package`: EPackage, `type`: EType): Code =
     val mpt         = namingConventions.methodParamsTraitName(`type`)

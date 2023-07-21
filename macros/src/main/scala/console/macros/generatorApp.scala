@@ -1,6 +1,6 @@
 package console.macros
 
-import console.macros.codegenerators.{AvroCaseClassSchemaGenerator, GeneratorBuilder, MethodToCaseClassGenerator, TraitMethodsTo2FunctionCallsGenerator}
+import console.macros.codegenerators.{AvroCaseClassSchemaGenerator, CallerProxyBuilder, MethodToCaseClassGenerator, TraitMethodsTo2FunctionCallsGenerator}
 
 @main def generatorApp() =
 //  val structureExtractor      = StructureExtractor()
@@ -13,7 +13,7 @@ import console.macros.codegenerators.{AvroCaseClassSchemaGenerator, GeneratorBui
 //  val packages                = structureExtractor(tastyFiles)
 //  val codes                   = callerGenerator(packages) ++ caseClassGenerator(packages) ++ avroSerializerGenerator(packages)
 
-  val codes = GeneratorBuilder().generateCode(tastyFiles)
+  val codes = CallerProxyBuilder().withAvroBinarySerialization.generateCode(tastyFiles)
 
   println(codes.map(c => s"file:${c.file}\n\n${c.code}").mkString("\n-----------\n\n"))
   for c <- codes do c.writeTo(TargetRoot)

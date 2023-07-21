@@ -9,8 +9,8 @@ import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Par
 class MethodToCaseClassGenerator(
     namingConventions: MethodToCaseClassGenerator.NamingConventions,
     scalaFileTemplate: ScalaFileTemplate
-):
-  def apply(packages: Seq[EPackage]): Seq[Code]                = packages.flatMap(p => apply(p, p.types))
+) extends CodeGenerator:
+  override def apply(packages: Seq[EPackage]): Seq[Code]       = packages.flatMap(p => apply(p, p.types))
   def apply(`package`: EPackage, types: Seq[EType]): Seq[Code] = types.map(apply(`package`, _))
 
   def apply(`package`: EPackage, `type`: EType): Code =
