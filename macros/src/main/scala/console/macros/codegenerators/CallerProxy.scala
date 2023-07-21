@@ -4,7 +4,7 @@ import console.macros.StructureExtractor
 import console.macros.codegenerators.TraitMethodsTo2FunctionCallsGenerator.Config
 import console.macros.model.Code
 
-object CallerProxyBuilder:
+object CallerProxy:
 
   case class Builder(
       structureExtractor: StructureExtractor,
@@ -18,7 +18,7 @@ object CallerProxyBuilder:
       val packages = structureExtractor(tastyFiles.toList)
       generators.flatMap(_(packages))
 
-  def apply(
+  def builder(
       methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions,
       traitToSenderNamingConventions: TraitMethodsTo2FunctionCallsGenerator.NamingConventions = TraitMethodsTo2FunctionCallsGenerator.DefaultNamingConventions,
       function1Name: String = "toByteArray",
