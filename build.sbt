@@ -46,7 +46,7 @@ lazy val `ls-exports` = project
   .settings(
     commonSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
-    libraryDependencies ++= Seq(Avro4s)
+    libraryDependencies ++= Seq(Avro4s, ScalaTest)
   )
   .enablePlugins(PackPlugin)
 
