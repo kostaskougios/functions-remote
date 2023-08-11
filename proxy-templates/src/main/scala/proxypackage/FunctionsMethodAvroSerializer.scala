@@ -1,7 +1,6 @@
 package `proxypackage`
 
 import com.sksamuel.avro4s.AvroOutputStream
-import com.sksamuel.avro4s.AvroSchema
 import com.sksamuel.avro4s.AvroOutputStreamBuilder
 import java.io.ByteArrayOutputStream
 import scala.util.Using

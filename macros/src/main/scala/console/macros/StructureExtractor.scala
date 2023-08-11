@@ -4,14 +4,8 @@ import console.macros.model.*
 import console.macros.utils.Cleanup
 import console.macros.utils.Cleanup.removeColours
 import dotty.tools.dotc.ast.Trees.*
-import dotty.tools.dotc.config.Printers.Printer
-import dotty.tools.dotc.core.Decorators.show
-import dotty.tools.dotc.core.Names.{TermName, TypeName, typeName}
-import dotty.tools.dotc.printing.PlainPrinter
-import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable
-import scala.io.AnsiColor
 import scala.quoted.*
 import scala.tasty.inspector.*
 
