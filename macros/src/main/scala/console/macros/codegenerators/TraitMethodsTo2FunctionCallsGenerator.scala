@@ -35,14 +35,15 @@ class TraitMethodsTo2FunctionCallsGenerator(
     val sn        = config.traitToSenderNamingConventions.className(`type`)
     val mpt       = config.methodToCaseClassNamingConventions.methodParamsTraitName(`type`)
     val functions = `type`.methods.map: m =>
+      val caseClassName = config.methodToCaseClassNamingConventions.methodArgsCaseClassName(
+        `type`,
+        m
+      )
       Func(
         m.name,
         m.toParams,
         m.returnType.name,
-        config.methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + config.methodToCaseClassNamingConventions.methodArgsCaseClassName(
-          `type`,
-          m
-        )
+        config.methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName
       )
     val vals      = Vals(`package`.name, Imports(imports), sn, config.function1Name, mpt, config.function1ReturnType, config.function2Name, functions)
     val code      = scalaFileTemplate(vals)
