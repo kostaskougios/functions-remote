@@ -38,7 +38,7 @@ lazy val macros = project
 
 lazy val `templates-lib` = project.settings(
   commonSettings,
-  libraryDependencies ++= Seq(ScalaTest, CommonsIO, CommonsText) ++ Diffx
+  libraryDependencies ++= Seq(Scala3Tasty, ScalaTest, CommonsIO, CommonsText) ++ Diffx
 )
 
 lazy val `ls-exports` = project

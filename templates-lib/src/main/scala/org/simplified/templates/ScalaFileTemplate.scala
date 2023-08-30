@@ -1,10 +1,8 @@
 package org.simplified.templates
 
-import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
 import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Params, TemplatesSourceLocation}
 
-import java.io.File
 import scala.io.Source
 import scala.util.Using
 
