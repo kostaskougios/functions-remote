@@ -20,17 +20,6 @@ class TraitMethodsTo2FunctionCallsGenerator(
     `package`.types.map(apply(`package`, _))
 
   def apply(`package`: EPackage, `type`: EType): Code =
-    case class Func(functionN: String, params: Params, resultN: String, caseClass: String)
-    case class Vals(
-        proxypackage: String,
-        imports: Imports,
-        functionsCaller: String,
-        function1: String,
-        methodParams: String,
-        function1ReturnType: String,
-        function2: String,
-        functions: Seq[Func]
-    )
     val imports   = `type`.typesInMethods.toSet
     val sn        = config.traitToSenderNamingConventions.className(`type`)
     val mpt       = config.methodToCaseClassNamingConventions.methodParamsTraitName(`type`)
@@ -45,12 +34,25 @@ class TraitMethodsTo2FunctionCallsGenerator(
         m.returnType.name,
         config.methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName
       )
-    val vals      = Vals(`package`.name, Imports(imports), sn, config.function1Name, mpt, config.function1ReturnType, config.function2Name, functions)
-    val code      = scalaFileTemplate(vals)
+    val vals = FunctionCallerModel(`package`.name, Imports(imports), sn, config.function1Name, mpt, config.function1ReturnType, config.function2Name, functions)
+    val code = scalaFileTemplate(vals)
     Code(
       s"${`package`.toPath}/$sn.scala",
       code
     )
+
+case class Func(functionN: String, params: Params, resultN: String, caseClass: String)
+
+case class FunctionCallerModel(
+    proxypackage: String,
+    imports: Imports,
+    functionsCaller: String,
+    function1: String,
+    methodParams: String,
+    function1ReturnType: String,
+    function2: String,
+    functions: Seq[Func]
+)
 
 object TraitMethodsTo2FunctionCallsGenerator:
   case class Config(

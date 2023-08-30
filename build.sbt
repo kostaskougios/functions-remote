@@ -58,6 +58,8 @@ lazy val `ls` = project
   .dependsOn(`ls-exports`)
   .enablePlugins(PackPlugin)
 
-lazy val `proxy-templates` = project.settings(
-  libraryDependencies ++= Seq(Avro4s)
-)
+lazy val `proxy-templates` = project
+  .settings(
+    libraryDependencies ++= Seq(Avro4s)
+  )
+  .enablePlugins(SbtTwirl)
