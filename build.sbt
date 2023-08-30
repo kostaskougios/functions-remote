@@ -23,7 +23,8 @@ val Logback     = "ch.qos.logback"     % "logback-classic" % "1.4.6"
 val CommonsText = "org.apache.commons" % "commons-text"    % "1.10.0"
 val CommonsIO   = "commons-io"         % "commons-io"      % "2.11.0"
 
-val Avro4s = "com.sksamuel.avro4s" %% "avro4s-core" % "5.0.4"
+val Avro4s   = "com.sksamuel.avro4s"              %% "avro4s-core" % "5.0.4"
+val Mustache = "com.github.spullara.mustache.java" % "compiler"    % "0.9.10"
 
 val commonSettings = Seq(
   version := "1.0"
@@ -38,7 +39,7 @@ lazy val macros = project
 
 lazy val `templates-lib` = project.settings(
   commonSettings,
-  libraryDependencies ++= Seq(ScalaTest, CommonsIO, CommonsText) ++ Diffx
+  libraryDependencies ++= Seq(ScalaTest, CommonsIO, CommonsText, Mustache) ++ Diffx
 )
 
 lazy val `ls-exports` = project
