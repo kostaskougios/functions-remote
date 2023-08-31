@@ -2,7 +2,7 @@ package mustache.integration
 
 import com.github.mustachejava.{DefaultMustacheFactory, Mustache}
 import mustache.integration
-import org.simplified.templates.model.TemplatesSourceLocation
+import mustache.integration.model.TemplatesSourceLocation
 
 import java.io.{StringReader, StringWriter}
 

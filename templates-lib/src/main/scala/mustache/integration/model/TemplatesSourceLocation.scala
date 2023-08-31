@@ -1,4 +1,4 @@
-package org.simplified.templates.model
+package mustache.integration.model
 
 import scala.io.Source
 import scala.util.Using

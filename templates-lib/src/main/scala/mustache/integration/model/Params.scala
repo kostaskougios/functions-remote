@@ -1,4 +1,4 @@
-package org.simplified.templates.model
+package mustache.integration.model
 
 case class Params(params: Seq[Param]):
   def toMethodDeclArguments: String = params.map(_.toMethodDeclArguments).mkString(", ")

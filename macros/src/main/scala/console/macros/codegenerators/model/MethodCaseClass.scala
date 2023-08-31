@@ -2,7 +2,7 @@ package console.macros.codegenerators.model
 
 import console.macros.codegenerators.MethodToCaseClassGenerator.NamingConventions
 import console.macros.model.{EMethod, EPackage, EType}
-import org.simplified.templates.model.Params
+import mustache.integration.model.Params
 
 // method parameters converted to this so that we can render it
 case class MethodCaseClass(imports: Set[String], caseClass: String, params: Params, paramsDecl: String)
