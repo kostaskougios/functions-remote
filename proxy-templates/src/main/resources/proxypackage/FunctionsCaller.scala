@@ -1,10 +1,13 @@
-package `proxypackage`
+package {{proxypackage}}
 
 {{#imports}}
 import {{.}}
 {{/imports}}
 
-class FunctionsCaller(`function1`: `methodParams` => `function1ReturnType`, `function2`: (`methodParams`.Methods, `function1ReturnType`) => Any):
+class FunctionsCaller(
+  {{function1}}: {{methodParams}} => {{function1ReturnType}},
+  {{function2}}: ({{methodParams}}.Methods, {{function1ReturnType}}) => Any
+):
 
   // foreach functions
   def `functionN`(`params`: String): `resultN` =
