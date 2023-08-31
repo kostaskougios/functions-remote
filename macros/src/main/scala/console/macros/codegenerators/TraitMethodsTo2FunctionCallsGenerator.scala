@@ -22,7 +22,7 @@ class TraitMethodsTo2FunctionCallsGenerator(
     `package`.types.map(apply(`package`, _))
 
   def apply(`package`: EPackage, `type`: EType): Code =
-    case class Func(functionN: String, params: Params, resultN: String, caseClass: String)
+    case class Func(functionN: String, params: String, paramsCall: String, resultN: String, caseClass: String, caseClassName: String)
     case class Vals(
         proxypackage: String,
         imports: Many[String],
@@ -37,14 +37,18 @@ class TraitMethodsTo2FunctionCallsGenerator(
     val sn        = config.traitToSenderNamingConventions.className(`type`)
     val mpt       = config.methodToCaseClassNamingConventions.methodParamsTraitName(`type`)
     val functions = `type`.methods.map: m =>
+      val params        = m.toParams
+      val caseClassName = config.methodToCaseClassNamingConventions.methodArgsCaseClassName(
+        `type`,
+        m
+      )
       Func(
         m.name,
-        m.toParams,
+        params.toMethodDeclArguments,
+        params.toMethodCallArguments,
         m.returnType.name,
-        config.methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + config.methodToCaseClassNamingConventions.methodArgsCaseClassName(
-          `type`,
-          m
-        )
+        config.methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
+        caseClassName
       )
     val vals      = Vals(`package`.name, imports, sn, config.function1Name, mpt, config.function1ReturnType, config.function2Name, functions)
     val code      = template(vals)

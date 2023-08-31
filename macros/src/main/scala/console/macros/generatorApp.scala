@@ -10,4 +10,4 @@ import console.macros.codegenerators.{AvroCaseClassSchemaGenerator, CallerProxy,
   val codes = CallerProxy.builder().withAvroBinarySerialization.generateCode(tastyFiles)
 
   println(codes.map(c => s"file:${c.file}\n\n${c.code}").mkString("\n-----------\n\n"))
-//  for c <- codes do c.writeTo(TargetRoot)
+  for c <- codes do c.writeTo(TargetRoot)
