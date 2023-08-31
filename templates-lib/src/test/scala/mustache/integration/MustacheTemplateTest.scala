@@ -8,3 +8,19 @@ class MustacheTemplateTest extends AnyFunSuiteLike:
     case class Vals(name: String)
     MustacheTemplate("Hello {{name}}").apply(Vals("world")) should be("Hello world")
   }
+
+  test("renders condition positive") {
+    case class Vals(cond: Boolean)
+    MustacheTemplate("{{#cond}}Hello{{/cond}}").apply(Vals(true)) should be("Hello")
+  }
+
+  test("renders condition negative") {
+    case class Vals(cond: Boolean)
+    MustacheTemplate("{{#cond}}Hello{{/cond}}").apply(Vals(false)) should be("")
+  }
+
+  test("renders collections") {
+    case class Item(name: String)
+    case class Vals(items: Many[Item])
+    MustacheTemplate("{{#items}}name={{name}}\n{{/items}}").apply(Vals(Many(Item("phone"), Item("watch")))) should be("name=phone\nname=watch\n")
+  }
