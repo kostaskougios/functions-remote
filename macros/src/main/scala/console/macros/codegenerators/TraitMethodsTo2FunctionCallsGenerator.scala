@@ -2,8 +2,10 @@ package console.macros.codegenerators
 
 import console.macros.codegenerators.TraitMethodsTo2FunctionCallsGenerator.Config
 import console.macros.model.*
-import org.simplified.templates.ScalaFileTemplate
-import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Param, Params}
+import mustache.integration.{Many, MustacheTemplate}
+import org.simplified.templates.model.{Params, ResourceTemplatesSourceLocation}
+
+import scala.language.implicitConversions
 
 /** Converts a trait A to a class that proxies A's methods. Each proxy converts the method's args to a case class and passes it through 2 functions.
   *
@@ -11,7 +13,7 @@ import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Par
   */
 class TraitMethodsTo2FunctionCallsGenerator(
     config: Config,
-    scalaFileTemplate: ScalaFileTemplate
+    template: MustacheTemplate
 ) extends CodeGenerator:
   override def apply(packages: Seq[EPackage]): Seq[Code] =
     packages.flatMap(apply)
@@ -23,7 +25,7 @@ class TraitMethodsTo2FunctionCallsGenerator(
     case class Func(functionN: String, params: Params, resultN: String, caseClass: String)
     case class Vals(
         proxypackage: String,
-        imports: Imports,
+        imports: Many[String],
         functionsCaller: String,
         function1: String,
         methodParams: String,
@@ -44,8 +46,8 @@ class TraitMethodsTo2FunctionCallsGenerator(
           m
         )
       )
-    val vals      = Vals(`package`.name, Imports(imports), sn, config.function1Name, mpt, config.function1ReturnType, config.function2Name, functions)
-    val code      = scalaFileTemplate(vals)
+    val vals      = Vals(`package`.name, imports, sn, config.function1Name, mpt, config.function1ReturnType, config.function2Name, functions)
+    val code      = template(vals)
     Code(
       s"${`package`.toPath}/$sn.scala",
       code
@@ -74,5 +76,5 @@ object TraitMethodsTo2FunctionCallsGenerator:
       config: Config = Config()
   ) = new TraitMethodsTo2FunctionCallsGenerator(
     config,
-    ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "proxypackage.FunctionsCaller")
+    MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsCaller")
   )

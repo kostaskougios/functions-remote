@@ -92,7 +92,4 @@ object ScalaFileTemplate:
   def apply(code: String): ScalaFileTemplate = new ScalaFileTemplate(code)
 
   def apply(templatesSourceLocation: TemplatesSourceLocation, className: String): ScalaFileTemplate =
-    templatesSourceLocation match
-      case FileTemplatesSourceLocation(path) =>
-        Using.resource(Source.fromFile(s"$path/${className.replace('.', '/')}.scala")): in =>
-          new ScalaFileTemplate(in.mkString)
+    new ScalaFileTemplate(templatesSourceLocation.load(className))

@@ -2,11 +2,9 @@ package mustache.integration
 
 import com.github.mustachejava.{DefaultMustacheFactory, Mustache}
 import mustache.integration
-import org.simplified.templates.model.{FileTemplatesSourceLocation, TemplatesSourceLocation}
+import org.simplified.templates.model.TemplatesSourceLocation
 
 import java.io.{StringReader, StringWriter}
-import scala.io.Source
-import scala.util.Using
 
 class MustacheTemplate(mustache: Mustache):
   def apply(vals: Product): String =
@@ -17,11 +15,8 @@ class MustacheTemplate(mustache: Mustache):
 object MustacheTemplate:
   private val mf = new DefaultMustacheFactory
 
-  def apply(code: String): MustacheTemplate =
-    new MustacheTemplate(mf.compile(new StringReader(code), "t"))
+  def apply(code: String, name: String): MustacheTemplate =
+    new MustacheTemplate(mf.compile(new StringReader(code), name))
 
   def apply(templatesSourceLocation: TemplatesSourceLocation, className: String): MustacheTemplate =
-    templatesSourceLocation match
-      case FileTemplatesSourceLocation(path) =>
-        Using.resource(Source.fromFile(s"$path/${className.replace('.', '/')}.scala")): in =>
-          apply(in.mkString)
+    apply(templatesSourceLocation.load(className), className)

@@ -35,7 +35,7 @@ lazy val macros = project
     commonSettings,
     libraryDependencies ++= Seq(Scala3Tasty, ScalaTest, CommonsIO, CommonsText) ++ Diffx
   )
-  .dependsOn(`templates-lib`)
+  .dependsOn(`templates-lib`, `proxy-templates`)
 
 lazy val `templates-lib` = project.settings(
   commonSettings,
