@@ -14,6 +14,6 @@ object {{methodParams}}:
   {{/caseClasses}}
 
   enum Methods:
-    // foreach caseClasses
-    case `caseClass`
-  // end caseClasses
+    {{#caseClasses}}
+    case {{caseClass}}
+    {{/caseClasses}}
