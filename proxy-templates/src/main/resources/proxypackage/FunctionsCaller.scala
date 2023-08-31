@@ -9,10 +9,10 @@ class FunctionsCaller(
   {{function2}}: ({{methodParams}}.Methods, {{function1ReturnType}}) => Any
 ):
 
-  // foreach functions
-  def `functionN`(`params`: String): `resultN` =
-    val c  = `caseClass`(`params`)
-    val r1 = `function1`(c)
-    val r2 = `function2`(`methodParams`.Methods.`caseClass`, r1)
-    r2.asInstanceOf[`resultN`]
-  // end functions
+  {{#functions}}
+  def {{functionN}}({{params}}): {{resultN}} =
+    val c  = {{caseClass}}({{params}})
+    val r1 = {{function1}}(c)
+    val r2 = {{function2}}({{methodParams}}.Methods.{{caseClass}}, r1)
+    r2.asInstanceOf[{{resultN}}]
+  {{/functions}}

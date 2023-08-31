@@ -31,7 +31,7 @@ class TraitMethodsTo2FunctionCallsGenerator(
         methodParams: String,
         function1ReturnType: String,
         function2: String,
-        functions: Seq[Func]
+        functions: Many[Func]
     )
     val imports   = `type`.typesInMethods.toSet
     val sn        = config.traitToSenderNamingConventions.className(`type`)
