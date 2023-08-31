@@ -10,7 +10,7 @@ trait {{methodParams}}
 object {{methodParams}}:
 
   {{#caseClasses}}
-  case class {{caseClass}}({{params}}) extends {{methodParams}}
+  case class {{caseClass}}({{paramsDecl}}) extends {{methodParams}}
   {{/caseClasses}}
 
   enum Methods:

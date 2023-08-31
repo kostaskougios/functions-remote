@@ -5,7 +5,7 @@ import console.macros.model.{EMethod, EPackage, EType}
 import org.simplified.templates.model.Params
 
 // method parameters converted to this so that we can render it
-case class MethodCaseClass(imports: Set[String], caseClass: String, params: Params)
+case class MethodCaseClass(imports: Set[String], caseClass: String, params: Params, paramsDecl: String)
 
 object MethodCaseClass:
   /** @param `package`
@@ -21,4 +21,4 @@ object MethodCaseClass:
     val n       = namingConventions.methodArgsCaseClassName(`type`, method)
     val imports = `type`.typesInMethods.toSet
 
-    MethodCaseClass(imports, n, params)
+    MethodCaseClass(imports, n, params, params.toMethodDeclArguments)
