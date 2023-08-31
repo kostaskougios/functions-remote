@@ -3,12 +3,13 @@ package console.macros.codegenerators
 import console.macros.codegenerators.model.MethodCaseClass
 import console.macros.codegenerators.model.MethodCaseClass.toCaseClass
 import console.macros.model.*
-import org.simplified.templates.ScalaFileTemplate
-import org.simplified.templates.model.{FileTemplatesSourceLocation, Imports, Params}
+import mustache.integration.{Many, MustacheTemplate}
+import org.simplified.templates.model.ResourceTemplatesSourceLocation
+import scala.language.implicitConversions
 
 class MethodToCaseClassGenerator(
     namingConventions: MethodToCaseClassGenerator.NamingConventions,
-    scalaFileTemplate: ScalaFileTemplate
+    template: MustacheTemplate
 ) extends CodeGenerator:
   override def apply(packages: Seq[EPackage]): Seq[Code]       = packages.flatMap(p => apply(p, p.types))
   def apply(`package`: EPackage, types: Seq[EType]): Seq[Code] = types.map(apply(`package`, _))
@@ -18,9 +19,9 @@ class MethodToCaseClassGenerator(
     val n           = namingConventions.caseClassHolderObjectName(`type`)
     val imports     = caseClasses.flatMap(_.imports).toSet
 
-    case class Vals(proxypackage: String, imports: Imports, methodParams: String, caseClasses: Seq[MethodCaseClass])
+    case class Vals(proxypackage: String, imports: Many[String], methodParams: String, caseClasses: Many[MethodCaseClass])
 
-    val code = scalaFileTemplate(Vals(`package`.name, Imports(imports), n, caseClasses))
+    val code = template(Vals(`package`.name, imports, n, caseClasses))
     Code(
       s"${`package`.toPath}/$n.scala",
       code
@@ -52,5 +53,5 @@ object MethodToCaseClassGenerator:
       methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = DefaultNamingConventions
   ) = new MethodToCaseClassGenerator(
     methodToCaseClassNamingConventions,
-    ScalaFileTemplate(FileTemplatesSourceLocation("../proxy-templates/src/main/scala"), "proxypackage.FunctionsMethodParams")
+    MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsMethodParams")
   )
