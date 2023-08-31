@@ -2,10 +2,9 @@ package console.macros.codegenerators.model
 
 import console.macros.codegenerators.MethodToCaseClassGenerator.NamingConventions
 import console.macros.model.{EMethod, EPackage, EType}
-import mustache.integration.model.Params
 
 // method parameters converted to this so that we can render it
-case class MethodCaseClass(imports: Set[String], caseClass: String, params: Params, paramsDecl: String)
+case class MethodCaseClass(imports: Set[String], caseClass: String, paramsDecl: String)
 
 object MethodCaseClass:
   /** @param `package`
@@ -21,4 +20,4 @@ object MethodCaseClass:
     val n       = namingConventions.methodArgsCaseClassName(`type`, method)
     val imports = `type`.typesInMethods.toSet
 
-    MethodCaseClass(imports, n, params, params.toMethodDeclArguments)
+    MethodCaseClass(imports, n, params.toMethodDeclArguments)
