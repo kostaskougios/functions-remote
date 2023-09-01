@@ -6,8 +6,9 @@ import org.scalatest.matchers.should.Matchers.*
 
 class LsFunctionsCallerTest extends AnyFunSuiteLike {
   test("chains calls correctly"):
-    val byteData                                                              = Array(1, 2).map(_.toByte)
-    val expected                                                              = LsResult(Seq(LsFile("test")))
+    val byteData = Array(1, 2).map(_.toByte)
+    val expected = LsResult(Seq(LsFile("test")))
+
     def toByteArray(p: LsFunctionsMethodParams)                               =
       p should be(LsFunctionsMethodParams.Ls("/home", LsOptions()))
       byteData
