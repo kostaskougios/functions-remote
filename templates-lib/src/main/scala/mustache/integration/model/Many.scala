@@ -1,4 +1,5 @@
-package mustache.integration
+package mustache.integration.model
+
 import java.util
 import scala.jdk.CollectionConverters.IteratorHasAsJava
 

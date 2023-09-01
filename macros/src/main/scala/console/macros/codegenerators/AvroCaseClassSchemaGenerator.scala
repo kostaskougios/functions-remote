@@ -2,8 +2,8 @@ package console.macros.codegenerators
 
 import console.macros.codegenerators.model.MethodCaseClass
 import console.macros.model.*
-import mustache.integration.model.ResourceTemplatesSourceLocation
-import mustache.integration.{Many, MustacheTemplate}
+import mustache.integration.model.{Many, ResourceTemplatesSourceLocation}
+import mustache.integration.MustacheTemplate
 
 import scala.language.implicitConversions
 

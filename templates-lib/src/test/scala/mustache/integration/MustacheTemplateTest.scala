@@ -1,5 +1,6 @@
 package mustache.integration
 
+import mustache.integration.model.Many
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers.*
 
