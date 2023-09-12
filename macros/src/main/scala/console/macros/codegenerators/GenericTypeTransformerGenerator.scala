@@ -6,8 +6,8 @@ import mustache.integration.MustacheTemplate
 import mustache.integration.model.Many
 import scala.language.implicitConversions
 
-class Generator(
-    config: Generator.Config,
+class GenericTypeTransformerGenerator(
+    config: GenericTypeTransformerGenerator.Config,
     template: MustacheTemplate
 ) extends CodeGenerator:
   override def apply(packages: Seq[EPackage]): Seq[Code] =
@@ -18,11 +18,11 @@ class Generator(
 
   def apply(`package`: EPackage, `type`: EType): Code =
     case class Vals(
-                     proxypackage: String,
-                     imports: Many[String],
-                     className: String,
-                     methodParams: String,
-                     functions: Many[Func]
+        proxypackage: String,
+        imports: Many[String],
+        className: String,
+        methodParams: String,
+        functions: Many[Func]
     )
     val imports   = `type`.typesInMethods.toSet
     val sn        = config.namingConventions.className(`type`)
@@ -36,7 +36,7 @@ class Generator(
       code
     )
 
-object Generator:
+object GenericTypeTransformerGenerator:
   trait NamingConventions:
     /** The name of the generated caller class
       *

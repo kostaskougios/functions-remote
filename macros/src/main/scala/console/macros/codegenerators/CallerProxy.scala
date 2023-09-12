@@ -1,7 +1,7 @@
 package console.macros.codegenerators
 
 import console.macros.StructureExtractor
-import console.macros.codegenerators.Generator.Config
+import console.macros.codegenerators.GenericTypeTransformerGenerator.Config
 import console.macros.model.Code
 
 object CallerProxy:
@@ -20,7 +20,7 @@ object CallerProxy:
 
   def builder(
       methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions,
-      callerNamingConventions: Generator.NamingConventions = CallerGenerator.DefaultNamingConventions
+      callerNamingConventions: GenericTypeTransformerGenerator.NamingConventions = CallerGenerator.DefaultNamingConventions
   ): Builder =
     val structureExtractor = StructureExtractor()
     val caseClassGenerator = MethodToCaseClassGenerator()
