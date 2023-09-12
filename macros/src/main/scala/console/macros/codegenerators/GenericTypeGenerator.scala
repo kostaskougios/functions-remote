@@ -1,13 +1,14 @@
 package console.macros.codegenerators
 
 import console.macros.codegenerators.model.Func
-import console.macros.model.{Code, EPackage, EType}
+import console.macros.model.{Code, EMethod, EPackage, EType}
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.Many
+
 import scala.language.implicitConversions
 
 class GenericTypeGenerator(
-    config: GenericTypeGenerator.Config,
+    namingConventions: GenericTypeGenerator.NamingConventions,
     template: MustacheTemplate
 ) extends CodeGenerator:
   override def apply(packages: Seq[EPackage]): Seq[Code] =
@@ -25,9 +26,9 @@ class GenericTypeGenerator(
         functions: Many[Func]
     )
     val imports   = `type`.typesInMethods.toSet
-    val sn        = config.namingConventions.className(`type`)
-    val mpt       = config.methodToCaseClassNamingConventions.methodParamsTraitName(`type`)
-    val functions = Func(`type`, config.methodToCaseClassNamingConventions)
+    val sn        = namingConventions.className(`type`)
+    val mpt       = namingConventions.methodParamsTraitName(`type`)
+    val functions = Func(`type`, namingConventions)
 
     val vals = Vals(`package`.name, imports, sn, mpt, functions)
     val code = template(vals)
@@ -47,7 +48,21 @@ object GenericTypeGenerator:
       */
     def className(`type`: EType): String
 
-  case class Config(
-      methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions,
-      namingConventions: NamingConventions
-  )
+    /** The name of the generated case class for a method args.
+      *
+      * @param `type`
+      *   the type where the method belongs to
+      * @param method
+      *   the method
+      * @return
+      *   the case class name for the method
+      */
+    def methodArgsCaseClassName(`type`: EType, method: EMethod): String = method.name.capitalize
+
+    /** The name of a trait that will be the super class of all generated case classes
+      */
+    def methodParamsTraitName(`type`: EType): String = s"${`type`.name}Methods"
+
+    /** The name of the object that will hold all case classes
+      */
+    def caseClassHolderObjectName(`type`: EType): String = methodParamsTraitName(`type`)

@@ -1,6 +1,6 @@
 package console.macros.codegenerators
 
-import console.macros.codegenerators.GenericTypeGenerator.Config
+import console.macros.codegenerators.GenericTypeGenerator.NamingConventions
 import console.macros.model.*
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
@@ -10,8 +10,8 @@ object ReceiverGenerator:
     def className(`type`: EType) = s"${`type`.name}Receiver"
 
   def apply(
-      config: Config = Config(namingConventions = DefaultNamingConventions)
+      namingConventions: NamingConventions = DefaultNamingConventions
   ) = new GenericTypeGenerator(
-    config,
+    namingConventions,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsReceiver")
   )

@@ -1,6 +1,5 @@
 package console.macros.codegenerators
 
-import console.macros.codegenerators.GenericTypeGenerator.Config
 import console.macros.model.*
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
@@ -8,33 +7,13 @@ import mustache.integration.model.ResourceTemplatesSourceLocation
 import scala.language.implicitConversions
 
 object MethodToCaseClassGenerator:
-  trait NamingConventions:
-    /** The name of the generated case class for a method args.
-      * @param `type`
-      *   the type where the method belongs to
-      * @param method
-      *   the method
-      * @return
-      *   the case class name for the method
-      */
-    def methodArgsCaseClassName(`type`: EType, method: EMethod): String = method.name.capitalize
 
-    /** The name of a trait that will be the super class of all generated case classes
-      */
-    def methodParamsTraitName(`type`: EType): String = s"${`type`.name}Methods"
-
-    /** The name of the object that will hold all case classes
-      */
-    def caseClassHolderObjectName(`type`: EType): String = methodParamsTraitName(`type`)
-
-  object DefaultNamingConventions extends NamingConventions
-
-  object DefaultClassNamingConventions extends GenericTypeGenerator.NamingConventions:
+  object DefaultNamingConventions extends GenericTypeGenerator.NamingConventions:
     override def className(`type`: EType) = s"${`type`.name}Methods"
 
   def apply(
-      config: Config = Config(namingConventions = DefaultClassNamingConventions)
+      namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions
   ) = new GenericTypeGenerator(
-    config,
+    namingConventions,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsMethodParams")
   )

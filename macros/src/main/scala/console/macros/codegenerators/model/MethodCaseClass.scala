@@ -1,6 +1,6 @@
 package console.macros.codegenerators.model
 
-import console.macros.codegenerators.MethodToCaseClassGenerator.NamingConventions
+import console.macros.codegenerators.GenericTypeGenerator.NamingConventions
 import console.macros.model.{EMethod, EPackage, EType}
 
 // method parameters converted to this so that we can render it

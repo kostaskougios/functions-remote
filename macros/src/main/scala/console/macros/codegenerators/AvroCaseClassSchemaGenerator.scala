@@ -1,5 +1,6 @@
 package console.macros.codegenerators
 
+import console.macros.codegenerators
 import console.macros.codegenerators.model.MethodCaseClass
 import console.macros.model.*
 import mustache.integration.model.{Many, ResourceTemplatesSourceLocation}
@@ -7,7 +8,7 @@ import mustache.integration.MustacheTemplate
 
 import scala.language.implicitConversions
 
-class AvroCaseClassSchemaGenerator(namingConventions: MethodToCaseClassGenerator.NamingConventions, template: MustacheTemplate) extends CodeGenerator:
+class AvroCaseClassSchemaGenerator(namingConventions: GenericTypeGenerator.NamingConventions, template: MustacheTemplate) extends CodeGenerator:
   override def apply(packages: Seq[EPackage]): Seq[Code] = packages.flatMap(apply)
   def apply(`package`: EPackage): Seq[Code]              = `package`.types.map(apply(`package`, _))
 
@@ -29,7 +30,7 @@ class AvroCaseClassSchemaGenerator(namingConventions: MethodToCaseClassGenerator
     )
 
 object AvroCaseClassSchemaGenerator:
-  def apply(namingConventions: MethodToCaseClassGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions) =
+  def apply(namingConventions: GenericTypeGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions) =
     new AvroCaseClassSchemaGenerator(
       namingConventions,
       MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsMethodAvroSerializer")
