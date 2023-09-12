@@ -5,9 +5,10 @@ import {{.}}
 {{/imports}}
 
 class {{functionsReceiver}}(
-    fromLs: Array[Byte] => LsFunctionsMethods.Ls,
+  {{#functions}}
+    from{{caseClassName}}: Array[Byte] => {{methodParams}}.{{caseClassName}},
+  {{/functions}}
     lsResponse: LsResult => Array[Byte],
-    fromFileSize: Array[Byte] => LsFunctionsMethods.FileSize,
     f: LsFunctions
 ):
   def invoke(method: LsFunctionsMethods.Methods, data: Array[Byte]): Array[Byte] =

@@ -27,6 +27,7 @@ class ReceiverGenerator(
         proxypackage: String,
         imports: Many[String],
         functionsReceiver: String,
+        methodParams: String,
         functions: Many[Func]
     )
     val imports   = `type`.typesInMethods.toSet
@@ -46,8 +47,9 @@ class ReceiverGenerator(
         config.methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
         caseClassName
       )
-    val vals      = Vals(`package`.name, imports, sn, functions)
-    val code      = template(vals)
+
+    val vals = Vals(`package`.name, imports, sn, mpt, functions)
+    val code = template(vals)
     Code(
       s"${`package`.toPath}/$sn.scala",
       code
