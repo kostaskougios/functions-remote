@@ -9,11 +9,11 @@ import scala.language.implicitConversions
 object MethodToCaseClassGenerator:
 
   object DefaultNamingConventions extends GenericTypeGenerator.NamingConventions:
-    override def className(`type`: EType) = s"${`type`.name}Methods"
+    override def className(`type`: EType) = methodParamsTraitName(`type`)
 
   def apply(
       namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions
   ) = new GenericTypeGenerator(
     namingConventions,
-    MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsMethodParams")
+    MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsMethods")
   )
