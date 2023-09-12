@@ -4,7 +4,7 @@ package {{proxypackage}}
 import {{.}}
 {{/imports}}
 
-class {{functionsReceiver}}(
+class {{functionsProxy}}(
   {{#functions}}
     from{{caseClassName}}: Array[Byte] => {{methodParams}}.{{caseClassName}},
     {{functionN}}Response: {{resultN}} => Array[Byte],

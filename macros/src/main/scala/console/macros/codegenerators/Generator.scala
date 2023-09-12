@@ -20,7 +20,7 @@ class Generator(
     case class Vals(
         proxypackage: String,
         imports: Many[String],
-        functionsReceiver: String,
+        functionsProxy: String,
         methodParams: String,
         functions: Many[Func]
     )
