@@ -5,12 +5,12 @@ import {{.}}
 {{/imports}}
 
 
-trait {{functionsProxy}}
+trait {{className}}
 
-object {{functionsProxy}}:
+object {{className}}:
 
   {{#functions}}
-  case class {{caseClassName}}({{params}}) extends {{functionsProxy}}
+  case class {{caseClassName}}({{params}}) extends {{className}}
   {{/functions}}
 
   enum Methods:

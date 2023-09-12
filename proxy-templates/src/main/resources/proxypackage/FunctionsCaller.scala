@@ -4,7 +4,7 @@ package {{proxypackage}}
 import {{.}}
 {{/imports}}
 
-class {{functionsProxy}}(
+class {{className}}(
   toByteArray: {{methodParams}} => Array[Byte],
   callFunction: ({{methodParams}}.Methods, Array[Byte]) => Any
 ):

@@ -18,11 +18,11 @@ class Generator(
 
   def apply(`package`: EPackage, `type`: EType): Code =
     case class Vals(
-        proxypackage: String,
-        imports: Many[String],
-        functionsProxy: String,
-        methodParams: String,
-        functions: Many[Func]
+                     proxypackage: String,
+                     imports: Many[String],
+                     className: String,
+                     methodParams: String,
+                     functions: Many[Func]
     )
     val imports   = `type`.typesInMethods.toSet
     val sn        = config.namingConventions.className(`type`)
