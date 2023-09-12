@@ -3,7 +3,7 @@ package console.macros.codegenerators
 import console.macros.codegenerators.ReceiverGenerator.Config
 import console.macros.model.*
 import mustache.integration.MustacheTemplate
-import mustache.integration.model.{Many, ResourceTemplatesSourceLocation}
+import mustache.integration.model.{Many, Param, ResourceTemplatesSourceLocation}
 
 import scala.language.implicitConversions
 
@@ -22,7 +22,7 @@ class ReceiverGenerator(
     `package`.types.map(apply(`package`, _))
 
   def apply(`package`: EPackage, `type`: EType): Code =
-    case class Func(functionN: String, params: String, paramsCall: String, resultN: String, caseClass: String, caseClassName: String)
+    case class Func(functionN: String, params: String, paramsCall: String, paramsRaw: Many[Param], resultN: String, caseClass: String, caseClassName: String)
     case class Vals(
         proxypackage: String,
         imports: Many[String],
@@ -43,6 +43,7 @@ class ReceiverGenerator(
         m.name,
         params.toMethodDeclArguments,
         params.toMethodCallArguments,
+        params.params,
         m.returnType.name,
         config.methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
         caseClassName

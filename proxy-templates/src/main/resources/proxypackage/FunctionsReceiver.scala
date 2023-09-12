@@ -15,7 +15,9 @@ class {{functionsReceiver}}(
     method match
       case LsFunctionsMethods.Methods.Ls => ls(data)
 
-  def ls(data: Array[Byte]): Array[Byte] =
-    val params = fromLs(data)
-    val r      = f.ls(params.path, params.lsOptions)
-    lsResponse(r)
+  {{#functions}}
+  def {{functionN}}(data: Array[Byte]): Array[Byte] =
+    val params = from{{caseClassName}}(data)
+    val r      = f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
+    {{functionN}}Response(r)
+  {{/functions}}
