@@ -1,8 +1,9 @@
 package console.macros.codegenerators.model
 
 import console.macros.codegenerators.MethodToCaseClassGenerator
-import console.macros.model.{EMethod, EType}
+import console.macros.model.EType
 import mustache.integration.model.{Many, Param}
+
 import scala.language.implicitConversions
 
 case class Func(functionN: String, params: String, paramsCall: String, paramsRaw: Many[Param], resultN: String, caseClass: String, caseClassName: String)
