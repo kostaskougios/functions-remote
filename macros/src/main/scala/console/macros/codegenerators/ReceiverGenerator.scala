@@ -1,6 +1,7 @@
 package console.macros.codegenerators
 
 import console.macros.codegenerators.ReceiverGenerator.Config
+import console.macros.codegenerators.model.Func
 import console.macros.model.*
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.{Many, Param, ResourceTemplatesSourceLocation}
@@ -22,7 +23,6 @@ class ReceiverGenerator(
     `package`.types.map(apply(`package`, _))
 
   def apply(`package`: EPackage, `type`: EType): Code =
-    case class Func(functionN: String, params: String, paramsCall: String, paramsRaw: Many[Param], resultN: String, caseClass: String, caseClassName: String)
     case class Vals(
         proxypackage: String,
         imports: Many[String],
@@ -33,21 +33,7 @@ class ReceiverGenerator(
     val imports   = `type`.typesInMethods.toSet
     val sn        = config.traitToSenderNamingConventions.className(`type`)
     val mpt       = config.methodToCaseClassNamingConventions.methodParamsTraitName(`type`)
-    val functions = `type`.methods.map: m =>
-      val params        = m.toParams
-      val caseClassName = config.methodToCaseClassNamingConventions.methodArgsCaseClassName(
-        `type`,
-        m
-      )
-      Func(
-        m.name,
-        params.toMethodDeclArguments,
-        params.toMethodCallArguments,
-        params.params,
-        m.returnType.name,
-        config.methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
-        caseClassName
-      )
+    val functions = Func(`type`, config.methodToCaseClassNamingConventions)
 
     val vals = Vals(`package`.name, imports, sn, mpt, functions)
     val code = template(vals)
