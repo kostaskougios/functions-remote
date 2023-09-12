@@ -17,7 +17,7 @@ object {{functionsMethodAvroSerializer}}:
 
     bos.toByteArray
 
-  val avroSerializer: PartialFunction[{{methodParams}}, Array[Byte]] =
+  val avroParamsSerializer: PartialFunction[{{methodParams}}, Array[Byte]] =
     {{#caseClasses}}
     case value: {{caseClass}} =>
       avroSerialize(AvroOutputStream.data[{{caseClass}}], value)
