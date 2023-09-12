@@ -5,15 +5,15 @@ import {{.}}
 {{/imports}}
 
 
-trait {{methodParams}}
+trait {{functionsProxy}}
 
-object {{methodParams}}:
+object {{functionsProxy}}:
 
-  {{#caseClasses}}
-  case class {{caseClass}}({{paramsDecl}}) extends {{methodParams}}
-  {{/caseClasses}}
+  {{#functions}}
+  case class {{caseClassName}}({{params}}) extends {{functionsProxy}}
+  {{/functions}}
 
   enum Methods:
-    {{#caseClasses}}
-    case {{caseClass}}
-    {{/caseClasses}}
+    {{#functions}}
+    case {{caseClassName}}
+    {{/functions}}

@@ -1,31 +1,13 @@
 package console.macros.codegenerators
 
+import console.macros.codegenerators.Generator.Config
 import console.macros.codegenerators.model.MethodCaseClass
 import console.macros.codegenerators.model.MethodCaseClass.toCaseClass
 import console.macros.model.*
 import mustache.integration.model.{Many, ResourceTemplatesSourceLocation}
 import mustache.integration.MustacheTemplate
+
 import scala.language.implicitConversions
-
-class MethodToCaseClassGenerator(
-    namingConventions: MethodToCaseClassGenerator.NamingConventions,
-    template: MustacheTemplate
-) extends CodeGenerator:
-  override def apply(packages: Seq[EPackage]): Seq[Code]       = packages.flatMap(p => apply(p, p.types))
-  def apply(`package`: EPackage, types: Seq[EType]): Seq[Code] = types.map(apply(`package`, _))
-
-  def apply(`package`: EPackage, `type`: EType): Code =
-    val caseClasses = `type`.methods.map(toCaseClass(namingConventions, `package`, `type`, _))
-    val n           = namingConventions.caseClassHolderObjectName(`type`)
-    val imports     = caseClasses.flatMap(_.imports).toSet
-
-    case class Vals(proxypackage: String, imports: Many[String], methodParams: String, caseClasses: Many[MethodCaseClass])
-
-    val code = template(Vals(`package`.name, imports, n, caseClasses))
-    Code(
-      s"${`package`.toPath}/$n.scala",
-      code
-    )
 
 object MethodToCaseClassGenerator:
   trait NamingConventions:
@@ -49,9 +31,12 @@ object MethodToCaseClassGenerator:
 
   object DefaultNamingConventions extends NamingConventions
 
+  object DefaultClassNamingConventions extends Generator.NamingConventions:
+    override def className(`type`: EType) = s"${`type`.name}Methods"
+
   def apply(
-      methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = DefaultNamingConventions
-  ) = new MethodToCaseClassGenerator(
-    methodToCaseClassNamingConventions,
+      config: Config = Config(namingConventions = DefaultClassNamingConventions)
+  ) = new Generator(
+    config,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsMethodParams")
   )

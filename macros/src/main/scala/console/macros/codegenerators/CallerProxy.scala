@@ -23,7 +23,7 @@ object CallerProxy:
       callerNamingConventions: Generator.NamingConventions = CallerGenerator.DefaultNamingConventions
   ): Builder =
     val structureExtractor = StructureExtractor()
-    val caseClassGenerator = MethodToCaseClassGenerator(methodToCaseClassNamingConventions)
+    val caseClassGenerator = MethodToCaseClassGenerator()
     val callerGenerator    = CallerGenerator(
       Config(
         methodToCaseClassNamingConventions,
