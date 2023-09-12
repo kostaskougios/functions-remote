@@ -7,8 +7,8 @@ import {{.}}
 class {{functionsReceiver}}(
   {{#functions}}
     from{{caseClassName}}: Array[Byte] => {{methodParams}}.{{caseClassName}},
+    {{functionN}}Response: {{resultN}} => Array[Byte],
   {{/functions}}
-    lsResponse: LsResult => Array[Byte],
     f: LsFunctions
 ):
   def invoke(method: LsFunctionsMethods.Methods, data: Array[Byte]): Array[Byte] =
