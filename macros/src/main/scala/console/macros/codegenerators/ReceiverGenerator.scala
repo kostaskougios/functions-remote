@@ -1,9 +1,9 @@
 package console.macros.codegenerators
 
-import console.macros.codegenerators.TraitMethodsTo2FunctionCallsGenerator.Config
+import console.macros.codegenerators.ReceiverGenerator.Config
 import console.macros.model.*
-import mustache.integration.model.{Many, Params, ResourceTemplatesSourceLocation}
 import mustache.integration.MustacheTemplate
+import mustache.integration.model.{Many, ResourceTemplatesSourceLocation}
 
 import scala.language.implicitConversions
 
@@ -11,7 +11,7 @@ import scala.language.implicitConversions
   *
   * Example: function 1 converts the case class to json and function 2 does a rest api call
   */
-class TraitMethodsTo2FunctionCallsGenerator(
+class ReceiverGenerator(
     config: Config,
     template: MustacheTemplate
 ) extends CodeGenerator:
@@ -26,11 +26,7 @@ class TraitMethodsTo2FunctionCallsGenerator(
     case class Vals(
         proxypackage: String,
         imports: Many[String],
-        functionsCaller: String,
-        function1: String,
-        methodParams: String,
-        function1ReturnType: String,
-        function2: String,
+        functionsReceiver: String,
         functions: Many[Func]
     )
     val imports   = `type`.typesInMethods.toSet
@@ -50,20 +46,17 @@ class TraitMethodsTo2FunctionCallsGenerator(
         config.methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
         caseClassName
       )
-    val vals      = Vals(`package`.name, imports, sn, config.function1Name, mpt, config.function1ReturnType, config.function2Name, functions)
+    val vals      = Vals(`package`.name, imports, sn, functions)
     val code      = template(vals)
     Code(
       s"${`package`.toPath}/$sn.scala",
       code
     )
 
-object TraitMethodsTo2FunctionCallsGenerator:
+object ReceiverGenerator:
   case class Config(
       methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions,
-      traitToSenderNamingConventions: TraitMethodsTo2FunctionCallsGenerator.NamingConventions = DefaultNamingConventions,
-      function1Name: String = "toByteArray",
-      function1ReturnType: String = "Array[Byte]",
-      function2Name: String = "callFunction"
+      traitToSenderNamingConventions: ReceiverGenerator.NamingConventions = DefaultNamingConventions
   )
   trait NamingConventions:
     /** The name of the generated caller class
@@ -72,13 +65,13 @@ object TraitMethodsTo2FunctionCallsGenerator:
       * @return
       *   the case class name for the method
       */
-    def className(`type`: EType) = s"${`type`.name}Caller"
+    def className(`type`: EType) = s"${`type`.name}Receiver"
 
   object DefaultNamingConventions extends NamingConventions
 
   def apply(
       config: Config = Config()
-  ) = new TraitMethodsTo2FunctionCallsGenerator(
+  ) = new ReceiverGenerator(
     config,
-    MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsCaller")
+    MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsReceiver")
   )

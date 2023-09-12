@@ -1,7 +1,7 @@
 package console.macros.codegenerators
 
 import console.macros.StructureExtractor
-import console.macros.codegenerators.TraitMethodsTo2FunctionCallsGenerator.Config
+import console.macros.codegenerators.CallerGenerator.Config
 import console.macros.model.Code
 
 object CallerProxy:
@@ -19,18 +19,18 @@ object CallerProxy:
       generators.flatMap(_(packages))
 
   def builder(
-      methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions,
-      traitToSenderNamingConventions: TraitMethodsTo2FunctionCallsGenerator.NamingConventions = TraitMethodsTo2FunctionCallsGenerator.DefaultNamingConventions,
-      function1Name: String = "toByteArray",
-      function1ReturnType: String = "Array[Byte]",
-      function2Name: String = "callFunction"
+               methodToCaseClassNamingConventions: MethodToCaseClassGenerator.NamingConventions = MethodToCaseClassGenerator.DefaultNamingConventions,
+               callerNamingConventions: CallerGenerator.NamingConventions = CallerGenerator.DefaultNamingConventions,
+               function1Name: String = "toByteArray",
+               function1ReturnType: String = "Array[Byte]",
+               function2Name: String = "callFunction"
   ): Builder =
     val structureExtractor = StructureExtractor()
     val caseClassGenerator = MethodToCaseClassGenerator(methodToCaseClassNamingConventions)
-    val callerGenerator    = TraitMethodsTo2FunctionCallsGenerator(
+    val callerGenerator    = CallerGenerator(
       Config(
         methodToCaseClassNamingConventions,
-        traitToSenderNamingConventions,
+        callerNamingConventions,
         function1Name,
         function1ReturnType,
         function2Name

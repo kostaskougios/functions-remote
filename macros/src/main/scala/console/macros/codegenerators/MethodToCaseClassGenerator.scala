@@ -41,7 +41,7 @@ object MethodToCaseClassGenerator:
 
     /** The name of a trait that will be the super class of all generated case classes
       */
-    def methodParamsTraitName(`type`: EType): String = s"${`type`.name}MethodParams"
+    def methodParamsTraitName(`type`: EType): String = s"${`type`.name}Methods"
 
     /** The name of the object that will hold all case classes
       */
