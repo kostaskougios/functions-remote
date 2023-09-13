@@ -22,12 +22,6 @@ class {{className}}:
     Using.resource(b.from(data).build): in =>
       in.iterator.next()
 
-  val avroParamsSerializer: PartialFunction[{{methodParams}}, Array[Byte]] =
-    {{#functions}}
-    case value: {{caseClass}} =>
-      avroSerialize(AvroOutputStream.data[{{caseClass}}], value)
-    {{/functions}}
-
   {{#functions}}
   // ----------------------------------------------
   // Serializers for {{functionN}} function
