@@ -15,5 +15,5 @@ object {{className}}:
 
   object Methods:
     {{#functions}}
-    val {{caseClassName}} = "{{proxypackage}}.{{exportedType.name}}.{{functionN}}"
+    val {{caseClassName}} = "{{proxypackage}}.{{exportedType.name}}.{{functionN}}/{{config.apiVersion}}"
     {{/functions}}

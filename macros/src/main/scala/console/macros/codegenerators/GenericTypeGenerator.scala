@@ -9,6 +9,7 @@ import scala.language.implicitConversions
 
 class GenericTypeGenerator(
     namingConventions: GenericTypeGenerator.NamingConventions,
+    config: GenericTypeGenerator.Config,
     template: MustacheTemplate
 ) extends CodeGenerator:
   override def apply(packages: Seq[EPackage]): Seq[Code] =
@@ -19,6 +20,7 @@ class GenericTypeGenerator(
 
   def apply(`package`: EPackage, `type`: EType): Code =
     case class Vals(
+        config: GenericTypeGenerator.Config,
         exportedType: EType,
         proxypackage: String,
         imports: Many[String],
@@ -31,7 +33,7 @@ class GenericTypeGenerator(
     val mpt       = namingConventions.methodParamsTraitName(`type`)
     val functions = Func(`type`, namingConventions)
 
-    val vals = Vals(`type`, `package`.name, imports, sn, mpt, functions)
+    val vals = Vals(config, `type`, `package`.name, imports, sn, mpt, functions)
     val code = template(vals)
     Code(
       s"${`package`.toPath}/$sn.scala",
@@ -39,6 +41,7 @@ class GenericTypeGenerator(
     )
 
 object GenericTypeGenerator:
+  case class Config(apiVersion: String = "v1")
   trait NamingConventions:
     /** The name of the generated caller class
       *

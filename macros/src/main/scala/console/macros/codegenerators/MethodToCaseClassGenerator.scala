@@ -1,5 +1,6 @@
 package console.macros.codegenerators
 
+import console.macros.codegenerators.GenericTypeGenerator.Config
 import console.macros.model.*
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
@@ -12,8 +13,10 @@ object MethodToCaseClassGenerator:
     override def className(`type`: EType) = methodParamsTraitName(`type`)
 
   def apply(
-      namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions
+      namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions,
+      config: Config = Config()
   ) = new GenericTypeGenerator(
     namingConventions,
+    config,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsMethods")
   )
