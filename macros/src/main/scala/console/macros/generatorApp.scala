@@ -5,7 +5,7 @@ import console.macros.codegenerators.{AvroCaseClassSchemaGenerator, CallerGenera
 @main def generatorApp() =
   val ProjectRoot = "../example-commands/ls-exports"
   val TargetRoot  = s"$ProjectRoot/src/main/generated"
-  val tastyFiles  = List(s"$ProjectRoot/target/scala-3.3.0/classes/ls/LsFunctions.tasty")
+  val tastyFiles  = List(s"$ProjectRoot/target/scala-3.3.1/classes/ls/LsFunctions.tasty")
 
   val structureExtractor           = StructureExtractor()
   val callerGenerator              = CallerGenerator()
