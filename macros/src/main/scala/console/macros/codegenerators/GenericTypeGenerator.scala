@@ -19,6 +19,7 @@ class GenericTypeGenerator(
 
   def apply(`package`: EPackage, `type`: EType): Code =
     case class Vals(
+        exportedType: EType,
         proxypackage: String,
         imports: Many[String],
         className: String,
@@ -30,7 +31,7 @@ class GenericTypeGenerator(
     val mpt       = namingConventions.methodParamsTraitName(`type`)
     val functions = Func(`type`, namingConventions)
 
-    val vals = Vals(`package`.name, imports, sn, mpt, functions)
+    val vals = Vals(`type`, `package`.name, imports, sn, mpt, functions)
     val code = template(vals)
     Code(
       s"${`package`.toPath}/$sn.scala",
