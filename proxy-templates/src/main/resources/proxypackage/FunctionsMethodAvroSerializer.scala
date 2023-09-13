@@ -9,7 +9,7 @@ import scala.util.Using
 import {{.}}
 {{/imports}}
 
-object {{functionsMethodAvroSerializer}}:
+object {{className}}:
   private def avroSerialize[A](b: AvroOutputStreamBuilder[A], value: A): Array[Byte] =
     val bos = new ByteArrayOutputStream(4096)
     Using.resource(b.to(bos).build()): os =>
@@ -18,7 +18,7 @@ object {{functionsMethodAvroSerializer}}:
     bos.toByteArray
 
   val avroParamsSerializer: PartialFunction[{{methodParams}}, Array[Byte]] =
-    {{#caseClasses}}
+    {{#functions}}
     case value: {{caseClass}} =>
       avroSerialize(AvroOutputStream.data[{{caseClass}}], value)
-    {{/caseClasses}}
+    {{/functions}}
