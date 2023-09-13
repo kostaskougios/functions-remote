@@ -9,7 +9,7 @@ class LsFunctionsCallerTest extends AnyFunSuiteLike {
     val byteData = Array(1, 2).map(_.toByte)
     val expected = LsResult(Seq(LsFile("test")))
 
-    def toByteArray(p: LsFunctionsMethods)                               =
+    def toByteArray(p: LsFunctionsMethods)           =
       p should be(LsFunctionsMethods.Ls("/home", LsOptions()))
       byteData
     def callFunction(method: String, a: Array[Byte]) =
@@ -17,6 +17,6 @@ class LsFunctionsCallerTest extends AnyFunSuiteLike {
       a should be(byteData)
       expected
 
-    val caller = new LsFunctionsCaller(toByteArray, callFunction)
+    val caller = new LsFunctionsCaller(toByteArray, _ => Array.emptyByteArray, callFunction)
     caller.ls("/home", LsOptions()) should be(expected)
 }
