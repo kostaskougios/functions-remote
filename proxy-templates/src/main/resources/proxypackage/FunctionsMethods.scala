@@ -13,7 +13,7 @@ object {{className}}:
   case class {{caseClassName}}({{params}}) extends {{className}}
   {{/functions}}
 
-  enum Methods:
+  object Methods:
     {{#functions}}
-    case {{caseClassName}}
+    val {{caseClassName}} = "{{caseClassName}}"
     {{/functions}}

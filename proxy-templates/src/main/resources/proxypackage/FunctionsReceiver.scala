@@ -11,7 +11,7 @@ class {{className}}(
   {{/functions}}
     f: LsFunctions
 ):
-  def invoke(method: LsFunctionsMethods.Methods, data: Array[Byte]): Array[Byte] =
+  def invoke(method: String, data: Array[Byte]): Array[Byte] =
     method match
     {{#functions}}
       case {{methodParams}}.Methods.{{caseClassName}} => {{functionN}}(data)

@@ -12,7 +12,7 @@ class LsFunctionsCallerTest extends AnyFunSuiteLike {
     def toByteArray(p: LsFunctionsMethods)                               =
       p should be(LsFunctionsMethods.Ls("/home", LsOptions()))
       byteData
-    def callFunction(method: LsFunctionsMethods.Methods, a: Array[Byte]) =
+    def callFunction(method: String, a: Array[Byte]) =
       method should be(LsFunctionsMethods.Methods.Ls)
       a should be(byteData)
       expected

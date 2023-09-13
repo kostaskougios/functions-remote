@@ -6,7 +6,7 @@ import {{.}}
 
 class {{className}}(
   toByteArray: {{methodParams}} => Array[Byte],
-  callFunction: ({{methodParams}}.Methods, Array[Byte]) => Any
+  callFunction: (String, Array[Byte]) => Any
 ):
 
   {{#functions}}
