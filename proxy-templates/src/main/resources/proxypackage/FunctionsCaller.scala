@@ -7,15 +7,16 @@ import {{.}}
 class {{className}}(
   {{#functions}}
   {{functionN}}ToByteArray: {{methodParams}}.{{caseClassName}} => Array[Byte],
+  {{functionN}}ReturnTypeFromByteArray: Array[Byte] => {{resultN}},
   {{/functions}}
-  callFunction: (String, Array[Byte]) => Any
-):
+  callFunction: (String, Array[Byte]) => Array[Byte]
+) extends {{exportedType.name}}:
 
   {{#functions}}
   // {{functionN}} function
   def {{functionN}}({{params}}): {{resultN}} =
     val c  = {{caseClass}}({{paramsCall}})
-    val r1 = {{functionN}}ToByteArray(c)
-    val r2 = callFunction({{methodParams}}.Methods.{{caseClassName}}, r1)
-    r2.asInstanceOf[{{resultN}}]
+    val binIn = {{functionN}}ToByteArray(c)
+    val binOut = callFunction({{methodParams}}.Methods.{{caseClassName}}, binIn)
+    {{functionN}}ReturnTypeFromByteArray(binOut)
   {{/functions}}

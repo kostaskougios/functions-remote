@@ -29,14 +29,14 @@ class GenericTypeGenerator(
         functions: Many[Func]
     )
     val imports   = `type`.typesInMethods.toSet
-    val sn        = namingConventions.className(`type`)
+    val className = namingConventions.className(`type`)
     val mpt       = namingConventions.methodParamsTraitName(`type`)
     val functions = Func(`type`, namingConventions)
 
-    val vals = Vals(config, `type`, `package`.name, imports, sn, mpt, functions)
+    val vals = Vals(config, `type`, `package`.name, imports, className, mpt, functions)
     val code = template(vals)
     Code(
-      s"${`package`.toPath}/$sn.scala",
+      s"${`package`.toPath}/$className.scala",
       code
     )
 
