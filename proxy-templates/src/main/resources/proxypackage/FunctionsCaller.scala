@@ -6,10 +6,12 @@ import {{.}}
 
 class {{className}}(
   {{#functions}}
+  // {{functionN}} serialization
   {{functionN}}ToByteArray: {{methodParams}}.{{caseClassName}} => Array[Byte],
   {{functionN}}ReturnTypeFromByteArray: Array[Byte] => {{resultN}},
   {{/functions}}
-  callFunction: (String, Array[Byte]) => Array[Byte]
+  // this should transport the data to the remote function and get the response from that function
+  transport: (String, Array[Byte]) => Array[Byte]
 ) extends {{exportedType.name}}:
 
   {{#functions}}
@@ -17,6 +19,6 @@ class {{className}}(
   def {{functionN}}({{params}}): {{resultN}} =
     val c  = {{caseClass}}({{paramsCall}})
     val binIn = {{functionN}}ToByteArray(c)
-    val binOut = callFunction({{methodParams}}.Methods.{{caseClassName}}, binIn)
+    val binOut = transport({{methodParams}}.Methods.{{caseClassName}}, binIn)
     {{functionN}}ReturnTypeFromByteArray(binOut)
   {{/functions}}
