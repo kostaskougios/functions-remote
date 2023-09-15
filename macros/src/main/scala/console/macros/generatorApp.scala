@@ -12,7 +12,7 @@ import console.macros.codegenerators.{AvroCaseClassSchemaGenerator, AvroFactorie
   val receiverGenerator            = ReceiverGenerator()
   val methodToCaseClassGenerator   = MethodToCaseClassGenerator()
   val avroCaseClassSchemaGenerator = AvroCaseClassSchemaGenerator()
-  val factories                    = AvroFactories()
+  val factories                    = AvroFactories.caller()
   val packages                     = structureExtractor(tastyFiles)
   val codes                        =
     callerGenerator(packages) ++ methodToCaseClassGenerator(packages) ++ avroCaseClassSchemaGenerator(packages) ++ receiverGenerator(packages) ++
