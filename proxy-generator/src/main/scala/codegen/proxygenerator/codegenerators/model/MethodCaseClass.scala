@@ -1,7 +1,7 @@
-package console.macros.codegenerators.model
+package codegen.proxygenerator.codegenerators.model
 
-import console.macros.codegenerators.GenericTypeGenerator.NamingConventions
-import console.macros.model.{EMethod, EPackage, EType}
+import codegen.proxygenerator.model.{EMethod, EPackage, EType}
+import codegen.proxygenerator.codegenerators.GenericTypeGenerator.NamingConventions
 
 // method parameters converted to this so that we can render it
 case class MethodCaseClass(imports: Set[String], caseClass: String, paramsDecl: String)

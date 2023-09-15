@@ -1,8 +1,9 @@
-package console.macros
+package codegen.proxygenerator
 
-import console.macros.model.*
-import console.macros.utils.Cleanup
-import console.macros.utils.Cleanup.removeColours
+import codegen.proxygenerator.model.{EMethod, EPackage, EParam, EType}
+import codegen.proxygenerator.utils.Cleanup
+import codegen.proxygenerator.model.*
+import Cleanup.removeColours
 import dotty.tools.dotc.ast.Trees.*
 
 import scala.collection.mutable

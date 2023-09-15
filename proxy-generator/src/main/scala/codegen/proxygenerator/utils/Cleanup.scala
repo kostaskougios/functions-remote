@@ -1,4 +1,4 @@
-package console.macros.utils
+package codegen.proxygenerator.utils
 
 import org.apache.commons.lang3.StringUtils
 

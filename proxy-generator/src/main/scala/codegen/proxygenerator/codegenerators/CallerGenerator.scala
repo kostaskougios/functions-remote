@@ -1,8 +1,9 @@
-package console.macros.codegenerators
+package codegen.proxygenerator.codegenerators
 
-import console.macros.codegenerators.model.Config
-import console.macros.codegenerators.GenericTypeGenerator.NamingConventions
-import console.macros.model.*
+import codegen.proxygenerator.codegenerators.model.Config
+import codegen.proxygenerator.model.EType
+import GenericTypeGenerator.NamingConventions
+import codegen.proxygenerator.model.*
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
 

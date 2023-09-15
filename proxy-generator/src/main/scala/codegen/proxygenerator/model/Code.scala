@@ -1,4 +1,4 @@
-package console.macros.model
+package codegen.proxygenerator.model
 
 import org.apache.commons.io.FileUtils
 

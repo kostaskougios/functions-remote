@@ -1,6 +1,6 @@
-package console.macros.codegenerators.model
+package codegen.proxygenerator.codegenerators.model
 
-import console.macros.model.EType
+import codegen.proxygenerator.model.EType
 import mustache.integration.model.Many
 
 case class Vals(

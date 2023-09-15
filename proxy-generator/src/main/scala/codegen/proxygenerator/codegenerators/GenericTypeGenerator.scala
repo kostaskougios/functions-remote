@@ -1,7 +1,7 @@
-package console.macros.codegenerators
+package codegen.proxygenerator.codegenerators
 
-import console.macros.codegenerators.model.{Config, Func, Vals}
-import console.macros.model.{Code, EMethod, EPackage, EType}
+import codegen.proxygenerator.codegenerators.model.{Config, Func, Vals}
+import codegen.proxygenerator.model.{Code, EMethod, EPackage, EType}
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.Many
 
@@ -22,7 +22,7 @@ class GenericTypeGenerator(
     val imports   = `type`.typesInMethods.toSet
     val className = namingConventions.className(`type`)
     val mpt       = namingConventions.methodParamsTraitName(`type`)
-    val functions = Func(`type`, namingConventions)
+    val functions = model.Func(`type`, namingConventions)
 
     val vals = Vals(config, `type`, `package`.name, imports, className, mpt, functions)
     val code = template(vals)

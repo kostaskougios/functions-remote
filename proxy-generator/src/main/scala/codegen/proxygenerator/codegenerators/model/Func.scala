@@ -1,7 +1,7 @@
-package console.macros.codegenerators.model
+package codegen.proxygenerator.codegenerators.model
 
-import console.macros.codegenerators.{GenericTypeGenerator, MethodToCaseClassGenerator}
-import console.macros.model.EType
+import codegen.proxygenerator.codegenerators.{GenericTypeGenerator, MethodToCaseClassGenerator}
+import codegen.proxygenerator.model.EType
 import mustache.integration.model.{Many, Param}
 
 import scala.language.implicitConversions

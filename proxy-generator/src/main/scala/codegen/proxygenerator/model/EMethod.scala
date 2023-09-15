@@ -1,4 +1,4 @@
-package console.macros.model
+package codegen.proxygenerator.model
 
 import mustache.integration.model.{Param, Params}
 
