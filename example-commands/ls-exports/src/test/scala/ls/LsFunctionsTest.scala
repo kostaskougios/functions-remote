@@ -1,6 +1,6 @@
 package ls
 
-import ls.model.{LsFile, LsOptions, LsResult}
+import ls.model.{LsFile, LsResult}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers.*
 
