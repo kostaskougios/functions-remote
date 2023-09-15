@@ -8,11 +8,11 @@ import mustache.integration.model.ResourceTemplatesSourceLocation
 
 object AvroCaseClassSchemaGenerator:
   object DefaultNamingConventions extends GenericTypeGenerator.NamingConventions:
-    override def className(`type`: EType) = caseClassHolderObjectName(`type`) + "AvroSerializer"
+    override def className(`type`: EType) = `type`.name + "AvroSerializer"
 
   def apply(namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions, config: Config = Config()) =
     new GenericTypeGenerator(
       namingConventions,
       config,
-      MustacheTemplate(ResourceTemplatesSourceLocation,  "proxypackage.FunctionsMethodAvroSerializer")
+      MustacheTemplate(ResourceTemplatesSourceLocation,  "proxypackage.FunctionsAvroSerializer")
     )
