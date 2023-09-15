@@ -1,4 +1,4 @@
-package codegen.tastyextractor.model
+package codegen.proxygenerator.codegenerators.model
 
 import org.apache.commons.io.FileUtils
 
