@@ -30,7 +30,7 @@ val commonSettings = Seq(
   version := "1.0"
 )
 
-lazy val macros = project
+lazy val `proxy-generator` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(Scala3Tasty, ScalaTest, CommonsIO, CommonsText) ++ Diffx
