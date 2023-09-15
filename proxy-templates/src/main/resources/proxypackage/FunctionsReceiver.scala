@@ -6,8 +6,8 @@ import {{.}}
 
 class {{className}}(
   {{#functions}}
-    from{{caseClassName}}: Array[Byte] => {{methodParams}}.{{caseClassName}},
-    {{functionN}}Response: {{resultN}} => Array[Byte],
+    {{functionN}}Deserializer: Array[Byte] => {{methodParams}}.{{caseClassName}},
+    {{functionN}}ReturnTypeSerializer: {{resultN}} => Array[Byte],
   {{/functions}}
     f: LsFunctions
 ):
@@ -19,7 +19,7 @@ class {{className}}(
 
   {{#functions}}
   def {{functionN}}(data: Array[Byte]): Array[Byte] =
-    val params = from{{caseClassName}}(data)
+    val params = {{functionN}}Deserializer(data)
     val r      = f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
-    {{functionN}}Response(r)
+    {{functionN}}ReturnTypeSerializer(r)
   {{/functions}}
