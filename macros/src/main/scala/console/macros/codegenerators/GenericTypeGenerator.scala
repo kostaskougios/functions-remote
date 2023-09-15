@@ -11,8 +11,8 @@ class GenericTypeGenerator(
     namingConventions: GenericTypeGenerator.NamingConventions,
     config: Config,
     template: MustacheTemplate
-) extends CodeGenerator:
-  override def apply(packages: Seq[EPackage]): Seq[Code] =
+):
+  def apply(packages: Seq[EPackage]): Seq[Code] =
     packages.flatMap(apply)
 
   def apply(`package`: EPackage): Seq[Code] =
