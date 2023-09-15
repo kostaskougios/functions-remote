@@ -1,6 +1,7 @@
 package console.macros.codegenerators
 
-import console.macros.codegenerators.GenericTypeGenerator.{Config, NamingConventions}
+import console.macros.codegenerators.GenericTypeGenerator.NamingConventions
+import console.macros.codegenerators.model.Config
 import console.macros.model.*
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation

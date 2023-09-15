@@ -1,6 +1,6 @@
 package console.macros.codegenerators
 
-import console.macros.codegenerators.model.Func
+import console.macros.codegenerators.model.{Config, Func, Vals}
 import console.macros.model.{Code, EMethod, EPackage, EType}
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.Many
@@ -9,7 +9,7 @@ import scala.language.implicitConversions
 
 class GenericTypeGenerator(
     namingConventions: GenericTypeGenerator.NamingConventions,
-    config: GenericTypeGenerator.Config,
+    config: Config,
     template: MustacheTemplate
 ) extends CodeGenerator:
   override def apply(packages: Seq[EPackage]): Seq[Code] =
@@ -19,15 +19,6 @@ class GenericTypeGenerator(
     `package`.types.map(apply(`package`, _))
 
   def apply(`package`: EPackage, `type`: EType): Code =
-    case class Vals(
-        config: GenericTypeGenerator.Config,
-        exportedType: EType,
-        proxypackage: String,
-        imports: Many[String],
-        className: String,
-        methodParams: String,
-        functions: Many[Func]
-    )
     val imports   = `type`.typesInMethods.toSet
     val className = namingConventions.className(`type`)
     val mpt       = namingConventions.methodParamsTraitName(`type`)
@@ -41,7 +32,6 @@ class GenericTypeGenerator(
     )
 
 object GenericTypeGenerator:
-  case class Config(apiVersion: String = "v1")
   trait NamingConventions:
     /** The name of the generated caller class
       *

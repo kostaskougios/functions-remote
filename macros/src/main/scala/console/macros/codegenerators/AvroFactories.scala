@@ -1,7 +1,7 @@
 package console.macros.codegenerators
 
 import console.macros.codegenerators
-import console.macros.codegenerators.GenericTypeGenerator.Config
+import console.macros.codegenerators.model.Config
 import console.macros.model.EType
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
