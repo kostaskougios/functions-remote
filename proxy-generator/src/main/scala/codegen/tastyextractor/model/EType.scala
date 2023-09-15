@@ -1,4 +1,4 @@
-package codegen.proxygenerator.model
+package codegen.tastyextractor.model
 
 case class EType(name: String, code: String, methods: Seq[EMethod]):
   def typesInMethods: Seq[String] = methods.flatMap(m => m.paramss.flatMap(_.map(_.`type`) :+ m.returnType.code)).distinct.filter(_.contains('.'))

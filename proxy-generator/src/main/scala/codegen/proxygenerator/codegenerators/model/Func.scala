@@ -1,7 +1,7 @@
 package codegen.proxygenerator.codegenerators.model
 
 import codegen.proxygenerator.codegenerators.{GenericTypeGenerator, MethodToCaseClassGenerator}
-import codegen.proxygenerator.model.EType
+import codegen.tastyextractor.model.EType
 import mustache.integration.model.{Many, Param}
 
 import scala.language.implicitConversions

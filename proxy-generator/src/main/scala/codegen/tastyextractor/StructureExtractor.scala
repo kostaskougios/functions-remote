@@ -1,6 +1,6 @@
 package codegen.tastyextractor
 
-import codegen.proxygenerator.model.*
+import codegen.tastyextractor.model.{EMethod, EPackage, EParam, EType}
 import codegen.tastyextractor.utils.Cleanup.*
 import dotty.tools.dotc.ast.Trees.*
 
@@ -28,7 +28,7 @@ private class StructureExtractorInspector extends Inspector:
             }
             EType(typeName.toString, typeName.show, methods)
           }
-          packages += EPackage(pid.name.show, types)
+          packages += model.EPackage(pid.name.show, types)
       }
 
 /** Converts tasty files to an easier to digest domain model

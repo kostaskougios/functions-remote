@@ -1,4 +1,4 @@
-package codegen.proxygenerator.model
+package codegen.tastyextractor.model
 
 import mustache.integration.model.{Param, Params}
 

@@ -1,9 +1,8 @@
 package codegen.proxygenerator.codegenerators
 
 import codegen.proxygenerator.codegenerators.model.Config
-import codegen.proxygenerator.model.EType
 import GenericTypeGenerator.NamingConventions
-import codegen.proxygenerator.model.*
+import codegen.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
 

@@ -1,6 +1,6 @@
 package codegen.proxygenerator.codegenerators.model
 
-import codegen.proxygenerator.model.EType
+import codegen.tastyextractor.model.EType
 import mustache.integration.model.Many
 
 case class Vals(
