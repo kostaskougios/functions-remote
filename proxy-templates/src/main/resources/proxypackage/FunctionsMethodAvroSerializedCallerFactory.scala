@@ -1,7 +1,7 @@
 package {{proxypackage}}
 
 object {{className}}:
-  def create{{exportedType.name}}Caller(transport: (String, Array[Byte]) => Array[Byte]) =
+  def create{{exportedType.name}}Caller(transport: (String, Array[Byte]) => Array[Byte]): {{exportedType.name}} =
     val serializer = new {{exportedType.name}}MethodsAvroSerializer
     new {{exportedType.name}}Caller(
       {{#functions}}
