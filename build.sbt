@@ -30,12 +30,18 @@ val commonSettings = Seq(
   version := "1.0"
 )
 
-lazy val `proxy-generator` = project
+lazy val `tasty-extractor` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(Scala3Tasty, ScalaTest, CommonsIO, CommonsText) ++ Diffx
   )
-  .dependsOn(`templates-lib`, `proxy-templates`)
+
+lazy val `proxy-generator` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest, CommonsIO, CommonsText) ++ Diffx
+  )
+  .dependsOn(`templates-lib`, `proxy-templates`, `tasty-extractor`)
 
 lazy val `templates-lib` = project.settings(
   commonSettings,
