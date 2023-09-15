@@ -1,7 +1,7 @@
 package console.macros
 
-import codegen.proxygenerator.StructureExtractor
 import codegen.proxygenerator.codegenerators.{AvroCaseClassSchemaGenerator, AvroFactories, CallerGenerator, MethodToCaseClassGenerator, ReceiverGenerator}
+import codegen.tastyextractor.StructureExtractor
 
 @main def generatorApp() =
   val ProjectRoot = "../example-commands/ls-exports"

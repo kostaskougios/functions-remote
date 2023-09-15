@@ -1,4 +1,4 @@
-package codegen.proxygenerator.utils
+package codegen.tastyextractor.utils
 
 import org.apache.commons.lang3.StringUtils
 

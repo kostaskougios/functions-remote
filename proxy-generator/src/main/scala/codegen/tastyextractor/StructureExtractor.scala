@@ -1,9 +1,7 @@
-package codegen.proxygenerator
+package codegen.tastyextractor
 
-import codegen.proxygenerator.model.{EMethod, EPackage, EParam, EType}
-import codegen.proxygenerator.utils.Cleanup
 import codegen.proxygenerator.model.*
-import Cleanup.removeColours
+import codegen.tastyextractor.utils.Cleanup.*
 import dotty.tools.dotc.ast.Trees.*
 
 import scala.collection.mutable
