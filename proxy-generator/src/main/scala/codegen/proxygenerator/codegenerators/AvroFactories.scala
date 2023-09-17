@@ -10,9 +10,19 @@ object AvroFactories:
   object DefaultCallerNamingConventions extends GenericTypeGenerator.NamingConventions:
     override def className(`type`: EType) = `type`.name + "CallerAvroSerializedFactory"
 
-  def caller(namingConventions: GenericTypeGenerator.NamingConventions = DefaultCallerNamingConventions, config: Config = Config()) =
+  object DefaultReceiverNamingConventions extends GenericTypeGenerator.NamingConventions:
+    override def className(`type`: EType) = `type`.name + "ReceiverAvroSerializedFactory"
+
+  def caller(namingConventions: GenericTypeGenerator.NamingConventions = DefaultCallerNamingConventions, config: Config = Config()): GenericTypeGenerator =
     new GenericTypeGenerator(
       namingConventions,
       config,
       MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsCallerAvroSerializedFactory")
+    )
+
+  def receiver(namingConventions: GenericTypeGenerator.NamingConventions = DefaultReceiverNamingConventions, config: Config = Config()): GenericTypeGenerator =
+    new GenericTypeGenerator(
+      namingConventions,
+      config,
+      MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsReceiverAvroSerializedFactory")
     )

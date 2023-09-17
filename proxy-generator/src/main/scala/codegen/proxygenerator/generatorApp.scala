@@ -13,10 +13,11 @@ import codegen.tastyextractor.StructureExtractor
   val receiverGenerator            = ReceiverGenerator()
   val methodToCaseClassGenerator   = MethodToCaseClassGenerator()
   val avroCaseClassSchemaGenerator = AvroCaseClassSchemaGenerator()
-  val factories                    = AvroFactories.caller()
+  val callerFactory                = AvroFactories.caller()
+  val receiverFactory              = AvroFactories.receiver()
   val packages                     = structureExtractor(tastyFiles)
   val codes                        =
     callerGenerator(packages) ++ methodToCaseClassGenerator(packages) ++ avroCaseClassSchemaGenerator(packages) ++ receiverGenerator(packages) ++
-      factories(packages)
+      callerFactory(packages) ++ receiverFactory(packages)
   println(codes.map(c => s"file:${c.file}\n\n${c.code}").mkString("\n-----------\n\n"))
   for c <- codes do c.writeTo(TargetRoot)
