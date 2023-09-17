@@ -33,16 +33,16 @@ class GenericTypeGenerator(
 
 object GenericTypeGenerator:
   trait NamingConventions:
-    /** The name of the generated caller class
+    /** The name of the generated class
       *
       * @param `type`
       *   the type where the method belongs to
       * @return
-      *   the case class name for the method
+      *   the name that the generated class should have
       */
     def className(`type`: EType): String
 
-    /** The name of the generated case class for a method args.
+    /** The name of the generated case class for a method.
       *
       * @param `type`
       *   the type where the method belongs to
