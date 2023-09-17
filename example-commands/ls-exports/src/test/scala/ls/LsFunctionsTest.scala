@@ -17,4 +17,4 @@ class LsFunctionsTest extends AnyFunSuiteLike:
   }
   abstract class CallerApp:
     def transport(method: String, input: Array[Byte]): Array[Byte]
-    val caller = LsFunctionsAvroSerializedCallerFactory.createLsFunctionsCaller(transport)
+    val caller = LsFunctionsCallerAvroSerializedFactory.createLsFunctionsCaller(transport)
