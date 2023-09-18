@@ -1,4 +1,4 @@
-//> using dependency org.kkougios::proxy-generator:1.0
+//> using dependency org.kkougios::proxy-generator:0.1-SNAPSHOT
 //> using dependency com.lihaoyi::os-lib:0.9.1
 
 import codegen.proxygenerator.codegenerators.*

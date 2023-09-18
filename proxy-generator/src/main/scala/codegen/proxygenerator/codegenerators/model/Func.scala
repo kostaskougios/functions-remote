@@ -6,10 +6,20 @@ import mustache.integration.model.{Many, Param, Params}
 
 import scala.language.implicitConversions
 
-case class Func(functionN: String, params: String, paramsCall: String, paramsRaw: Many[Param], resultN: String, caseClass: String, caseClassName: String)
+case class Func(
+    functionN: String,
+    params: String,
+    paramsCall: String,
+    paramsRaw: Many[Param],
+    resultN: String,
+    caseClass: String,
+    caseClassName: String,
+    last: Boolean
+)
 
 object Func:
   def apply(`type`: EType, methodToCaseClassNamingConventions: GenericTypeGenerator.NamingConventions): Seq[Func] =
+    val last = `type`.methods.last
     `type`.methods.map: m =>
       val params        = toParams(m)
       val caseClassName = methodToCaseClassNamingConventions.methodArgsCaseClassName(`type`, m)
@@ -20,7 +30,8 @@ object Func:
         params.params,
         m.returnType.name,
         methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
-        caseClassName
+        caseClassName,
+        m eq last
       )
 
   private def toParams(m: EMethod): Params = {

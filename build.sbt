@@ -1,6 +1,6 @@
 val scala3Version = "3.3.1"
 
-ThisBuild / version := "1.0"
+ThisBuild / version := "0.1-SNAPSHOT"
 
 ThisBuild / organization := "org.kkougios"
 
@@ -27,7 +27,6 @@ val Avro4s   = "com.sksamuel.avro4s"              %% "avro4s-core" % "5.0.4"
 val Mustache = "com.github.spullara.mustache.java" % "compiler"    % "0.9.10"
 
 val commonSettings = Seq(
-  version := "1.0"
 )
 
 lazy val `tasty-extractor` = project

@@ -20,4 +20,4 @@ import codegen.tastyextractor.StructureExtractor
     callerGenerator(packages) ++ methodToCaseClassGenerator(packages) ++ avroCaseClassSchemaGenerator(packages) ++ receiverGenerator(packages) ++
       callerFactory(packages) ++ receiverFactory(packages)
   println(codes.map(c => s"file:${c.file}\n\n${c.code}").mkString("\n-----------\n\n"))
-  for c <- codes do c.writeTo(TargetRoot)
+  // for c <- codes do c.writeTo(TargetRoot)
