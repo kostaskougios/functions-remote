@@ -1,4 +1,4 @@
-package console.macros
+package codegen.proxygenerator
 
 import codegen.proxygenerator.codegenerators.{AvroCaseClassSchemaGenerator, AvroFactories, CallerGenerator, MethodToCaseClassGenerator, ReceiverGenerator}
 import codegen.tastyextractor.StructureExtractor

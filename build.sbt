@@ -42,10 +42,15 @@ lazy val `proxy-generator` = project
     libraryDependencies ++= Seq(ScalaTest, CommonsIO, CommonsText) ++ Diffx
   )
   .dependsOn(`templates-lib`, `proxy-templates`, `tasty-extractor`)
+  .enablePlugins(PackPlugin)
 
 lazy val `templates-lib` = project.settings(
   commonSettings,
   libraryDependencies ++= Seq(ScalaTest, CommonsIO, CommonsText, Mustache) ++ Diffx
+)
+
+lazy val `proxy-templates` = project.settings(
+  libraryDependencies ++= Seq(Avro4s)
 )
 
 lazy val `ls-exports` = project
@@ -57,7 +62,7 @@ lazy val `ls-exports` = project
   )
   .enablePlugins(PackPlugin)
 
-lazy val `ls` = project
+lazy val ls = project
   .in(file("example-commands/ls"))
   .settings(
     commonSettings
@@ -65,6 +70,10 @@ lazy val `ls` = project
   .dependsOn(`ls-exports`)
   .enablePlugins(PackPlugin)
 
-lazy val `proxy-templates` = project.settings(
-  libraryDependencies ++= Seq(Avro4s)
-)
+lazy val `using-commands` = project
+  .in(file("example-commands/using-commands"))
+  .settings(
+    commonSettings,
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated"
+  )
+  .dependsOn(`ls-exports`)
