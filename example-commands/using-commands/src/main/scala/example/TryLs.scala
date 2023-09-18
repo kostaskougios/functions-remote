@@ -3,7 +3,7 @@ package example
 import ls.LsFunctionsCallerAvroSerializedFactory
 
 @main def tryLs() =
-  val functions = LsFunctionsCallerAvroSerializedFactory.createLsFunctionsCaller { (cmd, data) =>
+  val functions = LsFunctionsCallerAvroSerializedFactory.createCaller { (cmd, data) =>
     println(s"running $cmd")
     Array.emptyByteArray
   }
