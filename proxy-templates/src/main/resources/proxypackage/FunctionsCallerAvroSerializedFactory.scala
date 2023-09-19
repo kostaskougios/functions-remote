@@ -1,7 +1,8 @@
 package {{proxypackage}}
+import functions.discovery.model.CallerFactory
 
-object {{className}}:
-  def createCaller(transport: (String, Array[Byte]) => Array[Byte]): {{exportedType.name}} =
+object {{className}} extends CallerFactory[{{exportedType.name}}]:
+  override def createCaller(transport: (String, Array[Byte]) => Array[Byte]): {{exportedType.name}} =
     val serializer = new {{exportedType.name}}AvroSerializer
     new {{exportedType.name}}Caller(
       {{#functions}}

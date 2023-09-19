@@ -1,10 +1,12 @@
 package example
 
-import ls.LsFunctionsCallerAvroSerializedFactory
+import functions.discovery.FunctionsDiscovery
+import ls.{LsFunctions, LsFunctionsCallerAvroSerializedFactory}
 
 @main def tryLs() =
-  val functions = LsFunctionsCallerAvroSerializedFactory.createCaller { (cmd, data) =>
+  val discovery = FunctionsDiscovery { (cmd, data) =>
     println(s"running $cmd")
     Array.emptyByteArray
   }
+  val functions = discovery.discoverFirstOne[LsFunctions]
   functions.ls("/tmp")

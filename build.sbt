@@ -52,6 +52,8 @@ lazy val `proxy-templates` = project.settings(
   libraryDependencies ++= Seq(Avro4s)
 )
 
+lazy val `functions-discovery` = project.settings(commonSettings)
+
 lazy val `ls-exports` = project
   .in(file("example-commands/ls-exports"))
   .settings(
@@ -75,4 +77,4 @@ lazy val `using-commands` = project
     commonSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated"
   )
-  .dependsOn(`ls-exports`)
+  .dependsOn(`ls-exports`, `functions-discovery`)
