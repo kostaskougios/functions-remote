@@ -1,7 +1,7 @@
-package functions.discovery.scanners
+package functions.discovery.serializerscanners
 
 import functions.discovery.model.{CallerFactory, Serializer}
 
-trait Scanner:
+trait SerializerScanner:
   def scan[A](className: String): Option[CallerFactory[A]]
   def serializer: Serializer

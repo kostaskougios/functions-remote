@@ -1,4 +1,4 @@
-package functions.discovery.scanners
+package functions.discovery.serializerscanners
 
 import functions.discovery.model.CallerFactory
 
