@@ -66,7 +66,8 @@ lazy val `ls-exports` = project
 lazy val ls = project
   .in(file("example-commands/ls"))
   .settings(
-    commonSettings
+    commonSettings,
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated"
   )
   .dependsOn(`ls-exports`)
   .enablePlugins(PackPlugin)
