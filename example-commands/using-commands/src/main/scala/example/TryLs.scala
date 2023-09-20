@@ -1,8 +1,7 @@
 package example
 
 import functions.discovery.FunctionsDiscovery
-import ls.{LsFunctions, LsFunctionsAvroSerializer}
-import ls.model.{LsFile, LsResult}
+import ls.LsFunctions
 
 @main def tryLs() =
   val discovery = FunctionsDiscovery()
