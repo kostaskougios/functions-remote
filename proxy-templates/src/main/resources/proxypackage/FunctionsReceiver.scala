@@ -11,10 +11,9 @@ class {{className}}(
   {{/functions}}
     f: LsFunctions
 ):
-  def invoke(method: String, data: Array[Byte]): Array[Byte] =
-    method match
+  def invoke: PartialFunction[( String, Array[Byte]) , Array[Byte]] =
     {{#functions}}
-      case {{methodParams}}.Methods.{{caseClassName}} => {{functionN}}(data)
+      case ({{methodParams}}.Methods.{{caseClassName}}, data) => {{functionN}}(data)
     {{/functions}}
 
   {{#functions}}
