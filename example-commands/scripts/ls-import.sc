@@ -4,7 +4,7 @@
 import codegen.proxygenerator.codegenerators.*
 import codegen.tastyextractor.StructureExtractor
 
-val ProjectRoot=os.pwd / os.up
+val ProjectRoot = os.pwd
 val TargetRoot  = s"$ProjectRoot/using-commands/src/main/generated"
 val tastyFiles  = List(s"$ProjectRoot/ls-exports/target/scala-3.3.1/classes/ls/LsFunctions.tasty")
 
