@@ -1,6 +1,6 @@
 package functions.serializerscanners
 
-import functions.model.{CallerFactory, Serializer}
+import functions.model.Serializer
 
 trait SerializerScanner[F]:
   def scan(className: String): Option[F]

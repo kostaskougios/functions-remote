@@ -1,9 +1,9 @@
 package functions.discovery
 
-import functions.serializerscanners.AvroSerializerScanner
+import functions.serializerscanners.GenericScanner
 import functions.discovery.transportscanners.{SeparateClassLoaderTransport, TransportScanner}
 import functions.model
-import functions.model.{CallerFactory, FunctionDetails}
+import functions.model.{CallerFactory, FunctionDetails, Serializer}
 import functions.serializerscanners.SerializerScanner
 
 import scala.reflect.{ClassTag, classTag}
@@ -23,6 +23,6 @@ class FunctionsDiscovery(scanners: Seq[SerializerScanner[CallerFactory[_]]], tra
 
 object FunctionsDiscovery:
   def apply(classLoader: ClassLoader = Thread.currentThread().getContextClassLoader) =
-    val scanners   = Seq(AvroSerializerScanner[CallerFactory[_]](classLoader))
+    val scanners   = Seq(GenericScanner[CallerFactory[_]](classLoader, Serializer.Avro, "CallerAvroSerializedFactory"))
     val transports = Seq(new SeparateClassLoaderTransport())
     new FunctionsDiscovery(scanners, transports)
