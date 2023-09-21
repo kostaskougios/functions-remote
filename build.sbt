@@ -56,7 +56,7 @@ lazy val `functions-common` = project.settings(commonSettings)
 
 lazy val `functions-discovery` = project.settings(commonSettings).dependsOn(`functions-common`)
 
-lazy val `functions-receiver` = project.settings(commonSettings).dependsOn(`functions-common`)
+lazy val `functions-invoker` = project.settings(commonSettings).dependsOn(`functions-common`)
 
 lazy val `ls-exports` = project
   .in(file("example-commands/ls-exports"))
@@ -73,7 +73,7 @@ lazy val ls = project
     commonSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated"
   )
-  .dependsOn(`ls-exports`, `functions-receiver`)
+  .dependsOn(`ls-exports`, `functions-invoker`)
   .enablePlugins(PackPlugin)
 
 lazy val `using-commands` = project
