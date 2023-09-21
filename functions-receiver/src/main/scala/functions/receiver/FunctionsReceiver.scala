@@ -12,4 +12,4 @@ object FunctionsReceiver:
     val scanners = Seq(GenericScanner[CallerFactory[_]](classLoader, Serializer.Avro, "CallerAvroSerializedFactory"))
     new FunctionsReceiver(functions, scanners)
 
-  def withDefaults(functions: RegisteredFunction[_]*) = apply(Thread.currentThread().getContextClassLoader, functions.toList)
+  def withFunctions(functions: RegisteredFunction[_]*) = apply(Thread.currentThread().getContextClassLoader, functions.toList)
