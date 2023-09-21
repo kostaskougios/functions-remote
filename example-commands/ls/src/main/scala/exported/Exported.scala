@@ -8,7 +8,6 @@ import ls.impl.LsFunctionsImpl
 import java.util.function.BiFunction
 
 object Exported extends BiFunction[String, Array[Byte], Array[Byte]]:
-  private val functions = FunctionsReceiver(RegisteredFunction[LsFunctions](new LsFunctionsImpl))
-//  private val receiver = LsFunctionsReceiverAvroSerializedFactory.createReceiver()
+  private val functions = FunctionsReceiver.withDefaults(RegisteredFunction[LsFunctions](new LsFunctionsImpl))
 
   override def apply(method: String, data: Array[Byte]) = functions.invoke(method, data)
