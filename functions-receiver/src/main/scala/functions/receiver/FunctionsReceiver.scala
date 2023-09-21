@@ -1,6 +1,6 @@
 package functions.receiver
 
-import functions.model.{CallerFactory, Serializer}
+import functions.model.{ReceiverFactory, Serializer}
 import functions.receiver.model.RegisteredFunction
 import functions.serializerscanners.{GenericScanner, SerializerScanner}
 
@@ -9,7 +9,7 @@ class FunctionsReceiver(registeredFunctions: Seq[RegisteredFunction[_]], seriali
 
 object FunctionsReceiver:
   def apply(classLoader: ClassLoader, functions: Seq[RegisteredFunction[_]]): FunctionsReceiver =
-    val scanners = Seq(GenericScanner[CallerFactory[_]](classLoader, Serializer.Avro, "CallerAvroSerializedFactory"))
+    val scanners = Seq(GenericScanner[ReceiverFactory[_]](classLoader, Serializer.Avro, "ReceiverAvroSerializedFactory"))
     new FunctionsReceiver(functions, scanners)
 
   def withFunctions(functions: RegisteredFunction[_]*) = apply(Thread.currentThread().getContextClassLoader, functions.toList)

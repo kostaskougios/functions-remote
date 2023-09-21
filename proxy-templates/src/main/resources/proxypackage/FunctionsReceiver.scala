@@ -1,5 +1,6 @@
 package {{proxypackage}}
 
+import functions.model.FunctionsReceiver
 {{#imports}}
 import {{.}}
 {{/imports}}
@@ -9,9 +10,9 @@ class {{className}}(
     {{functionN}}Deserializer: Array[Byte] => {{methodParams}}.{{caseClassName}},
     {{functionN}}ReturnTypeSerializer: {{resultN}} => Array[Byte],
   {{/functions}}
-    f: LsFunctions
-):
-  def invoke: PartialFunction[( String, Array[Byte]) , Array[Byte]] =
+    f: {{exportedType.name}}
+) extends FunctionsReceiver:
+  override val invoke: PartialFunction[( String, Array[Byte]) , Array[Byte]] =
     {{#functions}}
       case ({{methodParams}}.Methods.{{caseClassName}}, data) => {{functionN}}(data)
     {{/functions}}

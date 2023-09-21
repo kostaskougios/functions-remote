@@ -1,6 +1,8 @@
 package {{proxypackage}}
 
-object {{className}}:
+import functions.model.ReceiverFactory
+
+object {{className}} extends ReceiverFactory[{{exportedType.name}}]:
   def createReceiver(functions: {{exportedType.name}}): {{exportedType.name}}Receiver =
     val serializer = new {{exportedType.name}}AvroSerializer
     new {{exportedType.name}}Receiver(
