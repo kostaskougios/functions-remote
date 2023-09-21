@@ -2,7 +2,6 @@ package functions.discovery
 
 import functions.serializerscanners.GenericScanner
 import functions.discovery.transportscanners.{SeparateClassLoaderTransport, TransportScanner}
-import functions.model
 import functions.model.{CallerFactory, FunctionDetails, Serializer}
 import functions.serializerscanners.SerializerScanner
 
@@ -17,7 +16,7 @@ class FunctionsDiscovery(scanners: Seq[SerializerScanner[CallerFactory[_]]], tra
       t                  <- transports
       tr = t.scan(n)
       c  = factory.createCaller(tr).asInstanceOf[A]
-    yield model.FunctionDetails(c, scanner.serializer, t.transport)
+    yield FunctionDetails(c, scanner.serializer, t.transport)
 
   def discoverFirstOne[A: ClassTag]: A = discover.head.function
 
