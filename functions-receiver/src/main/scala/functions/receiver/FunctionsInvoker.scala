@@ -14,7 +14,9 @@ object FunctionsInvoker:
       f               <- functions
       s               <- scanners
       receiverFactory <- s.scan(f.className)
-    yield AvailableFunction(receiverFactory.asInstanceOf[ReceiverFactory[Any]].createReceiver(f.function), s.serializer)
-    new FunctionsInvoker(availableFunctions)
+    yield (f.className, AvailableFunction(receiverFactory.asInstanceOf[ReceiverFactory[Any]].createReceiver(f.function), s.serializer))
+    val missing            = functions.map(_.className).toSet -- availableFunctions.map(_._1).toSet
+    if missing.nonEmpty then throw new IllegalStateException(s"Missing serializers for ${missing.mkString(", ")}")
+    new FunctionsInvoker(availableFunctions.map(_._2))
 
   def withFunctions(functions: RegisteredFunction[_]*) = apply(Thread.currentThread().getContextClassLoader, functions.toList)
