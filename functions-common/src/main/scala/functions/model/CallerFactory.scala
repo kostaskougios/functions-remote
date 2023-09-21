@@ -1,4 +1,4 @@
-package functions.discovery.model
+package functions.model
 
 type TransportFunction = (String, Array[Byte]) => Array[Byte]
 trait CallerFactory[A]:

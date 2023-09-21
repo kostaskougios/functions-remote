@@ -1,4 +1,4 @@
-package functions.discovery.model
+package functions.model
 
 enum Transport:
   case SeparateClassLoader

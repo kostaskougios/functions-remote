@@ -1,11 +1,14 @@
 package exported
 
-import ls.LsFunctionsReceiverAvroSerializedFactory
+import functions.receiver.FunctionsReceiver
+import functions.receiver.model.RegisteredFunction
+import ls.LsFunctions
 import ls.impl.LsFunctionsImpl
 
 import java.util.function.BiFunction
 
 object Exported extends BiFunction[String, Array[Byte], Array[Byte]]:
-  private val receiver = LsFunctionsReceiverAvroSerializedFactory.createReceiver(new LsFunctionsImpl)
+  private val functions = FunctionsReceiver(RegisteredFunction[LsFunctions](new LsFunctionsImpl))
+//  private val receiver = LsFunctionsReceiverAvroSerializedFactory.createReceiver()
 
-  override def apply(method: String, data: Array[Byte]) = receiver.invoke(method, data)
+  override def apply(method: String, data: Array[Byte]) = functions.invoke(method, data)
