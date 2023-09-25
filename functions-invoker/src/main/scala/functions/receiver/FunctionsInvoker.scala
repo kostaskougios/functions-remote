@@ -1,14 +1,20 @@
 package functions.receiver
 
 import functions.Log
-import functions.model.{ReceiverFactory, Serializer}
+import functions.model.{Coordinates, ReceiverFactory, Serializer}
 import functions.receiver.model.{AvailableFunction, RegisteredFunction}
 import functions.serializerscanners.GenericScanner
 
 class FunctionsInvoker(availableFunctions: Seq[AvailableFunction]):
-  def invoke(method: String, data: Array[Byte]): Array[Byte] =
-    Log.info(s"Invoking $method")
-    ???
+  def invoke(coordinates: String, data: Array[Byte]): Array[Byte] =
+    Log.info(s"Invoking $coordinates")
+    val c    = Coordinates(coordinates)
+    val args = (c.methodAndVersion, data)
+    val f    = availableFunctions
+      .find(_.functionsReceiver.invoke.isDefinedAt(args))
+      .getOrElse(throw new IllegalStateException(s"Can't find method ${c.methodAndVersion}"))
+
+    f.functionsReceiver.invoke(args)
 
 object FunctionsInvoker:
   def apply(classLoader: ClassLoader, functions: Seq[RegisteredFunction[_]]): FunctionsInvoker =

@@ -16,5 +16,5 @@ object {{className}}:
   val AllMethods = List({{#functions}}{{caseClassName}}{{^last}}, {{/last}}{{/functions}})
   object Methods:
     {{#functions}}
-    val {{caseClassName}} = "{{proxypackage}}.{{exportedType.name}}.{{functionN}}/{{config.apiVersion}}"
+    val {{caseClassName}} = "{{proxypackage}}.{{exportedType.name}}.{{functionN}}:{{config.apiVersion}}"
     {{/functions}}

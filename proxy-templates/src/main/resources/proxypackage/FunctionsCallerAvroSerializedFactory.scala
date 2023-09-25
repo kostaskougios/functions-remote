@@ -1,5 +1,5 @@
 package {{proxypackage}}
-import functions.discovery.model.CallerFactory
+import functions.model.CallerFactory
 
 object {{className}} extends CallerFactory[{{exportedType.name}}]:
   override def createCaller(transport: (String, Array[Byte]) => Array[Byte]): {{exportedType.name}} =

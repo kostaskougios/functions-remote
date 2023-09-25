@@ -17,4 +17,6 @@ object Exported extends BiFunction[String, Array[Byte], Array[Byte]]:
 @main
 def tryExporter() =
   val serializer = new LsFunctionsAvroSerializer
-  Exported(LsFunctionsMethods.Methods.Ls, serializer.lsSerializer(Ls("/tmp", LsOptions())))
+  val result     = Exported(LsFunctionsMethods.Methods.Ls + ":Avro", serializer.lsSerializer(Ls("/tmp", LsOptions())))
+  val cc         = serializer.lsReturnTypeDeserializer(result)
+  println(cc)
