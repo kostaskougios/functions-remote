@@ -2,9 +2,9 @@ val scala3Version = "3.3.1"
 
 ThisBuild / version := "0.1-SNAPSHOT"
 
-ThisBuild / organization := "org.kkougios"
+ThisBuild / organization := "org.functions-remote"
 
-name := "scala-codegen2"
+name := "functions-remote"
 
 ThisBuild / scalaVersion := scala3Version
 
