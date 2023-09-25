@@ -23,7 +23,7 @@ val Logback     = "ch.qos.logback"     % "logback-classic" % "1.4.6"
 val CommonsText = "org.apache.commons" % "commons-text"    % "1.10.0"
 val CommonsIO   = "commons-io"         % "commons-io"      % "2.11.0"
 
-val Avro4s   = "com.sksamuel.avro4s"              %% "avro4s-core" % "5.0.4"
+val Avro4s   = "com.sksamuel.avro4s"              %% "avro4s-core" % "5.0.5"
 val Mustache = "com.github.spullara.mustache.java" % "compiler"    % "0.9.10"
 
 val commonSettings = Seq(
@@ -65,7 +65,6 @@ lazy val `ls-exports` = project
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s, ScalaTest)
   )
-  .enablePlugins(PackPlugin)
 
 lazy val ls = project
   .in(file("example-commands/ls"))
