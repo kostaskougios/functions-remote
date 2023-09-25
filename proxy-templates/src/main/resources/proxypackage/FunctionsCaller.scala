@@ -1,10 +1,12 @@
 package {{proxypackage}}
 
+import functions.model.Serializer
 {{#imports}}
 import {{.}}
 {{/imports}}
 
 class {{className}}(
+  serializer: Serializer,
   {{#functions}}
   // {{functionN}} serialization
   {{functionN}}ToByteArray: {{methodParams}}.{{caseClassName}} => Array[Byte],
@@ -19,6 +21,6 @@ class {{className}}(
   def {{functionN}}({{params}}): {{resultN}} =
     val c  = {{caseClass}}({{paramsCall}})
     val binIn = {{functionN}}ToByteArray(c)
-    val binOut = transport({{methodParams}}.Methods.{{caseClassName}}, binIn)
+    val binOut = transport({{methodParams}}.Methods.{{caseClassName}} + ":" + serializer, binIn)
     {{functionN}}ReturnTypeFromByteArray(binOut)
   {{/functions}}
