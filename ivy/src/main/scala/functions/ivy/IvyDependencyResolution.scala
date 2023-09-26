@@ -1,9 +1,7 @@
 package functions.ivy
 
-import java.io.File
-import java.net.URL
 import org.apache.ivy.Ivy
-import org.apache.ivy.core.module.descriptor.{DefaultDependencyDescriptor, DefaultModuleDescriptor, ModuleDescriptor}
+import org.apache.ivy.core.module.descriptor.{DefaultDependencyDescriptor, DefaultModuleDescriptor}
 import org.apache.ivy.core.module.id.ModuleRevisionId
 import org.apache.ivy.core.resolve.ResolveOptions
 import org.apache.ivy.core.retrieve.RetrieveOptions
@@ -49,7 +47,8 @@ class IvyDependencyResolution:
       report.getModuleDescriptor.getModuleRevisionId,
       new RetrieveOptions().setDestArtifactPattern(s"$ivyHome/cache/$Pattern").setConfs(Array("default"))
     )
+    retrieveReport
 
 @main def tryIvy() =
   val ivy = new IvyDependencyResolution
-  ivy.detectJar("org.functions-remote", "proxy-generator_3", "0.1-SNAPSHOT")
+  ivy.detectJar("org.functions-remote", "proxy-generator_3", "0.15-SNAPSHOT")
