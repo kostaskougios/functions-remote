@@ -63,14 +63,15 @@ lazy val `ls-exports` = project
   .settings(
     commonSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
-    libraryDependencies ++= Seq(Avro4s, ScalaTest)
+    libraryDependencies ++= Seq(ScalaTest)
   )
 
 lazy val ls = project
   .in(file("example-commands/ls"))
   .settings(
     commonSettings,
-    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated"
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
+    libraryDependencies ++= Seq(Avro4s)
   )
   .dependsOn(`ls-exports`, `functions-invoker`)
   .enablePlugins(PackPlugin)
@@ -79,6 +80,7 @@ lazy val `using-commands` = project
   .in(file("example-commands/using-commands"))
   .settings(
     commonSettings,
-    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated"
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
+    libraryDependencies ++= Seq(Avro4s)
   )
   .dependsOn(`ls-exports`, `functions-discovery`)
