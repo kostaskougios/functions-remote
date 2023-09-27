@@ -78,7 +78,6 @@ lazy val `ls-exports` = project
   .in(file("example-commands/ls-exports"))
   .settings(
     commonSettings,
-    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(ScalaTest),
     buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion) ++ Seq[BuildInfoKey]("exportedArtifact" -> "ls"),
     buildInfoPackage := "ls"
