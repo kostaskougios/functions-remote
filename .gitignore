@@ -25,3 +25,5 @@ project/metals.sbt
 javacore.*
 generated
 .scala-build
+
+functions-remote-config/.dependencies
