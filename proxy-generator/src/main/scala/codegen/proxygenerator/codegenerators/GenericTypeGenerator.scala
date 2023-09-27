@@ -1,6 +1,6 @@
 package codegen.proxygenerator.codegenerators
 
-import codegen.proxygenerator.codegenerators.model.{Code, Config, Func, Vals}
+import codegen.proxygenerator.codegenerators.model.{Code, Func, Vals}
 import codegen.tastyextractor.model.{EMethod, EPackage, EType}
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.Many
@@ -9,7 +9,6 @@ import scala.language.implicitConversions
 
 class GenericTypeGenerator(
     namingConventions: GenericTypeGenerator.NamingConventions,
-    config: Config,
     template: MustacheTemplate
 ):
   def apply(packages: Seq[EPackage]): Seq[Code] =
@@ -24,7 +23,7 @@ class GenericTypeGenerator(
     val mpt       = namingConventions.methodParamsTraitName(`type`)
     val functions = model.Func(`type`, namingConventions)
 
-    val vals = Vals(config, `type`, `package`.name, imports, className, mpt, functions)
+    val vals = Vals(`type`, `package`.name, imports, className, mpt, functions)
     val code = template(vals)
     Code(
       s"${`package`.toPath}/$className.scala",

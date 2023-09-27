@@ -1,6 +1,5 @@
 package codegen.proxygenerator.codegenerators
 
-import codegen.proxygenerator.codegenerators.model.Config
 import codegen.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
@@ -13,10 +12,8 @@ object MethodToCaseClassGenerator:
     override def className(`type`: EType) = methodParamsTraitName(`type`)
 
   def apply(
-      namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions,
-      config: Config = Config()
+      namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions
   ) = new GenericTypeGenerator(
     namingConventions,
-    config,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsMethods")
   )

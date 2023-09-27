@@ -1,6 +1,5 @@
 package codegen.proxygenerator.codegenerators
 
-import codegen.proxygenerator.codegenerators.model.Config
 import codegen.proxygenerator.codegenerators
 import codegen.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
@@ -10,9 +9,8 @@ object AvroCaseClassSchemaGenerator:
   object DefaultNamingConventions extends GenericTypeGenerator.NamingConventions:
     override def className(`type`: EType) = `type`.name + "AvroSerializer"
 
-  def apply(namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions, config: Config = Config()) =
+  def apply(namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions) =
     new GenericTypeGenerator(
       namingConventions,
-      config,
-      MustacheTemplate(ResourceTemplatesSourceLocation,  "proxypackage.FunctionsAvroSerializer")
+      MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsAvroSerializer")
     )

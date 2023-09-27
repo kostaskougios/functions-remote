@@ -1,6 +1,5 @@
 package codegen.proxygenerator.codegenerators
 
-import codegen.proxygenerator.codegenerators.model.Config
 import GenericTypeGenerator.NamingConventions
 import codegen.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
@@ -11,10 +10,8 @@ object ReceiverGenerator:
     def className(`type`: EType) = s"${`type`.name}Receiver"
 
   def apply(
-      namingConventions: NamingConventions = DefaultNamingConventions,
-      config: Config = Config()
+      namingConventions: NamingConventions = DefaultNamingConventions
   ) = new GenericTypeGenerator(
     namingConventions,
-    config,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsReceiver")
   )

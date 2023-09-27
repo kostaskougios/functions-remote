@@ -1,6 +1,5 @@
 package codegen.proxygenerator.codegenerators
 
-import codegen.proxygenerator.codegenerators.model.Config
 import codegen.proxygenerator.codegenerators
 import codegen.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
@@ -13,16 +12,14 @@ object AvroFactories:
   object DefaultReceiverNamingConventions extends GenericTypeGenerator.NamingConventions:
     override def className(`type`: EType) = `type`.name + "ReceiverAvroSerializedFactory"
 
-  def caller(namingConventions: GenericTypeGenerator.NamingConventions = DefaultCallerNamingConventions, config: Config = Config()): GenericTypeGenerator =
+  def caller(namingConventions: GenericTypeGenerator.NamingConventions = DefaultCallerNamingConventions): GenericTypeGenerator =
     new GenericTypeGenerator(
       namingConventions,
-      config,
       MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsCallerAvroSerializedFactory")
     )
 
-  def receiver(namingConventions: GenericTypeGenerator.NamingConventions = DefaultReceiverNamingConventions, config: Config = Config()): GenericTypeGenerator =
+  def receiver(namingConventions: GenericTypeGenerator.NamingConventions = DefaultReceiverNamingConventions): GenericTypeGenerator =
     new GenericTypeGenerator(
       namingConventions,
-      config,
       MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsReceiverAvroSerializedFactory")
     )

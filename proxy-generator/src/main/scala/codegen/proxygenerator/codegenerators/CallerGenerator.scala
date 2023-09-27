@@ -1,6 +1,5 @@
 package codegen.proxygenerator.codegenerators
 
-import codegen.proxygenerator.codegenerators.model.Config
 import GenericTypeGenerator.NamingConventions
 import codegen.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
@@ -13,10 +12,8 @@ object CallerGenerator:
     def className(`type`: EType) = s"${`type`.name}Caller"
 
   def apply(
-      namingConventions: NamingConventions = DefaultNamingConventions,
-      config: Config = Config()
+      namingConventions: NamingConventions = DefaultNamingConventions
   ) = new GenericTypeGenerator(
     namingConventions,
-    config,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsCaller")
   )
