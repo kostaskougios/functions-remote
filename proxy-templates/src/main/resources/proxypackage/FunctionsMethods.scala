@@ -16,5 +16,6 @@ object {{className}}:
   val AllMethods = List({{#functions}}{{caseClassName}}{{^last}}, {{/last}}{{/functions}})
   object Methods:
     {{#functions}}
-    val {{caseClassName}} = "{{proxypackage}}.{{exportedType.name}}.{{functionN}}:{{config.apiVersion}}"
+    // Make sure you create the BuildInfo class i.e. via sbt build-info plugin as described in the functions-remote docs.
+    val {{caseClassName}} = s"${BuildInfo.organization}:${BuildInfo.exportedArtifact}:{{proxypackage}}.{{exportedType.name}}.{{functionN}}:{{config.apiVersion}}"
     {{/functions}}
