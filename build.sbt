@@ -74,10 +74,14 @@ lazy val `functions-discovery` = project.settings(commonSettings).dependsOn(`fun
 
 lazy val `functions-invoker` = project.settings(commonSettings).dependsOn(`functions-common`)
 
-lazy val `ls-exports` = project
+// ----------------------- Example commands ---------------------------------------
+val exampleCommandsSettings = Seq(
+  organization := "com.example"
+)
+lazy val `ls-exports`       = project
   .in(file("example-commands/ls-exports"))
   .settings(
-    commonSettings,
+    exampleCommandsSettings,
     libraryDependencies ++= Seq(ScalaTest),
     buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion) ++ Seq[BuildInfoKey]("exportedArtifact" -> "ls"),
     buildInfoPackage := "ls"
@@ -87,7 +91,7 @@ lazy val `ls-exports` = project
 lazy val ls = project
   .in(file("example-commands/ls"))
   .settings(
-    commonSettings,
+    exampleCommandsSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s)
   )
@@ -97,7 +101,7 @@ lazy val ls = project
 lazy val `using-commands` = project
   .in(file("example-commands/using-commands"))
   .settings(
-    commonSettings,
+    exampleCommandsSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s)
   )

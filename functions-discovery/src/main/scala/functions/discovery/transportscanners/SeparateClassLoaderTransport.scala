@@ -1,13 +1,13 @@
 package functions.discovery.transportscanners
 
 import functions.Log
-import functions.model.TransportFunction
-import functions.model.Transport
+import functions.model.{Coordinates, Transport, TransportFunction}
 
 class SeparateClassLoaderTransport extends TransportScanner:
   override def scan(className: String): TransportFunction =
     Log.info(s"scanning for class $className")
-    (coordinates, data) =>
+    (coords, data) =>
+      val coordinates = Coordinates(coords)
       Log.info(s"Invoking $coordinates")
       ???
 
