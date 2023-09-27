@@ -11,17 +11,9 @@ import scala.util.Using
 
 // see https://get-coursier.io/docs/api
 class CoursierResolver {
-  def resolve(dependency: Dependency) = {
-//    val params = ResolutionParams()
-//      .withScalaVersion("3.3.1")
-//    Resolve()
-//      .addDependencies(dependency)
-//      .withResolutionParams(params)
-//      .run()
-    Fetch()
-      .addDependencies(dependency)
-      .run()
-  }
+  def resolve(dependency: Dependency) = Fetch()
+    .addDependencies(dependency)
+    .run()
 }
 
 object CoursierResolver extends App {
@@ -31,11 +23,12 @@ object CoursierResolver extends App {
   for {
     dep <- deps.filterNot(_.isBlank)
   } {
-    println(s"Importing $dep")
+    print(s"Importing $dep ... ")
     val Array(groupId, artifactId, version) = dep.split(":")
     val d                                   = Dependency(Module(Organization(groupId), ModuleName(artifactId)), version)
     val r                                   = resolver.resolve(d)
     val output                              = r.mkString("\n")
     Files.write(new File(FunctionsHome + s"/.dependencies/$dep.classpath").toPath, output.getBytes(StandardCharsets.UTF_8))
+    println(s"${r.size} jars")
   }
 }

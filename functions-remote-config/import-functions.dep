@@ -1,2 +1,2 @@
 com.example:ls_3:0.1-SNAPSHOT
-
+org.apache.spark:spark-core_2.13:3.5.0
