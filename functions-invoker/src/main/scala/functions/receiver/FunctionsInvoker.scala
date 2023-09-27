@@ -9,10 +9,10 @@ class FunctionsInvoker(availableFunctions: Seq[AvailableFunction]):
   def invoke(coordinates: String, data: Array[Byte]): Array[Byte] =
     Log.info(s"Invoking $coordinates")
     val c    = Coordinates(coordinates)
-    val args = (c.methodAndVersion, data)
+    val args = (c.toCoordinatesNoSerializer, data)
     val f    = availableFunctions
       .find(_.functionsReceiver.invoke.isDefinedAt(args))
-      .getOrElse(throw new IllegalStateException(s"Can't find method ${c.methodAndVersion}"))
+      .getOrElse(throw new IllegalStateException(s"Can't find method ${c.toCoordinatesNoSerializer}"))
 
     f.functionsReceiver.invoke(args)
 
