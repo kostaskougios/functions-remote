@@ -7,10 +7,13 @@ import org.apache.ivy.core.resolve.ResolveOptions
 import org.apache.ivy.core.retrieve.RetrieveOptions
 import org.apache.ivy.core.settings.IvySettings
 import org.apache.ivy.plugins.resolver.{FileSystemResolver, IBiblioResolver}
+import org.apache.ivy.util.{DefaultMessageLogger, Message}
 
 class IvyDependencyResolution:
-  private val ivyHome        = sys.props("user.home") + "/.ivy2"
-  private val Pattern        = "[organization]/[module]/[revision]/[artifact]-[revision].[ext]"
+  private val ivyHome = sys.props("user.home") + "/.ivy2"
+  private val Pattern = "[organization]/[module]/[revision]/[artifact]-[revision].[ext]"
+  Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG))
+
   private def createResolver =
     val resolver = new IBiblioResolver
     resolver.setM2compatible(true)

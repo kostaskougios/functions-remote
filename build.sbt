@@ -25,8 +25,8 @@ val CommonsIO   = "commons-io"         % "commons-io"      % "2.11.0"
 
 val Avro4s   = "com.sksamuel.avro4s"              %% "avro4s-core" % "5.0.5"
 val Mustache = "com.github.spullara.mustache.java" % "compiler"    % "0.9.10"
-//val Coursier = ("io.get-coursier" %% "coursier" % "2.1.7").cross(CrossVersion.for3Use2_13).exclude("org.scala-lang.modules", "scala-xml_2.13")
-val Ivy      = "org.apache.ivy"                    % "ivy"         % "2.5.2"
+val Coursier = "io.get-coursier" %% "coursier" % "2.1.7" // .cross(CrossVersion.for3Use2_13).exclude("org.scala-lang.modules", "scala-xml_2.13")
+val Ivy      = "org.apache.ivy"   % "ivy"      % "2.5.2"
 
 val commonSettings = Seq(
 )
@@ -41,6 +41,14 @@ lazy val ivy = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(Ivy, ScalaTest)
+  )
+
+lazy val coursier = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(Coursier, ScalaTest),
+    scalaVersion := "2.13.12",
+    scalacOptions -= "-Xmax-inlines"
   )
 
 lazy val `proxy-generator` = project
