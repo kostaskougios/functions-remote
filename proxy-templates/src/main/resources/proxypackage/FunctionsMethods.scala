@@ -17,5 +17,5 @@ object {{className}}:
   object Methods:
     {{#functions}}
     // Make sure you create the BuildInfo class i.e. via sbt build-info plugin as described in the functions-remote docs.
-    val {{caseClassName}} = s"${BuildInfo.organization}:${BuildInfo.exportedArtifact}:{{proxypackage}}.{{exportedType.name}}.{{functionN}}:{{config.apiVersion}}"
+    val {{caseClassName}} = s"${BuildInfo.organization}:${BuildInfo.exportedArtifact}:${BuildInfo.version}:{{proxypackage}}.{{exportedType.name}}.{{functionN}}:{{config.apiVersion}}"
     {{/functions}}
