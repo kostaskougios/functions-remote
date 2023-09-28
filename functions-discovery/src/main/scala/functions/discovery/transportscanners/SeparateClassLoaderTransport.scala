@@ -3,7 +3,7 @@ package functions.discovery.transportscanners
 import functions.Log
 import functions.discovery.utils.ClassLoaderUtils
 import functions.discovery.utils.ClassLoaderUtils.withThreadContextClassLoader
-import functions.model.{Coordinates, FunctionsMethods, RuntimeConfig, Transport, TransportFunction}
+import functions.model.{Coordinates, RuntimeConfig, Transport, TransportFunction}
 import functions.serializerscanners.reflectivelyLoadObject
 
 import java.net.{URI, URL, URLClassLoader}

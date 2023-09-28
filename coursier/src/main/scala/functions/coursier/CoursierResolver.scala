@@ -11,7 +11,7 @@ import scala.util.Using
 /** see https://get-coursier.io/docs/api
   */
 class CoursierResolver(functionsHome: String = FunctionsHome) {
-  def resolve(dependency: Dependency) = Fetch()
+  private def resolve(dependency: Dependency) = Fetch()
     .addDependencies(dependency)
     .run()
 
