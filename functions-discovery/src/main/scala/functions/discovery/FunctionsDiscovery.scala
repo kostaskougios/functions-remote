@@ -2,13 +2,13 @@ package functions.discovery
 
 import functions.serializerscanners.GenericScanner
 import functions.discovery.transportscanners.{SeparateClassLoaderTransport, TransportScanner}
-import functions.model.{CallerFactory, FunctionDetails, FunctionsMethods, Serializer}
+import functions.model.{CallerFactory, FunctionDetails, FunctionsMethods, RuntimeConfig, Serializer}
 import functions.serializerscanners.SerializerScanner
 import functions.serializerscanners.reflectivelyLoadObject
 
 import scala.reflect.{ClassTag, classTag}
 
-class FunctionsDiscovery(classLoader: ClassLoader, serializerScanners: Seq[SerializerScanner[CallerFactory[_]]], transports: Seq[TransportScanner]):
+class FunctionsDiscovery(runtimeConfig: RuntimeConfig, serializerScanners: Seq[SerializerScanner[CallerFactory[_]]], transports: Seq[TransportScanner]):
   def discover[A: ClassTag]: Seq[FunctionDetails[A]] =
     val n       = classTag[A].runtimeClass.getName
     val mo      = loadMethodsObject(n)
@@ -23,10 +23,10 @@ class FunctionsDiscovery(classLoader: ClassLoader, serializerScanners: Seq[Seria
   def discoverFirstOne[A: ClassTag]: A = discover.head.function
 
   private def loadMethodsObject(n: String) =
-    reflectivelyLoadObject[FunctionsMethods](classLoader, n + "Methods")
+    reflectivelyLoadObject[FunctionsMethods](runtimeConfig.classLoader, n + "Methods")
 
 object FunctionsDiscovery:
-  def apply(classLoader: ClassLoader = Thread.currentThread().getContextClassLoader) =
-    val scanners   = Seq(GenericScanner[CallerFactory[_]](classLoader, Serializer.Avro, "CallerAvroSerializedFactory"))
-    val transports = Seq(new SeparateClassLoaderTransport(classLoader))
-    new FunctionsDiscovery(classLoader, scanners, transports)
+  def apply(runtimeConfig: RuntimeConfig = RuntimeConfig.withDefaults()) =
+    val scanners   = Seq(GenericScanner[CallerFactory[_]](runtimeConfig.classLoader, Serializer.Avro, "CallerAvroSerializedFactory"))
+    val transports = Seq(new SeparateClassLoaderTransport(runtimeConfig))
+    new FunctionsDiscovery(runtimeConfig, scanners, transports)

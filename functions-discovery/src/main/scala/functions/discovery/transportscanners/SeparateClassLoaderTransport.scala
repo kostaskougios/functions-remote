@@ -1,9 +1,9 @@
 package functions.discovery.transportscanners
 
 import functions.Log
-import functions.model.{Coordinates, Transport, TransportFunction}
+import functions.model.{Coordinates, RuntimeConfig, Transport, TransportFunction}
 
-class SeparateClassLoaderTransport(classLoader: ClassLoader) extends TransportScanner:
+class SeparateClassLoaderTransport(runtimeConfig: RuntimeConfig) extends TransportScanner:
   override def scan(dependency: String, className: String): TransportFunction =
     Log.info(s"scanning for dependency $dependency")
     (coords, data) =>
