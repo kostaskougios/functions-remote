@@ -1,8 +1,7 @@
 package functions.discovery.transportscanners
 
-import functions.model.TransportFunction
-import functions.model.Transport
+import functions.model.{Coordinates, Transport, TransportFunction}
 
 trait TransportScanner:
-  def scan(className: String): TransportFunction
+  def scan(dependency: String,className:String): TransportFunction
   def transport: Transport
