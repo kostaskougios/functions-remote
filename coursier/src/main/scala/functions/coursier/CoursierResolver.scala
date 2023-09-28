@@ -17,8 +17,8 @@ class CoursierResolver(functionsHome: String = FunctionsHome) {
 
   def importFunctions(depFile: String) = {
     val depF      = new File(depFile)
-    val targetDir = new File(functionsHome + s"/.dependencies")
-    targetDir.mkdir()
+    val targetDir = new File(functionsHome + s"/.local/.dependencies")
+    targetDir.mkdirs()
     println(s"Importing from ${depF.getAbsolutePath} to ${targetDir.getAbsolutePath}")
 
     val deps = Using.resource(Source.fromFile(depF, "UTF-8"))(_.getLines().toList)
@@ -31,7 +31,7 @@ class CoursierResolver(functionsHome: String = FunctionsHome) {
       val d                                   = Dependency(Module(Organization(groupId), ModuleName(artifactId)), version)
       val r                                   = resolve(d)
       val output                              = r.mkString("\n")
-      Files.write(new File(functionsHome + s"/.dependencies/$dep.classpath").toPath, output.getBytes(StandardCharsets.UTF_8))
+      Files.write(new File(targetDir, s"$dep.classpath").toPath, output.getBytes(StandardCharsets.UTF_8))
       println(s"${r.size} jars")
     }
   }
