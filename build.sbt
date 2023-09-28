@@ -47,8 +47,9 @@ lazy val coursier = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(Coursier, ScalaTest),
-    scalaVersion := "2.13.12",
-    scalacOptions -= "-Xmax-inlines"
+    scalaVersion                           := "2.13.12",
+    scalacOptions -= "-Xmax-inlines",
+    Compile / packageDoc / publishArtifact := false
   )
 
 lazy val `proxy-generator` = project
