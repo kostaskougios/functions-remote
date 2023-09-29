@@ -2,6 +2,7 @@ import codegen.proxygenerator.codegenerators.*
 import codegen.tastyextractor.StructureExtractor
 
 val TargetRoot = s"$ProjectRoot/ls/src/main/generated"
+deleteScalaFiles(TargetRoot)
 
 println(s"Project dir = $ProjectRoot")
 println(s"Generated files target dir = $TargetRoot")
