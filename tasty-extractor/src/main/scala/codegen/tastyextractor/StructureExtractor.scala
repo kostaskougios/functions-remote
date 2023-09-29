@@ -4,9 +4,8 @@ import codegen.model.GeneratorConfig
 import codegen.tastyextractor.model.{EMethod, EPackage, EParam, EType}
 import codegen.tastyextractor.utils.Cleanup.*
 import dotty.tools.dotc.ast.Trees.*
-import functions.utils.FileUtils
+import org.apache.commons.lang3.StringUtils
 
-import java.io.File
 import scala.collection.mutable
 import scala.quoted.*
 import scala.tasty.inspector.*
@@ -42,16 +41,23 @@ class StructureExtractor:
     TastyInspector.inspectTastyFiles(tastyFiles)(inspector)
     inspector.packages.toSeq
 
-  def fromJar(tastyFile: String, jar: String): Seq[EPackage] = fromJars(List(tastyFile), List(jar))
+  def fromJars(classNames: List[String], jars: List[String]): Seq[EPackage] =
+    val inspector       = new StructureExtractorInspector
+    TastyInspector.inspectAllTastyFiles(Nil, jars, Nil)(inspector)
+    val packageAndClass = classNames.map(c => (StringUtils.substringBeforeLast(c, "."), StringUtils.substringAfterLast(c, "."))).toSet
 
-  def fromJars(tastyFiles: List[String], jars: List[String]): Seq[EPackage] =
-    val inspector = new StructureExtractorInspector
-    TastyInspector.inspectAllTastyFiles(tastyFiles, jars, Nil)(inspector)
-    inspector.packages.toSeq
+    for
+      p <- inspector.packages.toSeq
+      t <- p.types if packageAndClass((p.name, t.name))
+    yield p.copy(types = List(t))
 
-  def forDependency(generatorConfig: GeneratorConfig, dep: String, exportedClass: String): Seq[EPackage] =
+  def forDependency(generatorConfig: GeneratorConfig, dep: String, exportedClasses: Seq[String]): Seq[EPackage] =
     val jar = generatorConfig.exportJar(dep)
-    fromJar(exportedClass, jar)
+    fromJars(exportedClasses.toList, List(jar))
 
 object StructureExtractor:
   def apply() = new StructureExtractor
+
+@main def trySE() =
+  val packages = StructureExtractor().forDependency(GeneratorConfig.withDefaults(), "com.example:ls-exports_3:0.1-SNAPSHOT", Seq("ls.LsFunctions"))
+  println(packages.mkString("\n"))

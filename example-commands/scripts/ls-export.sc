@@ -5,14 +5,13 @@ val TargetRoot = s"$ProjectRoot/ls/src/main/generated"
 
 println(s"Project dir = $ProjectRoot")
 println(s"Generated files target dir = $TargetRoot")
-println(s"Tasty files to import = ${LsTastyFiles.mkString(", ")}")
 
 val structureExtractor           = StructureExtractor()
 val receiverGenerator            = ReceiverGenerator()
 val methodToCaseClassGenerator   = MethodToCaseClassGenerator()
 val avroCaseClassSchemaGenerator = AvroCaseClassSchemaGenerator()
 val receiverFactory              = AvroFactories.receiver()
-val packages                     = structureExtractor(LsTastyFiles)
+val packages                     = structureExtractor.forDependency(generatorConfig, LsExportsDep, LsExports)
 val codes                        =
   receiverGenerator(packages) ++ methodToCaseClassGenerator(packages) ++ avroCaseClassSchemaGenerator(packages) ++
     receiverFactory(packages)
