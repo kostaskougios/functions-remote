@@ -30,11 +30,24 @@ val Coursier = "io.get-coursier" %% "coursier" % "2.1.7" // .cross(CrossVersion.
 val commonSettings = Seq(
 )
 
+lazy val `runtime-and-generator-common` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest)
+  )
+
+lazy val `proxy-generator-common` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest)
+  )
+
 lazy val `tasty-extractor` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(Scala3Tasty, ScalaTest, CommonsIO, CommonsText) ++ Diffx
   )
+  .dependsOn(`runtime-and-generator-common`, `proxy-generator-common`)
 
 lazy val coursier = project
   .settings(
@@ -50,7 +63,7 @@ lazy val `proxy-generator` = project
     commonSettings,
     libraryDependencies ++= Seq(ScalaTest)
   )
-  .dependsOn(`templates-lib`, `proxy-templates`, `tasty-extractor`)
+  .dependsOn(`templates-lib`, `proxy-templates`, `tasty-extractor`, `proxy-generator-common`)
   .enablePlugins(PackPlugin)
 
 lazy val `templates-lib` = project.settings(
@@ -62,7 +75,7 @@ lazy val `proxy-templates` = project.settings(
   libraryDependencies ++= Seq(Avro4s)
 )
 
-lazy val `functions-common` = project.settings(commonSettings)
+lazy val `functions-common` = project.settings(commonSettings).dependsOn(`runtime-and-generator-common`)
 
 lazy val `functions-discovery` = project.settings(commonSettings).dependsOn(`functions-common`)
 

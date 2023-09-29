@@ -1,5 +1,6 @@
 package codegen.tastyextractor
 
+import codegen.model.GeneratorConfig
 import codegen.tastyextractor.model.{EMethod, EPackage, EParam, EType}
 import codegen.tastyextractor.utils.Cleanup.*
 import dotty.tools.dotc.ast.Trees.*
@@ -38,6 +39,15 @@ class StructureExtractor:
     val inspector = new StructureExtractorInspector
     TastyInspector.inspectTastyFiles(tastyFiles)(inspector)
     inspector.packages.toSeq
+
+  def fromJar(tastyFile: String, jar: String): Seq[EPackage] = fromJars(List(tastyFile), List(jar))
+
+  def fromJars(tastyFiles: List[String], jars: List[String]): Seq[EPackage] =
+    val inspector = new StructureExtractorInspector
+    TastyInspector.inspectAllTastyFiles(tastyFiles, jars, Nil)(inspector)
+    inspector.packages.toSeq
+
+  def forDependency(generatorConfig: GeneratorConfig, dep: String): Seq[EPackage] = ???
 
 object StructureExtractor:
   def apply() = new StructureExtractor
