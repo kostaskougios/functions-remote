@@ -1,38 +1,46 @@
 package functions.coursier
 import coursier._
 import functions.coursier.utils.Env.FunctionsHome
+import functions.coursier.utils.FileUtils
+import functions.coursier.utils.FileUtils.readTextFile
 
 import java.io.File
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import scala.io.Source
-import scala.util.Using
 
 /** see https://get-coursier.io/docs/api
   */
 class CoursierResolver(functionsHome: String = FunctionsHome) {
+  def importExports(artifacts: Seq[String]) = for (artifact <- artifacts) {
+    print(s"Importing exports dependencies from $artifact ... ")
+    val depFile   = resolve(toDependency(artifact)).head
+    val targetDir = new File(functionsHome + "/.local/exports")
+    targetDir.mkdirs()
+    FileUtils.writeTextFile(targetDir, s"$artifact.export", depFile.getAbsolutePath)
+    println("Ok")
+  }
+
+  def importDependencies(artifacts: Seq[String]) = {
+    val targetDir = new File(functionsHome + "/.local/dependencies")
+    targetDir.mkdirs()
+    println(s"Importing to directory ${targetDir.getAbsolutePath}")
+    for (artifact <- artifacts) {
+      print(s"Importing $artifact ... ")
+      val d      = toDependency(artifact)
+      val r      = resolve(d)
+      val output = r.mkString("\n")
+      FileUtils.writeTextFile(targetDir, s"$artifact.classpath", output)
+      println(s"${r.size} jars")
+    }
+  }
+
   private def resolve(dependency: Dependency) = Fetch()
     .addDependencies(dependency)
     .run()
 
-  def importDependencies(depFile: String) = {
-    val depF      = new File(depFile)
-    val targetDir = new File(functionsHome + "/.local/dependencies")
-    targetDir.mkdirs()
-    println(s"Importing from ${depF.getAbsolutePath} to ${targetDir.getAbsolutePath}")
-
-    val deps = Using.resource(Source.fromFile(depF, "UTF-8"))(_.getLines().toList)
-
-    for {
-      dep <- deps.filterNot(_.isBlank)
-    } {
-      print(s"Importing $dep ... ")
-      val Array(groupId, artifactId, version) = dep.split(":")
-      val d                                   = Dependency(Module(Organization(groupId), ModuleName(artifactId)), version)
-      val r                                   = resolve(d)
-      val output                              = r.mkString("\n")
-      Files.write(new File(targetDir, s"$dep.classpath").toPath, output.getBytes(StandardCharsets.UTF_8))
-      println(s"${r.size} jars")
+  private def toDependency(dep: String) = {
+    val (groupId, artifactId, version) = dep.split(":") match {
+      case Array(groupId, artifactId, version) => (groupId, artifactId, version)
+      case _ => throw new IllegalArgumentException(s"Can't parse dependency $dep, it should be in the format of group:artifact:version")
     }
+    Dependency(Module(Organization(groupId), ModuleName(artifactId)), version)
   }
 }
