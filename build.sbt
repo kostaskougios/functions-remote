@@ -41,13 +41,14 @@ lazy val `proxy-generator-common` = project
     commonSettings,
     libraryDependencies ++= Seq(ScalaTest)
   )
+  .dependsOn(`runtime-and-generator-common`)
 
 lazy val `tasty-extractor` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(Scala3Tasty, ScalaTest, CommonsIO, CommonsText) ++ Diffx
   )
-  .dependsOn(`runtime-and-generator-common`, `proxy-generator-common`)
+  .dependsOn(`proxy-generator-common`)
 
 lazy val coursier = project
   .settings(

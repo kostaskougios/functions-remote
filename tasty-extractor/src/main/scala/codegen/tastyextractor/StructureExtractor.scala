@@ -4,7 +4,9 @@ import codegen.model.GeneratorConfig
 import codegen.tastyextractor.model.{EMethod, EPackage, EParam, EType}
 import codegen.tastyextractor.utils.Cleanup.*
 import dotty.tools.dotc.ast.Trees.*
+import functions.utils.FileUtils
 
+import java.io.File
 import scala.collection.mutable
 import scala.quoted.*
 import scala.tasty.inspector.*
@@ -47,7 +49,9 @@ class StructureExtractor:
     TastyInspector.inspectAllTastyFiles(tastyFiles, jars, Nil)(inspector)
     inspector.packages.toSeq
 
-  def forDependency(generatorConfig: GeneratorConfig, dep: String): Seq[EPackage] = ???
+  def forDependency(generatorConfig: GeneratorConfig, dep: String, exportedClass: String): Seq[EPackage] =
+    val jar = generatorConfig.exportJar(dep)
+    fromJar(exportedClass, jar)
 
 object StructureExtractor:
   def apply() = new StructureExtractor
