@@ -1,8 +1,7 @@
 package codegen.proxygenerator
 
 import codegen.model.GeneratorConfig
-import codegen.proxygenerator.codegenerators.{AvroCaseClassSchemaGenerator, AvroFactories, CallerGenerator, GenericTypeGenerator, MethodToCaseClassGenerator}
-import codegen.tastyextractor.StructureExtractor
+import codegen.proxygenerator.codegenerators.*
 
 def generateCaller(generatorConfig: GeneratorConfig): CallerBuilder = new CallerBuilder(
   generatorConfig,
@@ -12,10 +11,5 @@ def generateCaller(generatorConfig: GeneratorConfig): CallerBuilder = new Caller
   )
 )
 
-class CallerBuilder(generatorConfig: GeneratorConfig, generators: Seq[GenericTypeGenerator]):
+class CallerBuilder(generatorConfig: GeneratorConfig, generators: Seq[GenericTypeGenerator]) extends AbstractGenerator(generatorConfig, generators):
   def includeAvroSerialization: CallerBuilder = new CallerBuilder(generatorConfig, generators :+ AvroCaseClassSchemaGenerator() :+ AvroFactories.caller())
-  def generate(targetDir: String, exportDependency: String, exportedClasses: Seq[String]): Unit =
-    val structureExtractor = StructureExtractor()
-    val packages           = structureExtractor.forDependency(generatorConfig, exportDependency, exportedClasses)
-    val codes              = generators.flatMap(_(packages))
-    for c <- codes do c.writeTo(targetDir)
