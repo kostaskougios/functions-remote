@@ -1,7 +1,7 @@
 import codegen.proxygenerator.codegenerators.*
 import codegen.tastyextractor.StructureExtractor
 
-val TargetRoot  = s"$ProjectRoot/using-commands/src/main/generated"
+val TargetRoot = s"$ProjectRoot/using-commands/src/main/generated"
 
 println(s"Project dir = $ProjectRoot")
 println(s"Generated files target dir = $TargetRoot")
@@ -14,8 +14,8 @@ val avroCaseClassSchemaGenerator = AvroCaseClassSchemaGenerator()
 val callerFactory                = AvroFactories.caller()
 val packages                     = structureExtractor(LsTastyFiles)
 val codes                        =
-    callerGenerator(packages) ++ methodToCaseClassGenerator(packages) ++ avroCaseClassSchemaGenerator(packages) ++ 
-        callerFactory(packages)
+  callerGenerator(packages) ++ methodToCaseClassGenerator(packages) ++ avroCaseClassSchemaGenerator(packages) ++
+    callerFactory(packages)
 
 for c <- codes do c.writeTo(TargetRoot)
 
