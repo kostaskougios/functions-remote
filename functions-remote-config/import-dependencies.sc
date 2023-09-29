@@ -3,5 +3,5 @@
 import functions.coursier._
 
 val resolver = new CoursierResolver(".")
-resolver.importFunctions("import-functions.dep")
+resolver.importDependencies("import-dependencies.dep")
 println("Ok, functions dependencies imported under .dependencies directory")

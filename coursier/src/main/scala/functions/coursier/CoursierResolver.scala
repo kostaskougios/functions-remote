@@ -15,7 +15,7 @@ class CoursierResolver(functionsHome: String = FunctionsHome) {
     .addDependencies(dependency)
     .run()
 
-  def importFunctions(depFile: String) = {
+  def importDependencies(depFile: String) = {
     val depF      = new File(depFile)
     val targetDir = new File(functionsHome + "/.local/dependencies")
     targetDir.mkdirs()
