@@ -36,11 +36,6 @@ private class StructureExtractorInspector extends Inspector:
 /** Converts tasty files to an easier to digest domain model
   */
 class StructureExtractor:
-  def apply(tastyFiles: List[String]): Seq[EPackage] =
-    val inspector = new StructureExtractorInspector
-    TastyInspector.inspectTastyFiles(tastyFiles)(inspector)
-    inspector.packages.toSeq
-
   def fromJars(classNames: List[String], jars: List[String]): Seq[EPackage] =
     val inspector       = new StructureExtractorInspector
     TastyInspector.inspectAllTastyFiles(Nil, jars, Nil)(inspector)
