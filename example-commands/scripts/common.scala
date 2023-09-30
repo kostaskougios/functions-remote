@@ -3,7 +3,7 @@ import java.io.File
 
 val ProjectRoot = os.pwd
 
-val generatorConfig = GeneratorConfig.withDefaults("../functions-remote-config")
+val generatorConfig = GeneratorConfig.withDefaults(s"$ProjectRoot/functions-remote-config")
 
 val LsExportsDep = "com.example:ls-exports_3:0.1-SNAPSHOT"
 val LsExports    = Seq("ls.LsFunctions")

@@ -26,4 +26,4 @@ javacore.*
 generated
 .scala-build
 
-functions-remote-config/.local
+example-commands/functions-remote-config/.local
