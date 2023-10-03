@@ -2,7 +2,9 @@ package ls
 
 import ls.model.{LsOptions, LsResult}
 
-/** Some comments //> exported
+/** The exported functions of ls module
+  *
+  * //> exported
   */
 trait LsFunctions:
   /** help */

@@ -34,7 +34,7 @@ private class StructureExtractorInspector extends Inspector:
         val r = tree match
           case c: ClassDef =>
             val methods = MethodTraverser.foldTree(Nil, c)(owner)
-            val t       = EType(c.name, c.name, methods)
+            val t       = EType(c.name, c.name, c.symbol.docstring, methods)
             List(t)
           case _           =>
             Nil
@@ -60,23 +60,22 @@ private class StructureExtractorInspector extends Inspector:
 /** Converts tasty files to an easier to digest domain model
   */
 class StructureExtractor:
-  def fromJars(classNames: List[String], jars: List[String]): Seq[EPackage] =
-    val inspector       = new StructureExtractorInspector
+  def fromJars(jars: List[String]): Seq[EPackage] =
+    val inspector = new StructureExtractorInspector
     TastyInspector.inspectAllTastyFiles(Nil, jars, Nil)(inspector)
-    val packageAndClass = classNames.map(c => (StringUtils.substringBeforeLast(c, "."), StringUtils.substringAfterLast(c, "."))).toSet
 
     for
       p <- inspector.packages.toSeq
-      t <- p.types if packageAndClass((p.name, t.name))
+      t <- p.types if t.scalaDocs.exists(_.contains("//> exported"))
     yield p.copy(types = List(t))
 
-  def forDependency(generatorConfig: GeneratorConfig, dep: String, exportedClasses: Seq[String]): Seq[EPackage] =
+  def forDependency(generatorConfig: GeneratorConfig, dep: String): Seq[EPackage] =
     val jar = generatorConfig.exportJar(dep)
-    fromJars(exportedClasses.toList, List(jar))
+    fromJars(List(jar))
 
 object StructureExtractor:
   def apply() = new StructureExtractor
 
 @main def trySE() =
-  val packages = StructureExtractor().forDependency(GeneratorConfig.withDefaults(), "com.example:ls-exports_3:0.1-SNAPSHOT", Seq("ls.LsFunctions"))
+  val packages = StructureExtractor().forDependency(GeneratorConfig.withDefaults(), "com.example:ls-exports_3:0.1-SNAPSHOT")
   println(packages.mkString("\n"))
