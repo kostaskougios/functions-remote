@@ -2,7 +2,6 @@ package codegen.tastyextractor
 
 import codegen.model.GeneratorConfig
 import codegen.tastyextractor.model.{EMethod, EPackage, EParam, EType}
-import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable
 import scala.quoted.*
@@ -46,7 +45,7 @@ private class StructureExtractorInspector extends Inspector:
         val r = tree match
           case p: PackageClause =>
             val types = TypeTraverser.foldTree(Nil, p)(owner)
-            val t     = EPackage(p.symbol.name, types)
+            val t     = EPackage(p.pid.show, types)
             List(t)
           case _                =>
             Nil

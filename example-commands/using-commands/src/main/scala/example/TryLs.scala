@@ -1,7 +1,7 @@
 package example
 
+import commands.ls.LsFunctions
 import functions.discovery.FunctionsDiscovery
-import ls.LsFunctions
 
 @main def tryLs() =
   val discovery = FunctionsDiscovery()

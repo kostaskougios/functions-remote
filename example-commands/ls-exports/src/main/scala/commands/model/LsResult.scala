@@ -1,4 +1,4 @@
-package ls.model
+package commands.model
 
 case class LsResult(
     files: Seq[LsFile]

@@ -1,4 +1,4 @@
-package ls.model
+package commands.model
 
 case class LsOptions(includeDirs: Boolean = true)
 

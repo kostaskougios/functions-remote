@@ -1,6 +1,6 @@
-package ls
+package commands.ls
 
-import ls.model.{LsOptions, LsResult}
+import commands.model.{LsOptions, LsResult}
 
 /** The exported functions of ls module
   *

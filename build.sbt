@@ -92,7 +92,7 @@ lazy val `ls-exports`       = project
     exampleCommandsSettings,
     libraryDependencies ++= Seq(ScalaTest),
     buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion) ++ Seq[BuildInfoKey]("exportedArtifact" -> "ls_3"),
-    buildInfoPackage := "ls"
+    buildInfoPackage := "commands.ls"
   )
   .enablePlugins(BuildInfoPlugin)
 

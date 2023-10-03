@@ -1,11 +1,12 @@
 package exported
 
+import commands.ls.LsFunctions
+import commands.model.LsOptions
 import functions.receiver.FunctionsInvoker
 import functions.receiver.model.RegisteredFunction
-import ls.LsFunctionsMethods.Ls
-import ls.{LsFunctions, LsFunctionsAvroSerializer, LsFunctionsMethods}
-import ls.impl.LsFunctionsImpl
-import ls.model.LsOptions
+import commands.ls.LsFunctionsMethods.Ls
+import commands.ls.{LsFunctionsAvroSerializer, LsFunctionsMethods}
+import commands.ls.impl.LsFunctionsImpl
 
 import java.util.function.BiFunction
 

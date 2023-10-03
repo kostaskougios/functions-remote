@@ -1,7 +1,7 @@
-package ls.impl
+package commands.ls.impl
 
-import ls.LsFunctions
-import ls.model.{LsFile, LsOptions, LsResult}
+import commands.ls.LsFunctions
+import commands.model.{LsFile, LsOptions, LsResult}
 
 class LsFunctionsImpl extends LsFunctions:
   override def fileSize(path: String): Long = path.length * 1000
