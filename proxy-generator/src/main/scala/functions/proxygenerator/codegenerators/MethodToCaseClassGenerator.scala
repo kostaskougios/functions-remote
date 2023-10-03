@@ -1,6 +1,6 @@
-package codegen.proxygenerator.codegenerators
+package functions.proxygenerator.codegenerators
 
-import codegen.tastyextractor.model.EType
+import functions.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
 

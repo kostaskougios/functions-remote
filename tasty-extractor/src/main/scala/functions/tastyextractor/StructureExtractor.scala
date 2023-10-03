@@ -1,7 +1,7 @@
-package codegen.tastyextractor
+package functions.tastyextractor
 
-import codegen.model.GeneratorConfig
-import codegen.tastyextractor.model.{EMethod, EPackage, EParam, EType}
+import functions.model.GeneratorConfig
+import functions.tastyextractor.model.{EMethod, EPackage, EParam, EType}
 
 import scala.collection.mutable
 import scala.quoted.*

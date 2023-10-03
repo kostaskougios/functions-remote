@@ -1,4 +1,4 @@
-package codegen.tastyextractor.model
+package functions.tastyextractor.model
 
 import org.apache.commons.lang3.StringUtils
 

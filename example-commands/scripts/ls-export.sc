@@ -1,4 +1,4 @@
-import codegen.proxygenerator.*
+import functions.proxygenerator.*
 
 val TargetRoot = s"$ProjectRoot/ls/src/main/generated"
 deleteScalaFiles(TargetRoot)

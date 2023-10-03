@@ -1,7 +1,7 @@
-package codegen.proxygenerator.codegenerators.model
+package functions.proxygenerator.codegenerators.model
 
-import codegen.proxygenerator.codegenerators.{GenericTypeGenerator, MethodToCaseClassGenerator}
-import codegen.tastyextractor.model.{EMethod, EType}
+import functions.proxygenerator.codegenerators.{GenericTypeGenerator, MethodToCaseClassGenerator}
+import functions.tastyextractor.model.{EMethod, EType}
 import mustache.integration.model.{Many, Param, Params}
 
 import scala.language.implicitConversions

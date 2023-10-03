@@ -1,7 +1,7 @@
-package codegen.proxygenerator
+package functions.proxygenerator
 
-import codegen.model.GeneratorConfig
-import codegen.proxygenerator.codegenerators.*
+import functions.model.GeneratorConfig
+import functions.proxygenerator.codegenerators.*
 
 def generateCaller(generatorConfig: GeneratorConfig): CallerBuilder = new CallerBuilder(
   generatorConfig,

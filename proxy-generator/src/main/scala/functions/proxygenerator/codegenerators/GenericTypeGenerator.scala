@@ -1,7 +1,7 @@
-package codegen.proxygenerator.codegenerators
+package functions.proxygenerator.codegenerators
 
-import codegen.proxygenerator.codegenerators.model.{Code, Func, Vals}
-import codegen.tastyextractor.model.{EMethod, EPackage, EType}
+import functions.proxygenerator.codegenerators.model.{Code, Func, Vals}
+import functions.tastyextractor.model.{EMethod, EPackage, EType}
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.Many
 

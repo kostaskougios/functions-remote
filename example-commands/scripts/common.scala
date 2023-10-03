@@ -1,4 +1,4 @@
-import codegen.model.GeneratorConfig
+import functions.model.GeneratorConfig
 import java.io.File
 import org.apache.commons.io.FileUtils
 

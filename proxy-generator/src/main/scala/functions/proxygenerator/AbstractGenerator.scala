@@ -1,8 +1,8 @@
-package codegen.proxygenerator
+package functions.proxygenerator
 
-import codegen.model.GeneratorConfig
-import codegen.proxygenerator.codegenerators.GenericTypeGenerator
-import codegen.tastyextractor.StructureExtractor
+import functions.model.GeneratorConfig
+import functions.proxygenerator.codegenerators.GenericTypeGenerator
+import functions.tastyextractor.StructureExtractor
 
 abstract class AbstractGenerator(generatorConfig: GeneratorConfig, generators: Seq[GenericTypeGenerator]):
   def generate(targetDir: String, exportDependency: String): Unit =

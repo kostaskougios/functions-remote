@@ -1,4 +1,4 @@
-package codegen.proxygenerator.codegenerators.model
+package functions.proxygenerator.codegenerators.model
 
 import org.apache.commons.io.FileUtils
 

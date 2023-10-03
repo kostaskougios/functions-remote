@@ -1,4 +1,4 @@
-package codegen.model
+package functions.model
 
 import functions.environment.Env
 import functions.utils.FileUtils
