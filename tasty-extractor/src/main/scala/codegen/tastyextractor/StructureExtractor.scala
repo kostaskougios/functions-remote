@@ -17,15 +17,16 @@ private class StructureExtractorInspector extends Inspector:
     import quotes.reflect.*
     object MethodTraverser extends TreeAccumulator[List[EMethod]]:
       def foldTree(existing: List[EMethod], tree: Tree)(owner: Symbol): List[EMethod] =
-        def paramsCode(param: Any) = param match
-          case ValDef(name, tpt, preRhs) =>
-            EParam(name, tpt.show, s"$name : ${tpt.show}")
+        def paramsCode(param: Any) =
+          param match
+            case v: ValDef @unchecked =>
+              EParam(v.name, v.tpt.show, s"${v.name} : ${v.tpt.show}")
 
         val r = tree match
           case d: DefDef if !d.name.contains("$") && d.name != "<init>" =>
             val m = EMethod(d.name, d.paramss.map(pc => pc.params.map(paramsCode)), EType.code(d.returnTpt.symbol.name.toString, d.returnTpt.show))
             List(m)
-          case tree                                                     =>
+          case _                                                        =>
             Nil
         foldOverTree(existing ++ r, tree)(owner)
     end MethodTraverser
@@ -37,7 +38,7 @@ private class StructureExtractorInspector extends Inspector:
             val methods = MethodTraverser.foldTree(Nil, c)(owner)
             val t       = EType(c.name, c.name, methods)
             List(t)
-          case tree        =>
+          case _           =>
             Nil
         foldOverTree(existing ++ r, tree)(owner)
     end TypeTraverser
@@ -49,7 +50,7 @@ private class StructureExtractorInspector extends Inspector:
             val types = TypeTraverser.foldTree(Nil, p)(owner)
             val t     = EPackage(p.symbol.name, types)
             List(t)
-          case tree             =>
+          case _                =>
             Nil
         foldOverTree(existing ++ r, tree)(owner)
     end PackageTraverser
