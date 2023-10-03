@@ -2,8 +2,6 @@ package codegen.tastyextractor
 
 import codegen.model.GeneratorConfig
 import codegen.tastyextractor.model.{EMethod, EPackage, EParam, EType}
-import codegen.tastyextractor.utils.Cleanup.*
-import dotty.tools.dotc.ast.Trees.*
 import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable
