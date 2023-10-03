@@ -6,7 +6,8 @@ import io.circe.syntax.*
 import commands.ls.LsFunctionsMethods.Ls
 import commands.model.LsOptions
 
-@main def tryCirce() =
+// see https://circe.github.io/circe/
+@main def tryCirce(): Unit =
   val j       = Ls("/tmp/path", LsOptions()).asJson.noSpaces
   println(j)
   val decoder = Decoder[Ls]
