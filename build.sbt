@@ -27,6 +27,14 @@ val Avro4s   = "com.sksamuel.avro4s"              %% "avro4s-core" % "5.0.5"
 val Mustache = "com.github.spullara.mustache.java" % "compiler"    % "0.9.10"
 val Coursier = "io.get-coursier" %% "coursier" % "2.1.7" // .cross(CrossVersion.for3Use2_13).exclude("org.scala-lang.modules", "scala-xml_2.13")
 
+val CirceVersion = "0.14.1"
+
+val Circe = Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % CirceVersion)
+
 val commonSettings = Seq(
 )
 
@@ -97,7 +105,7 @@ lazy val ls = project
   .settings(
     exampleCommandsSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
-    libraryDependencies ++= Seq(Avro4s)
+    libraryDependencies ++= Seq(Avro4s) ++ Circe
   )
   .dependsOn(`ls-exports`, `functions-invoker`)
   .enablePlugins(PackPlugin)
@@ -107,6 +115,6 @@ lazy val `using-commands` = project
   .settings(
     exampleCommandsSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
-    libraryDependencies ++= Seq(Avro4s)
+    libraryDependencies ++= Seq(Avro4s) ++ Circe
   )
   .dependsOn(`ls-exports`, `functions-discovery`)
