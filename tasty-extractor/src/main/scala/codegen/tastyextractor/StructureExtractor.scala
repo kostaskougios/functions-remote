@@ -14,24 +14,49 @@ private class StructureExtractorInspector extends Inspector:
   val packages = mutable.ListBuffer.empty[EPackage]
 
   override def inspect(using Quotes)(tastys: List[Tasty[quotes.type]]): Unit =
-    for tasty <- tastys do
-      val ctx                                      = scala.quoted.quotes.asInstanceOf[scala.quoted.runtime.impl.QuotesImpl].ctx
-      given dotty.tools.dotc.core.Contexts.Context = ctx
-      tasty.ast match {
-        case PackageDef(pid, stats) =>
-          val types = stats.collect { case TypeDef(typeName, Template(constr, parentsOrDerived, self, preBody: List[_])) =>
-            def paramsCode(param: Any) = param match
-              case ValDef(name, tpt, preRhs) =>
-                EParam(name.show, removeColours(tpt.show), removeColours(s"$name : ${tpt.show}"))
+    import quotes.reflect.*
+    object MethodTraverser extends TreeAccumulator[List[EMethod]]:
+      def foldTree(existing: List[EMethod], tree: Tree)(owner: Symbol): List[EMethod] =
+        def paramsCode(param: Any) = param match
+          case ValDef(name, tpt, preRhs) =>
+            EParam(name, tpt.show, s"$name : ${tpt.show}")
 
-            val methods = preBody.collect {
-              case DefDef(name, paramss: List[List[_]] @unchecked, tpt, preRhs) if !name.toString.contains("$") =>
-                EMethod(name.toString, paramss.map(_.map(paramsCode)), EType.code(tpt.symbol.name.toString, removeColours(tpt.show)))
-            }
-            EType(typeName.toString, typeName.show, methods)
-          }
-          packages += model.EPackage(pid.name.show, types)
-      }
+        val r = tree match
+          case d: DefDef if !d.name.contains("$") && d.name != "<init>" =>
+            val m = EMethod(d.name, d.paramss.map(pc => pc.params.map(paramsCode)), EType.code(d.returnTpt.symbol.name.toString, d.returnTpt.show))
+            List(m)
+          case tree                                                     =>
+            Nil
+        foldOverTree(existing ++ r, tree)(owner)
+    end MethodTraverser
+
+    object TypeTraverser extends TreeAccumulator[List[EType]]:
+      def foldTree(existing: List[EType], tree: Tree)(owner: Symbol): List[EType] =
+        val r = tree match
+          case c: ClassDef =>
+            val methods = MethodTraverser.foldTree(Nil, c)(owner)
+            val t       = EType(c.name, c.name, methods)
+            List(t)
+          case tree        =>
+            Nil
+        foldOverTree(existing ++ r, tree)(owner)
+    end TypeTraverser
+
+    object PackageTraverser extends TreeAccumulator[List[EPackage]]:
+      def foldTree(existing: List[EPackage], tree: Tree)(owner: Symbol): List[EPackage] =
+        val r = tree match
+          case p: PackageClause =>
+            val types = TypeTraverser.foldTree(Nil, p)(owner)
+            val t     = EPackage(p.symbol.name, types)
+            List(t)
+          case tree             =>
+            Nil
+        foldOverTree(existing ++ r, tree)(owner)
+    end PackageTraverser
+
+    for tasty <- tastys do
+      val tree = tasty.ast
+      packages ++= PackageTraverser.foldTree(Nil, tree)(tree.symbol)
 
 /** Converts tasty files to an easier to digest domain model
   */
