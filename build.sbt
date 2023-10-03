@@ -64,16 +64,12 @@ lazy val `proxy-generator` = project
     commonSettings,
     libraryDependencies ++= Seq(ScalaTest)
   )
-  .dependsOn(`templates-lib`, `proxy-templates`, `tasty-extractor`, `proxy-generator-common`)
+  .dependsOn(`templates-lib`, `tasty-extractor`, `proxy-generator-common`)
   .enablePlugins(PackPlugin)
 
 lazy val `templates-lib` = project.settings(
   commonSettings,
   libraryDependencies ++= Seq(ScalaTest, CommonsIO, CommonsText, Mustache) ++ Diffx
-)
-
-lazy val `proxy-templates` = project.settings(
-  libraryDependencies ++= Seq(Avro4s)
 )
 
 lazy val `functions-common` = project.settings(commonSettings).dependsOn(`runtime-and-generator-common`)
