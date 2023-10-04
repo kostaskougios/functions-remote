@@ -11,14 +11,17 @@ class FunctionsInvoker(availableFunctions: Seq[AvailableFunction]):
     val c    = Coordinates(coordinates)
     val args = (c.toCoordinatesNoSerializer, data)
     val f    = availableFunctions
-      .find(_.functionsReceiver.invoke.isDefinedAt(args))
+      .find(af => af.serializer == c.serializer && af.functionsReceiver.invoke.isDefinedAt(args))
       .getOrElse(throw new IllegalStateException(s"Can't find method ${c.toCoordinatesNoSerializer}"))
 
     f.functionsReceiver.invoke(args)
 
 object FunctionsInvoker:
   def apply(classLoader: ClassLoader, functions: Seq[RegisteredFunction[_]]): FunctionsInvoker =
-    val scanners           = Seq(GenericScanner[ReceiverFactory[_]](classLoader, Serializer.Avro, "ReceiverAvroSerializedFactory"))
+    val scanners           = Seq(
+      GenericScanner[ReceiverFactory[_]](classLoader, Serializer.Avro, "ReceiverAvroSerializedFactory"),
+      GenericScanner[ReceiverFactory[_]](classLoader, Serializer.Json, "ReceiverCirceJsonSerializedFactory")
+    )
     val availableFunctions = for
       f               <- functions
       s               <- scanners

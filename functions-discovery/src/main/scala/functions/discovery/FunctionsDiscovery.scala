@@ -27,6 +27,9 @@ class FunctionsDiscovery(runtimeConfig: RuntimeConfig, serializerScanners: Seq[S
 
 object FunctionsDiscovery:
   def apply(runtimeConfig: RuntimeConfig = RuntimeConfig.withDefaults()) =
-    val scanners   = Seq(GenericScanner[CallerFactory[_]](runtimeConfig.classLoader, Serializer.Avro, "CallerAvroSerializedFactory"))
+    val scanners   = Seq(
+      GenericScanner[CallerFactory[_]](runtimeConfig.classLoader, Serializer.Avro, "CallerAvroSerializedFactory"),
+      GenericScanner[CallerFactory[_]](runtimeConfig.classLoader, Serializer.Avro, "CallerCirceJsonSerializedFactory")
+    )
     val transports = Seq(new SeparateClassLoaderTransport(runtimeConfig))
     new FunctionsDiscovery(runtimeConfig, scanners, transports)
