@@ -8,9 +8,9 @@ import {{.}}
 {{/imports}}
 
 class {{className}}:
-  private def toJson[A](a: A, encoder: Encoder[A]) = encoder(a).noSpaces.getBytes("UTF-8")
+  private def toJson[A](a: A, encoder: Encoder[A]): Array[Byte] = encoder(a).noSpaces.getBytes("UTF-8")
 
-  private def parseJson[A](data: Array[Byte],decoder: Decoder[A]):A =
+  private def parseJson[A](data: Array[Byte],decoder: Decoder[A]): A =
     val j = new String(data,"UTF-8")
     parse(j).flatMap(decoder.decodeJson)
       .getOrElse(throw new IllegalArgumentException(s"Invalid json: $j"))
