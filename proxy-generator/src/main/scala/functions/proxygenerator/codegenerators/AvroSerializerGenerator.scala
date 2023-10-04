@@ -5,7 +5,7 @@ import functions.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
 
-object AvroCaseClassSchemaGenerator:
+object AvroSerializerGenerator:
   object DefaultNamingConventions extends GenericTypeGenerator.NamingConventions:
     override def className(`type`: EType) = `type`.name + "AvroSerializer"
 

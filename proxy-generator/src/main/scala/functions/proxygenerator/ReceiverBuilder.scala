@@ -12,4 +12,5 @@ def generateReceiver(generatorConfig: GeneratorConfig): ReceiverBuilder = new Re
 )
 
 class ReceiverBuilder(generatorConfig: GeneratorConfig, generators: Seq[GenericTypeGenerator]) extends AbstractGenerator(generatorConfig, generators):
-  def includeAvroSerialization: CallerBuilder = new CallerBuilder(generatorConfig, generators :+ AvroCaseClassSchemaGenerator() :+ AvroFactories.receiver())
+  def includeAvroSerialization: CallerBuilder = new CallerBuilder(generatorConfig, generators :+ AvroSerializerGenerator() :+ AvroFactories.receiver())
+  def includeJsonSerialization: CallerBuilder = new CallerBuilder(generatorConfig, generators :+ JsonSerializerGenerator())
