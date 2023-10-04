@@ -17,8 +17,8 @@ class FunctionsDiscovery(runtimeConfig: RuntimeConfig, serializerScanners: Seq[S
       (scanner, factory) <- scanned
       t                  <- transports
       tr = t.scan(mo.artifactCoordinates, n)
-      c  = factory.createCaller(tr).asInstanceOf[A]
-    yield FunctionDetails(c, scanner.serializer, t.transport)
+      f  = factory.createCaller(tr).asInstanceOf[A]
+    yield FunctionDetails(f, scanner.serializer, t.transport)
 
   def discoverFirstOne[A: ClassTag]: A = discover.head.function
 
@@ -29,7 +29,7 @@ object FunctionsDiscovery:
   def apply(runtimeConfig: RuntimeConfig = RuntimeConfig.withDefaults()) =
     val scanners   = Seq(
       GenericScanner[CallerFactory[_]](runtimeConfig.classLoader, Serializer.Avro, "CallerAvroSerializedFactory"),
-      GenericScanner[CallerFactory[_]](runtimeConfig.classLoader, Serializer.Avro, "CallerCirceJsonSerializedFactory")
+      GenericScanner[CallerFactory[_]](runtimeConfig.classLoader, Serializer.Json, "CallerCirceJsonSerializedFactory")
     )
     val transports = Seq(new SeparateClassLoaderTransport(runtimeConfig))
     new FunctionsDiscovery(runtimeConfig, scanners, transports)
