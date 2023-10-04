@@ -12,7 +12,7 @@ class FunctionsInvoker(availableFunctions: Seq[AvailableFunction]):
     val args = (c.toCoordinatesNoSerializer, data)
     val f    = availableFunctions
       .find(af => af.serializer == c.serializer && af.functionsReceiver.invoke.isDefinedAt(args))
-      .getOrElse(throw new IllegalStateException(s"Can't find method ${c.toCoordinatesNoSerializer}"))
+      .getOrElse(throw new IllegalStateException(s"Can't find method to call for coordinates $c"))
 
     f.functionsReceiver.invoke(args)
 
