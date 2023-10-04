@@ -12,5 +12,7 @@ def generateCaller(generatorConfig: GeneratorConfig): CallerBuilder = new Caller
 )
 
 class CallerBuilder(generatorConfig: GeneratorConfig, generators: Seq[GenericTypeGenerator]) extends AbstractGenerator(generatorConfig, generators):
-  def includeAvroSerialization: CallerBuilder = new CallerBuilder(generatorConfig, generators :+ AvroSerializerGenerator() :+ AvroFactories.caller())
-  def includeJsonSerialization: CallerBuilder = new CallerBuilder(generatorConfig, generators :+ JsonSerializerGenerator())
+  def includeAvroSerialization: CallerBuilder =
+    new CallerBuilder(generatorConfig, generators :+ AvroSerializerGenerator() :+ AvroFactories.caller())
+  def includeJsonSerialization: CallerBuilder =
+    new CallerBuilder(generatorConfig, generators :+ CirceJsonSerializerGenerator() :+ JsonCirceFactories.caller())

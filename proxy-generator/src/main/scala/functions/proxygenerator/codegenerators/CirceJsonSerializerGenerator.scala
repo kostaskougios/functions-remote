@@ -5,12 +5,12 @@ import functions.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
 
-object JsonSerializerGenerator:
+object CirceJsonSerializerGenerator:
   object DefaultNamingConventions extends GenericTypeGenerator.NamingConventions:
-    override def className(`type`: EType) = `type`.name + "JsonSerializer"
+    override def className(`type`: EType) = `type`.name + "CirceJsonSerializer"
 
   def apply(namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions) =
     new GenericTypeGenerator(
       namingConventions,
-      MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsJsonSerializer")
+      MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsCirceJsonSerializer")
     )

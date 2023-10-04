@@ -1,4 +1,4 @@
 package functions.model
 
 enum Serializer:
-  case Avro
+  case Avro, CirceJson
