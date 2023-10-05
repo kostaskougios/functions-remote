@@ -6,3 +6,4 @@ package endtoend.tests
   */
 trait SimpleFunctions:
   def add(a: Int, b: Int): Int
+  def multiply(a: Int, b: Int): Int
