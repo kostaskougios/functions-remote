@@ -9,4 +9,7 @@ abstract class AbstractGenerator(generatorConfig: GeneratorConfig, generators: S
     val structureExtractor = StructureExtractor()
     val packages           = structureExtractor.forDependency(generatorConfig, exportDependency)
     val codes              = generators.flatMap(_(packages))
-    for c <- codes do c.writeTo(targetDir)
+    println(s"Will write generated files under $targetDir")
+    for c <- codes do
+      println(s"Creating ${c.file}")
+      c.writeTo(targetDir)
