@@ -86,16 +86,51 @@ lazy val `functions-discovery` = project.settings(commonSettings).dependsOn(`fun
 
 lazy val `functions-invoker` = project.settings(commonSettings).dependsOn(`functions-common`)
 
+// ----------------------- end to end test modules --------------------------------
+val endToEndTestsSettings = Seq(
+  organization := "functions.end-to-end-tests",
+  version      := "0.1-SNAPSHOT"
+)
+
+lazy val `tests-exports` = project
+  .in(file("end-to-end-tests/tests-exports"))
+  .settings(
+    endToEndTestsSettings,
+    libraryDependencies ++= Seq(ScalaTest),
+    buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "tests-impl_3"),
+    buildInfoPackage := "endtoend.tests"
+  )
+  .enablePlugins(BuildInfoPlugin)
+
+lazy val `tests-impl` = project
+  .in(file("end-to-end-tests/tests-impl"))
+  .settings(
+    endToEndTestsSettings,
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
+    libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
+  )
+  .dependsOn(`tests-exports`, `functions-invoker`)
+
+lazy val `using-tests` = project
+  .in(file("end-to-end-tests/using-tests"))
+  .settings(
+    endToEndTestsSettings,
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
+    libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
+  )
+  .dependsOn(`tests-exports`, `functions-discovery`)
+
 // ----------------------- Example commands ---------------------------------------
 val exampleCommandsSettings = Seq(
-  organization := "com.example"
+  organization := "com.example",
+  version      := "0.1-SNAPSHOT"
 )
 lazy val `ls-exports`       = project
   .in(file("example-commands/ls-exports"))
   .settings(
     exampleCommandsSettings,
     libraryDependencies ++= Seq(ScalaTest),
-    buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion) ++ Seq[BuildInfoKey]("exportedArtifact" -> "ls_3"),
+    buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "ls_3"),
     buildInfoPackage := "commands.ls"
   )
   .enablePlugins(BuildInfoPlugin)
@@ -108,7 +143,6 @@ lazy val ls = project
     libraryDependencies ++= Seq(Avro4s) ++ Circe
   )
   .dependsOn(`ls-exports`, `functions-invoker`)
-  .enablePlugins(PackPlugin)
 
 lazy val `using-commands` = project
   .in(file("example-commands/using-commands"))
