@@ -2,7 +2,7 @@ package functions.discovery
 
 import functions.serializerscanners.GenericScanner
 import functions.discovery.transportscanners.{SeparateClassLoaderTransport, TransportScanner}
-import functions.model.{CallerFactory, FunctionDetails, FunctionsMethods, RuntimeConfig, Serializer}
+import functions.model.{CallerFactory, Coordinates, FunctionDetails, FunctionsMethods, RuntimeConfig, Serializer}
 import functions.serializerscanners.SerializerScanner
 import functions.serializerscanners.reflectivelyLoadObject
 
