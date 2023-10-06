@@ -5,5 +5,6 @@ package endtoend.tests
   * Mark it as exported: //> exported
   */
 trait SimpleFunctions:
+  def noArg(): Int
   def add(a: Int, b: Int): Int
   def multiply(a: Int, b: Int): Int

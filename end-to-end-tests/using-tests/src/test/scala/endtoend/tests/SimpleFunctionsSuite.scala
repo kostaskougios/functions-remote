@@ -17,3 +17,7 @@ class SimpleFunctionsSuite extends AbstractEndToEndSuite:
     test(s"multiply using $transport / $serializer") {
       function.multiply(2, 3) should be(6)
     }
+
+    test(s"noArg using $transport / $serializer") {
+      function.noArg() should be(10)
+    }
