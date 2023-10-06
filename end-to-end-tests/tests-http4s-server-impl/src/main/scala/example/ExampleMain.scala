@@ -3,7 +3,9 @@ package example
 import cats.effect.{Async, IO, IOApp, Sync}
 import cats.syntax.all.*
 import com.comcast.ip4s.*
+import endtoend.tests.SimpleFunctionsMethods
 import fs2.io.net.Network
+import functions.model.Serializer
 import org.http4s.dsl.Http4sDsl
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.headers.`Content-Type`
@@ -44,8 +46,12 @@ object QuickstartRoutes:
   def helloWorldRoutes[F[_]: Sync]: HttpRoutes[F] =
     val dsl = new Http4sDsl[F] {}
     import dsl.*
-    HttpRoutes.of[F] { case GET -> Root / "hello" / name =>
-      for {
-        resp <- Ok(s"hello $name!".getBytes("UTF-8")).map(_.withContentType(`Content-Type`(MediaType.text.plain)))
-      } yield resp
+    HttpRoutes.of[F] {
+      case GET -> Root / "hello" / name =>
+        for {
+          resp <- Ok(s"hello $name!".getBytes("UTF-8")).map(_.withContentType(`Content-Type`(MediaType.text.plain)))
+        } yield resp
+
+      case POST -> Root / "Json" / SimpleFunctionsMethods.Methods.Add =>
+        Ok(s"""{"x":5}""".getBytes("UTF-8")).map(_.withContentType(`Content-Type`(MediaType.application.json)))
     }

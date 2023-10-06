@@ -142,6 +142,15 @@ lazy val `tests-http4s-server-impl` = project
   )
   .dependsOn(`tests-exports`, `functions-invoker`)
 
+lazy val `tests-http4s-client-impl` = project
+  .in(file("end-to-end-tests/tests-http4s-client-impl"))
+  .settings(
+    endToEndTestsSettings,
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
+    libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe ++ Http4sClient ++ Http4sCirce
+  )
+  .dependsOn(`tests-exports`, `functions-invoker`)
+
 lazy val `using-tests` = project
   .in(file("end-to-end-tests/using-tests"))
   .settings(
