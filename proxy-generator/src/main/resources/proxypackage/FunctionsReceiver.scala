@@ -12,7 +12,7 @@ class {{className}}(
   {{/functions}}
     f: {{exportedType.name}}
 ) extends FunctionsReceiver:
-  override val invoke: PartialFunction[( String, Array[Byte]) , Array[Byte]] =
+  override val invoke: PartialFunction[(String, Array[Byte]) , Array[Byte]] =
     {{#functions}}
       case ({{methodParams}}.Methods.{{caseClassName}}, data) => {{functionN}}(data)
     {{/functions}}
