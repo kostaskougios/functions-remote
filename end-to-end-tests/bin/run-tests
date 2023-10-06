@@ -1,0 +1,13 @@
+# run me from the root directory of the project
+
+echo "Publishing artifacts"
+sbt publishLocal
+
+cd end-to-end-tests/config
+scala-cli import-dependencies.sc
+
+cd ..
+bin/import-and-export-functions
+
+cd ..
+sbt using-tests/test
