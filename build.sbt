@@ -10,6 +10,8 @@ ThisBuild / scalaVersion := scala3Version
 
 ThisBuild / scalacOptions ++= Seq("-unchecked", "-feature", "-deprecation", "-Xmax-inlines", "64")
 
+// ----------------------- dependencies --------------------------------
+
 val Scala3Compiler = "org.scala-lang" %% "scala3-compiler"        % scala3Version
 val Scala3Tasty    = "org.scala-lang" %% "scala3-tasty-inspector" % scala3Version
 
@@ -45,6 +47,10 @@ val Http4sServer = Seq(
 val Http4sClient = Seq(
   "org.http4s" %% "http4s-ember-client" % Http4sVersion
 )
+
+val Http4sCirce = Seq("org.http4s" %% "http4s-circe" % Http4sVersion)
+
+// ----------------------- modules --------------------------------
 
 val commonSettings = Seq(
 )
@@ -99,7 +105,7 @@ lazy val `functions-invoker` = project.settings(commonSettings).dependsOn(`funct
 
 lazy val `http4s-server` = project.settings(
   commonSettings,
-  libraryDependencies ++= Http4sServer ++ Seq(ScalaTest)
+  libraryDependencies ++= Http4sServer ++ Circe ++ Http4sCirce ++ Seq(ScalaTest)
 )
 
 // ----------------------- end to end test modules --------------------------------
