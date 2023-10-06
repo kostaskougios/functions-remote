@@ -35,6 +35,17 @@ val Circe = Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % CirceVersion)
 
+val Http4sVersion = "0.23.23"
+
+val Http4sServer = Seq(
+  "org.http4s" %% "http4s-ember-server" % Http4sVersion,
+  "org.http4s" %% "http4s-dsl"          % Http4sVersion
+)
+
+val Http4sClient = Seq(
+  "org.http4s" %% "http4s-ember-client" % Http4sVersion
+)
+
 val commonSettings = Seq(
 )
 
@@ -85,6 +96,11 @@ lazy val `functions-common` = project.settings(commonSettings).dependsOn(`runtim
 lazy val `functions-discovery` = project.settings(commonSettings).dependsOn(`functions-common`)
 
 lazy val `functions-invoker` = project.settings(commonSettings).dependsOn(`functions-common`)
+
+lazy val `http4s-server` = project.settings(
+  commonSettings,
+  libraryDependencies ++= Http4sServer ++ Seq(ScalaTest)
+)
 
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
