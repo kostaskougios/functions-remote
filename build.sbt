@@ -25,7 +25,7 @@ val CommonsIO   = "commons-io"         % "commons-io"      % "2.11.0"
 
 val Avro4s   = "com.sksamuel.avro4s"              %% "avro4s-core" % "5.0.5"
 val Mustache = "com.github.spullara.mustache.java" % "compiler"    % "0.9.10"
-val Coursier = "io.get-coursier" %% "coursier" % "2.1.7" // .cross(CrossVersion.for3Use2_13).exclude("org.scala-lang.modules", "scala-xml_2.13")
+val Coursier = "io.get-coursier"                  %% "coursier"    % "2.1.7"
 
 val CirceVersion = "0.14.1"
 
