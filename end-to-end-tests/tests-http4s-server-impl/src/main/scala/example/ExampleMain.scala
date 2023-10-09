@@ -5,15 +5,12 @@ import cats.syntax.all.*
 import com.comcast.ip4s.*
 import endtoend.tests.SimpleFunctionsMethods
 import fs2.io.net.Network
-import functions.model.Serializer
 import org.http4s.dsl.Http4sDsl
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.headers.`Content-Type`
 import org.http4s.implicits.*
 import org.http4s.server.middleware.Logger
 import org.http4s.{EntityEncoder, HttpRoutes, MediaType}
-
-import java.nio.charset.Charset
 
 object ExampleMain extends IOApp.Simple:
   val run = QuickstartServer.run[IO]
