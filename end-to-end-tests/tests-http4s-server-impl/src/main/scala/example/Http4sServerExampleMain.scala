@@ -12,7 +12,7 @@ import org.http4s.implicits.*
 import org.http4s.server.middleware.Logger
 import org.http4s.{EntityEncoder, HttpRoutes, MediaType}
 
-object ExampleMain extends IOApp.Simple:
+object Http4sServerExampleMain extends IOApp.Simple:
   val run = QuickstartServer.run[IO]
 
 object QuickstartServer:
@@ -43,12 +43,10 @@ object QuickstartRoutes:
   def helloWorldRoutes[F[_]: Sync]: HttpRoutes[F] =
     val dsl = new Http4sDsl[F] {}
     import dsl.*
-    HttpRoutes.of[F] {
-      case GET -> Root / "hello" / name =>
-        for {
-          resp <- Ok(s"hello $name!".getBytes("UTF-8")).map(_.withContentType(`Content-Type`(MediaType.text.plain)))
-        } yield resp
-
-      case POST -> Root / "Json" / SimpleFunctionsMethods.Methods.Add =>
-        Ok(s"""{"x":5}""".getBytes("UTF-8")).map(_.withContentType(`Content-Type`(MediaType.application.json)))
+    HttpRoutes.of[F] { case req @ POST -> Root / "Json" / SimpleFunctionsMethods.Methods.Add =>
+      req.bodyText
+      for
+        b <- req.body.compile.to(Array)
+        r <- Ok(s"""{"x":5}""".getBytes("UTF-8")).map(_.withContentType(`Content-Type`(MediaType.application.json)))
+      yield r
     }
