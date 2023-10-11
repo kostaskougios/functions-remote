@@ -26,7 +26,7 @@ object Http4sClientExample extends IOApp.Simple:
 
     import dsl.*
     for res <- client.expect[Array[Byte]](
-        POST(uri"http://localhost:8080/Json/endtoend.tests.SimpleFunctions:add").withBodyStream(
+        PUT(uri"http://localhost:8080/Json/endtoend.tests.SimpleFunctions:add").withBodyStream(
           Stream.emits(
             serializer.addSerializer(SimpleFunctionsMethods.Add(2, 3))
           )

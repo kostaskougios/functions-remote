@@ -51,10 +51,10 @@ class SFRoutes[F[_]: Sync](receiver: SimpleFunctionsReceiver, contentType: `Cont
   import dsl.*
 
   def addRoute: PartialFunction[Request[F], F[Response[F]]] =
-    case req @ POST -> Root / "Json" / SimpleFunctionsMethods.Methods.Add =>
+    case req @ PUT -> Root / "Json" / method =>
       for
         b <- req.body.compile.to(Array)
         _      = println(s"Received : ${new String(b, "UTF-8")}")
-        resBin = receiver.add(b)
+        resBin = receiver.invoke(method, b)
         r <- Ok(resBin).map(_.withContentType(contentType))
       yield r
