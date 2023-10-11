@@ -28,4 +28,3 @@ class RequestProcessor[F[_]: Sync](invoker: FunctionsInvoker):
     serializer match
       case Serializer.Json => `Content-Type`(MediaType.application.json)
       case Serializer.Avro => `Content-Type`(MediaType.application.`octet-stream`)
-      case x               => throw new IllegalArgumentException(s"Not yet implemented content type for $x , please report as a bug")
