@@ -10,7 +10,7 @@ import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.headers.`Content-Type`
 import org.http4s.implicits.*
 import org.http4s.server.middleware.Logger
-import org.http4s.{EntityEncoder, HttpRoutes, MediaType}
+import org.http4s.{EntityEncoder, HttpRoutes, MediaType, Request, Response}
 
 object Http4sServerExampleMain extends IOApp.Simple:
   val run = QuickstartServer.run[IO]
@@ -43,13 +43,18 @@ object QuickstartServer:
 
 object QuickstartRoutes:
   def helloWorldRoutes[F[_]: Sync](receiver: SimpleFunctionsReceiver, contentType: `Content-Type`): HttpRoutes[F] =
-    val dsl = new Http4sDsl[F] {}
-    import dsl.*
-    HttpRoutes.of[F] { case req @ POST -> Root / "Json" / SimpleFunctionsMethods.Methods.Add =>
+    val routes = new SFRoutes[F](receiver, contentType)
+    HttpRoutes.of[F](routes.addRoute)
+
+class SFRoutes[F[_]: Sync](receiver: SimpleFunctionsReceiver, contentType: `Content-Type`):
+  private val dsl = new Http4sDsl[F] {}
+  import dsl.*
+
+  def addRoute: PartialFunction[Request[F], F[Response[F]]] =
+    case req @ POST -> Root / "Json" / SimpleFunctionsMethods.Methods.Add =>
       for
         b <- req.body.compile.to(Array)
         _      = println(s"Received : ${new String(b, "UTF-8")}")
-        resBin = receiver.invoke(SimpleFunctionsMethods.Methods.Add, b)
+        resBin = receiver.add(b)
         r <- Ok(resBin).map(_.withContentType(contentType))
       yield r
-    }
