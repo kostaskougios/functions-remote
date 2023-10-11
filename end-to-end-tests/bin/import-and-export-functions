@@ -2,3 +2,4 @@ scala-cli scripts scripts/tests-export.sc
 scala-cli scripts scripts/tests-import.sc
 
 scala-cli scripts scripts/tests-http4s-export.sc
+scala-cli scripts scripts/tests-http4s-import.sc

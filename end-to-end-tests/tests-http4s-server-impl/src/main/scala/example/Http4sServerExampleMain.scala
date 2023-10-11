@@ -3,7 +3,7 @@ package example
 import cats.effect.{Async, IO, IOApp, Sync}
 import cats.syntax.all.*
 import com.comcast.ip4s.*
-import endtoend.tests.SimpleFunctionsMethods
+import endtoend.tests.{SimpleFunctionsImpl, SimpleFunctionsMethods, SimpleFunctionsReceiver, SimpleFunctionsReceiverCirceJsonSerializedFactory}
 import fs2.io.net.Network
 import org.http4s.dsl.Http4sDsl
 import org.http4s.ember.server.EmberServerBuilder
@@ -22,8 +22,10 @@ object QuickstartServer:
     // Can also be done via a Router if you
     // want to extract segments not checked
     // in the underlying routes.
-    val httpApp = (
-      QuickstartRoutes.helloWorldRoutes[F]
+    val impl     = new SimpleFunctionsImpl
+    val receiver = SimpleFunctionsReceiverCirceJsonSerializedFactory.createReceiver(impl)
+    val httpApp  = (
+      QuickstartRoutes.helloWorldRoutes[F](receiver, `Content-Type`(MediaType.application.json))
     ).orNotFound
 
     // With Middlewares in place
@@ -40,13 +42,14 @@ object QuickstartServer:
   }.useForever
 
 object QuickstartRoutes:
-  def helloWorldRoutes[F[_]: Sync]: HttpRoutes[F] =
+  def helloWorldRoutes[F[_]: Sync](receiver: SimpleFunctionsReceiver, contentType: `Content-Type`): HttpRoutes[F] =
     val dsl = new Http4sDsl[F] {}
     import dsl.*
     HttpRoutes.of[F] { case req @ POST -> Root / "Json" / SimpleFunctionsMethods.Methods.Add =>
-      req.bodyText
       for
         b <- req.body.compile.to(Array)
-        r <- Ok(s"""{"x":5}""".getBytes("UTF-8")).map(_.withContentType(`Content-Type`(MediaType.application.json)))
+        _      = println(s"Received : ${new String(b, "UTF-8")}")
+        resBin = receiver.invoke(SimpleFunctionsMethods.Methods.Add, b)
+        r <- Ok(resBin).map(_.withContentType(contentType))
       yield r
     }

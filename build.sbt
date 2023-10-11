@@ -140,7 +140,7 @@ lazy val `tests-http4s-server-impl` = project
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe ++ Http4sServer
   )
-  .dependsOn(`tests-exports`, `functions-invoker`)
+  .dependsOn(`tests-exports`, `tests-impl`, `functions-invoker`)
 
 lazy val `tests-http4s-client-impl` = project
   .in(file("end-to-end-tests/tests-http4s-client-impl"))
