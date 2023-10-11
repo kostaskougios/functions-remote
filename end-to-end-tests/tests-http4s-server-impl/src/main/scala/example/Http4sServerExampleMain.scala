@@ -3,8 +3,11 @@ package example
 import cats.effect.{Async, IO, IOApp, Sync}
 import cats.syntax.all.*
 import com.comcast.ip4s.*
-import endtoend.tests.{SimpleFunctionsImpl, SimpleFunctionsMethods, SimpleFunctionsReceiver, SimpleFunctionsReceiverCirceJsonSerializedFactory}
+import endtoend.tests.{SimpleFunctions, SimpleFunctionsImpl, SimpleFunctionsMethods, SimpleFunctionsReceiver, SimpleFunctionsReceiverCirceJsonSerializedFactory}
 import fs2.io.net.Network
+import functions.http4s.RequestProcessor
+import functions.receiver.FunctionsInvoker
+import functions.receiver.model.RegisteredFunction
 import org.http4s.dsl.Http4sDsl
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.headers.`Content-Type`
@@ -25,7 +28,7 @@ object QuickstartServer:
     val impl     = new SimpleFunctionsImpl
     val receiver = SimpleFunctionsReceiverCirceJsonSerializedFactory.createReceiver(impl)
     val httpApp  = (
-      QuickstartRoutes.helloWorldRoutes[F](receiver, `Content-Type`(MediaType.application.json))
+      QuickstartRoutes.simpleFunctionsRoutes[F]
     ).orNotFound
 
     // With Middlewares in place
@@ -42,19 +45,11 @@ object QuickstartServer:
   }.useForever
 
 object QuickstartRoutes:
-  def helloWorldRoutes[F[_]: Sync](receiver: SimpleFunctionsReceiver, contentType: `Content-Type`): HttpRoutes[F] =
-    val routes = new SFRoutes[F](receiver, contentType)
-    HttpRoutes.of[F](routes.addRoute)
+  def simpleFunctionsRoutes[F[_]: Sync]: HttpRoutes[F] =
+    val invoker          = FunctionsInvoker.withFunctions(RegisteredFunction[SimpleFunctions](new SimpleFunctionsImpl))
+    val requestProcessor = new RequestProcessor[F](invoker)
+    val dsl              = new Http4sDsl[F] {}
+    import dsl.*
 
-class SFRoutes[F[_]: Sync](receiver: SimpleFunctionsReceiver, contentType: `Content-Type`):
-  private val dsl = new Http4sDsl[F] {}
-  import dsl.*
-
-  def addRoute: PartialFunction[Request[F], F[Response[F]]] =
-    case req @ PUT -> Root / "Json" / method =>
-      for
-        b <- req.body.compile.to(Array)
-        _      = println(s"Received : ${new String(b, "UTF-8")}")
-        resBin = receiver.invoke(method, b)
-        r <- Ok(resBin).map(_.withContentType(contentType))
-      yield r
+    HttpRoutes.of[F]:
+      case req @ PUT -> Root / format / method => requestProcessor.invoke(req, format, method)

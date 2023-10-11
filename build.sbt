@@ -103,10 +103,12 @@ lazy val `functions-discovery` = project.settings(commonSettings).dependsOn(`fun
 
 lazy val `functions-invoker` = project.settings(commonSettings).dependsOn(`functions-common`)
 
-lazy val `http4s-server` = project.settings(
-  commonSettings,
-  libraryDependencies ++= Http4sServer ++ Circe ++ Http4sCirce ++ Seq(ScalaTest)
-)
+lazy val `http4s-server` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Http4sServer ++ Circe ++ Http4sCirce ++ Seq(ScalaTest)
+  )
+  .dependsOn(`functions-invoker`)
 
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
@@ -140,7 +142,7 @@ lazy val `tests-http4s-server-impl` = project
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe ++ Http4sServer
   )
-  .dependsOn(`tests-exports`, `tests-impl`, `functions-invoker`)
+  .dependsOn(`tests-exports`, `tests-impl`, `functions-invoker`, `http4s-server`)
 
 lazy val `tests-http4s-client-impl` = project
   .in(file("end-to-end-tests/tests-http4s-client-impl"))
