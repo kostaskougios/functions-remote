@@ -106,9 +106,16 @@ lazy val `functions-invoker` = project.settings(commonSettings).dependsOn(`funct
 lazy val `http4s-server` = project
   .settings(
     commonSettings,
-    libraryDependencies ++= Http4sServer ++ Circe ++ Http4sCirce ++ Seq(ScalaTest)
+    libraryDependencies ++= Http4sServer ++ Seq(ScalaTest)
   )
   .dependsOn(`functions-invoker`)
+
+lazy val `http4s-client` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Http4sClient ++ Seq(ScalaTest)
+  )
+  .dependsOn(`functions-discovery`)
 
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
