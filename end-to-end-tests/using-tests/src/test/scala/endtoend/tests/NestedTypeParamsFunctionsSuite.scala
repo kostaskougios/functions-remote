@@ -1,6 +1,6 @@
 package endtoend.tests
 
-import endtoend.tests.model.{Param1, Param2, Return1}
+import endtoend.tests.model.{CombinedReturn, Param1, Param2, Return1}
 import org.scalatest.matchers.should.Matchers.*
 
 class NestedTypeParamsFunctionsSuite extends AbstractEndToEndSuite:
@@ -21,4 +21,13 @@ class NestedTypeParamsFunctionsSuite extends AbstractEndToEndSuite:
 
     test(s"seqOfP1 using $transport / $serializer") {
       function.seqOfP1(Seq(Param1(2), Param1(3))) should be(Seq(Return1(2), Return1(3)))
+    }
+
+    test(s"seqOfP1P2 using $transport / $serializer") {
+      function.seqOfP1P2(Seq(Param1(2), Param1(3)), Seq(Param2(3.5))) should be(
+        CombinedReturn(
+          Seq(Return1(2), Return1(3)),
+          Seq(Return1(3))
+        )
+      )
     }
