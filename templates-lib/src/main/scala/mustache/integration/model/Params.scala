@@ -5,4 +5,4 @@ case class Params(params: Seq[Param]):
   def toMethodCallArguments: String = params.map(_.name).mkString(", ")
 
 case class Param(name: String, `type`: String, last: Boolean):
-  def toMethodDeclArguments: String = s"$name:${`type`}"
+  def toMethodDeclArguments: String = s"$name: ${`type`}"
