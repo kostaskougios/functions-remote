@@ -28,7 +28,7 @@ object Func:
         params.toMethodDeclArguments,
         params.toMethodCallArguments,
         params.params,
-        m.returnType.name,
+        m.returnType.code,
         methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
         caseClassName,
         m eq last

@@ -21,3 +21,7 @@ class SimpleFunctionsSuite extends AbstractEndToEndSuite:
     test(s"noArg using $transport / $serializer") {
       function.noArg() should be(10)
     }
+
+    test(s"toList using $transport / $serializer") {
+      function.toList(1, 3) should be(List(1, 2, 3))
+    }

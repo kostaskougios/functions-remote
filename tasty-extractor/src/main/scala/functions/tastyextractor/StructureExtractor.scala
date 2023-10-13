@@ -17,7 +17,8 @@ private class StructureExtractorInspector extends Inspector:
         def paramsCode(param: Any) =
           param match
             case v: ValDef @unchecked =>
-              EParam(v.name, v.tpt.show, s"${v.name} : ${v.tpt.show}")
+              val tpe = EType.code(v.tpt.symbol.name, v.tpt.show)
+              EParam(v.name, tpe, s"${v.name} : ${v.tpt.show}")
 
         val r = tree match
           case d: DefDef if !d.name.contains("$") && d.name != "<init>" =>
