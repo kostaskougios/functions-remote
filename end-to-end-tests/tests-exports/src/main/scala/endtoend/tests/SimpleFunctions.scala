@@ -9,3 +9,4 @@ trait SimpleFunctions:
   def add(a: Int, b: Int): Int
   def multiply(a: Int, b: Int): Int
   def toList(from: Int, to: Int): List[Int]
+  def listParam(from: List[Int]): Int

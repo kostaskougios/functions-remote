@@ -11,6 +11,8 @@ case class EType(name: String, code: String, scalaDocs: Option[String], methods:
       .map(_.asImport)
       .distinct
 
+  def typeUnqualified = code
+
   def isAlwaysImported: Boolean = asImport.startsWith("scala.") && !asImport.substring(7).contains('.')
 
 object EType:

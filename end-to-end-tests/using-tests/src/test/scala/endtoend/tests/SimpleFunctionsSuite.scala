@@ -25,3 +25,7 @@ class SimpleFunctionsSuite extends AbstractEndToEndSuite:
     test(s"toList using $transport / $serializer") {
       function.toList(1, 3) should be(List(1, 2, 3))
     }
+
+    test(s"listParam using $transport / $serializer") {
+      function.listParam(List(2, 4)) should be(6)
+    }

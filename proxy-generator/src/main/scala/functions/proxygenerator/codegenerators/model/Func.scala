@@ -37,5 +37,5 @@ object Func:
   private def toParams(m: EMethod): Params = {
     val paramsFlat = m.paramss.flatten
     val last       = paramsFlat.lastOption
-    Params(paramsFlat.map(ep => Param(ep.name, ep.typeUnqualified, last.isEmpty || ep.eq(last.get))))
+    Params(paramsFlat.map(ep => Param(ep.name, ep.`type`.typeUnqualified, last.isEmpty || ep.eq(last.get))))
   }
