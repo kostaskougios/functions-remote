@@ -9,3 +9,5 @@ import endtoend.tests.model.{Param1, Param2, Return1}
 trait NestedTypeParamsFunctions:
   def oneParam(p1: Param1): Return1
   def twoParams(p1: Param1, p2: Param2): Return1
+
+  def seqOfP1(p1l: Seq[Param1]): Seq[Return1]

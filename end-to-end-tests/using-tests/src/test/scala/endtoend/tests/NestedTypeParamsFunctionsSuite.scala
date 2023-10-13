@@ -18,3 +18,7 @@ class NestedTypeParamsFunctionsSuite extends AbstractEndToEndSuite:
     test(s"twoParams using $transport / $serializer") {
       function.twoParams(Param1(2), Param2(3.2)) should be(Return1(3))
     }
+
+    test(s"seqOfP1 using $transport / $serializer") {
+      function.seqOfP1(Seq(Param1(2), Param1(3))) should be(Seq(Return1(2), Return1(3)))
+    }
