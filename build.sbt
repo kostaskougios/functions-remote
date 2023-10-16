@@ -50,6 +50,7 @@ val Http4sClient = Seq(
 
 val Http4sCirce = Seq("org.http4s" %% "http4s-circe" % Http4sVersion)
 
+val CatsEffect = "org.typelevel" %% "cats-effect" % "3.5.2"
 // ----------------------- modules --------------------------------
 
 val commonSettings = Seq(
@@ -133,6 +134,16 @@ lazy val `tests-exports` = project
   )
   .enablePlugins(BuildInfoPlugin)
 
+lazy val `tests-cats-exports` = project
+  .in(file("end-to-end-tests/tests-cats-exports"))
+  .settings(
+    endToEndTestsSettings,
+    libraryDependencies ++= Seq(ScalaTest, CatsEffect),
+    buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "tests-cats-impl_3"),
+    buildInfoPackage := "endtoend.tests.cats"
+  )
+  .enablePlugins(BuildInfoPlugin)
+
 lazy val `tests-impl` = project
   .in(file("end-to-end-tests/tests-impl"))
   .settings(
@@ -141,6 +152,15 @@ lazy val `tests-impl` = project
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
   .dependsOn(`tests-exports`, `functions-invoker`)
+
+lazy val `tests-cats-impl` = project
+  .in(file("end-to-end-tests/tests-cats-impl"))
+  .settings(
+    endToEndTestsSettings,
+    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
+    libraryDependencies ++= Seq(Avro4s, ScalaTest, CatsEffect) ++ Circe
+  )
+  .dependsOn(`tests-cats-exports`, `functions-invoker`)
 
 lazy val `tests-http4s-server-impl` = project
   .in(file("end-to-end-tests/tests-http4s-server-impl"))

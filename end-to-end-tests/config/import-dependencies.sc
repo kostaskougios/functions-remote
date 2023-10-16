@@ -5,10 +5,12 @@ import functions.coursier._
 val TestsVersion = "0.1-SNAPSHOT"
 
 val functionsDependencies = Seq(
-    s"functions.end-to-end-tests:tests-impl_3:$TestsVersion"
+    s"functions.end-to-end-tests:tests-impl_3:$TestsVersion",
+    s"functions.end-to-end-tests:tests-cats-impl_3:$TestsVersion"
 )
 val exportsDependencies   = Seq(
-    s"functions.end-to-end-tests:tests-exports_3:$TestsVersion"
+    s"functions.end-to-end-tests:tests-exports_3:$TestsVersion",
+    s"functions.end-to-end-tests:tests-cats-exports_3:$TestsVersion"
 )
 val resolver = new CoursierResolver(".")
 resolver.importDependencies(functionsDependencies)
