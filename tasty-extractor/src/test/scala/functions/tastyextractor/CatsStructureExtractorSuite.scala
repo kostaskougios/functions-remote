@@ -13,6 +13,7 @@ class CatsStructureExtractorSuite extends AnyFunSuiteLike:
   val catsAdd                   = testsCatsFunctionsTrait.methods.find(_.name == "catsAdd").get
   val catsAddR                  = testsCatsFunctionsTrait.methods.find(_.name == "catsAddR").get
   val catsAddLR                 = testsCatsFunctionsTrait.methods.find(_.name == "catsAddLR").get
+  val noCatsDivide              = testsCatsFunctionsTrait.methods.find(_.name == "noCatsDivide").get
 
   test("detects cats effect") {
     e.head.types.head.framework should be(Some(DetectedCatsEffect("F", "cats.effect.kernel.Async", "Async")))
@@ -57,4 +58,10 @@ class CatsStructureExtractorSuite extends AnyFunSuiteLike:
 
   test("simplifiedCode for method cats return type with List of case class type arg") {
     catsAddLR.returnType.simplifiedCode should be("F[List[Return1]]")
+  }
+
+  test("method cats return type with 2 type args") {
+    noCatsDivide.returnType should be(
+      eType("Either", "scala.util.Either[scala.Int, scala.Predef.String]", Seq(eType("Int", "scala.Int"), eType("String", "scala.Predef.String")))
+    )
   }
