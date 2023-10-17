@@ -29,14 +29,14 @@ class {{className}}:
   private val {{functionN}}AvroOutputStream = AvroOutputStream.data[{{caseClass}}]
   private val {{functionN}}AvroInputStream = AvroInputStream.data[{{caseClass}}]
 
-  private val {{functionN}}ReturnTypeAvroOutputStream = AvroOutputStream.data[{{resultN}}]
-  private val {{functionN}}ReturnTypeAvroInputStream = AvroInputStream.data[{{resultN}}]
+  private val {{functionN}}ReturnTypeAvroOutputStream = AvroOutputStream.data[{{resultNNoFramework}}]
+  private val {{functionN}}ReturnTypeAvroInputStream = AvroInputStream.data[{{resultNNoFramework}}]
 
   def {{functionN}}Serializer(value: {{caseClass}}): Array[Byte] = avroSerialize({{functionN}}AvroOutputStream, value)
   def {{functionN}}Deserializer(data: Array[Byte]): {{caseClass}} = avroDeserialize({{functionN}}AvroInputStream, data)
 
-  def {{functionN}}ReturnTypeSerializer(value: {{resultN}}): Array[Byte] = avroSerialize({{functionN}}ReturnTypeAvroOutputStream, value)
-  def {{functionN}}ReturnTypeDeserializer(data: Array[Byte]): {{resultN}} = avroDeserialize({{functionN}}ReturnTypeAvroInputStream, data)
+  def {{functionN}}ReturnTypeSerializer(value: {{resultNNoFramework}}): Array[Byte] = avroSerialize({{functionN}}ReturnTypeAvroOutputStream, value)
+  def {{functionN}}ReturnTypeDeserializer(data: Array[Byte]): {{resultNNoFramework}} = avroDeserialize({{functionN}}ReturnTypeAvroInputStream, data)
 
   {{/functions}}
 
