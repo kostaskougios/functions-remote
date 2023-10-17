@@ -3,7 +3,9 @@ package functions.tastyextractor.model
 import org.apache.commons.lang3
 import org.apache.commons.lang3.StringUtils
 
-case class EType(name: String, code: String, frameworks: Seq[DetectedFramework], scalaDocs: Option[String], methods: Seq[EMethod]):
+case class EType(name: String, code: String, typeArgs: Seq[EType], framework: Option[DetectedFramework], scalaDocs: Option[String], methods: Seq[EMethod]):
+  def frameworkName: String = framework.map(_.frameworkName).getOrElse("none")
+
   def breakdown: ETypeBreakdown =
     val tpe        = if code.contains('[') then StringUtils.substringBefore(code, "[") else code
     val components = tpe.split("\\.").toList.reverse
@@ -16,4 +18,4 @@ case class ETypeBreakdown(packages: List[String], name: String, typeArgs: Option
     name + ta
 
 object EType:
-  def code(name: String, code: String) = EType(name, code, Nil, None, Nil)
+  def code(name: String, code: String) = EType(name, code, Nil, None, None, Nil)

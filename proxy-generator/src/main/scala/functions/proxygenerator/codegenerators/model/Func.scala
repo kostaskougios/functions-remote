@@ -23,12 +23,13 @@ object Func:
     `type`.methods.map: m =>
       val params        = toParams(m)
       val caseClassName = methodToCaseClassNamingConventions.methodArgsCaseClassName(`type`, m)
+      val resultN = m.returnType.breakdown.codeNoPackages
       Func(
         m.name,
         params.toMethodDeclArguments,
         params.toMethodCallArguments,
         params.params,
-        m.returnType.breakdown.codeNoPackages,
+        resultN,
         methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
         caseClassName,
         m eq last

@@ -2,7 +2,6 @@ package functions.tastyextractor
 
 import functions.model.GeneratorConfig
 import functions.tastyextractor.model.{DetectedCatsEffect, EImport, EMethod, EPackage, EParam, EType}
-import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable
 import scala.quoted.*
@@ -14,17 +13,29 @@ private class StructureExtractorInspector extends Inspector:
 
   override def inspect(using Quotes)(tastys: List[Tasty[quotes.type]]): Unit =
     import quotes.reflect.*
+
+    def eTypeOf(tpe: TypeRepr): EType = tpe match
+      case t: TypeRef      =>
+        val name = t.name
+        val code = t.show
+        EType.code(name, code)
+      case at: AppliedType =>
+        val args     = at.args.map(eTypeOf)
+        val tycon    = at.tycon
+        val typeArgs = at.typeArgs
+        EType(tycon.typeSymbol.name, tpe.show, args, None, None, Nil)
+
     object MethodTraverser extends TreeAccumulator[List[EMethod]]:
       def foldTree(existing: List[EMethod], tree: Tree)(owner: Symbol): List[EMethod] =
         def paramsCode(param: Any) =
           param match
             case v: ValDef @unchecked =>
-              val tpe = EType.code(v.tpt.symbol.name, v.tpt.show)
+              val tpe = eTypeOf(v.tpt.tpe)
               EParam(v.name, tpe, s"${v.name} : ${v.tpt.show}")
 
         val r = tree match
           case d: DefDef if !d.name.contains("$") && d.name != "<init>" =>
-            val m = EMethod(d.name, d.paramss.map(pc => pc.params.map(paramsCode)), EType.code(d.returnTpt.symbol.name.toString, d.returnTpt.show))
+            val m = EMethod(d.name, d.paramss.map(pc => pc.params.map(paramsCode)), eTypeOf(d.returnTpt.tpe))
             List(m)
           case _                                                        =>
             Nil
@@ -38,16 +49,16 @@ private class StructureExtractorInspector extends Inspector:
             typeTree.tpe match
               case AppliedType(TypeRef(repr, catsClassName), typeReprs) if repr.show.startsWith("cats.effect") =>
                 val fullCatsClassName = repr.show + "." + catsClassName
-                List(DetectedCatsEffect(name, fullCatsClassName, catsClassName))
-              case _                                                                                           => Nil
-          case _                                             => Nil
+                Some(DetectedCatsEffect(name, fullCatsClassName, catsClassName))
+              case _                                                                                           => None
+          case _                                             => None
 
       def foldTree(existing: List[EType], tree: Tree)(owner: Symbol): List[EType] =
         val r = tree match
           case c: ClassDef =>
             val frameworks = detectCats(c)
             val methods    = MethodTraverser.foldTree(Nil, c)(owner)
-            val t          = EType(c.name, c.name, frameworks, c.symbol.docstring, methods)
+            val t          = EType(c.name, c.name, Nil, frameworks, c.symbol.docstring, methods)
             List(t)
           case _           =>
             Nil

@@ -1,5 +1,7 @@
 package functions.tastyextractor.model
 
-trait DetectedFramework
+trait DetectedFramework:
+  def frameworkName: String
 
-case class DetectedCatsEffect(typeArg: String, catsFullClassName: String, catsClassName: String) extends DetectedFramework
+case class DetectedCatsEffect(typeArg: String, catsFullClassName: String, catsClassName: String) extends DetectedFramework:
+  override def frameworkName = "Cats-Effect"
