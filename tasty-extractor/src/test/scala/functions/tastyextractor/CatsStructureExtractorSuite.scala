@@ -29,6 +29,14 @@ class CatsStructureExtractorSuite extends AnyFunSuiteLike:
     testsCatsFunctionsImports should contain(EImport("cats.effect.kernel.Async"))
   }
 
+  test("typeNoFramework drops framework type") {
+    testsCatsFunctionsTrait.typeNoFramework(catsAddLR.returnType).simplifiedCode should be("List[Return1]")
+  }
+
+  test("typeNoFramework when no framework type") {
+    testsCatsFunctionsTrait.typeNoFramework(catsAdd.returnType).simplifiedCode should be("Int")
+  }
+
   test("method cats return simple type") {
     catsAdd.returnType should be(eType("F", "TestsCatsFunctions.this.F[scala.Int]", Seq(eType("Int", "scala.Int"))))
   }
