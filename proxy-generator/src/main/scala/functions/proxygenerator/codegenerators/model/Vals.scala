@@ -10,4 +10,6 @@ case class Vals(
     className: String,
     methodParams: String,
     functions: Many[Func]
-)
+):
+  def exportedTypeTypeArgs: String = if exportedType.isCatsEffect then "[_]" else ""
+  def exportedTypeFull: String     = exportedType.name + exportedTypeTypeArgs
