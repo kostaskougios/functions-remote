@@ -35,3 +35,14 @@ class CatsStructureExtractorSuite extends AnyFunSuiteLike:
       eType("F", "TestsCatsFunctions.this.F[endtoend.tests.cats.model.Return1]", Seq(eType("Return1", "endtoend.tests.cats.model.Return1")))
     )
   }
+
+  test("method cats return type with List of case class type arg") {
+    val catsAdd = testsCatsFunctionsTrait.methods.find(_.name == "catsAddLR").get
+    catsAdd.returnType should be(
+      eType(
+        "F",
+        "TestsCatsFunctions.this.F[scala.collection.immutable.List[endtoend.tests.cats.model.Return1]]",
+        Seq(eType("List", "scala.collection.immutable.List[endtoend.tests.cats.model.Return1]", Seq(eType("Return1", "endtoend.tests.cats.model.Return1"))))
+      )
+    )
+  }
