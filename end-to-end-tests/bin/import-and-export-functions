@@ -1,3 +1,6 @@
+# run me from the root directory of the project
+cd end-to-end-tests
+
 scala-cli scripts scripts/tests-export.sc
 scala-cli scripts scripts/tests-import.sc
 

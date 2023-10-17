@@ -23,7 +23,7 @@ object Func:
     `type`.methods.map: m =>
       val params        = toParams(m)
       val caseClassName = methodToCaseClassNamingConventions.methodArgsCaseClassName(`type`, m)
-      val resultN = m.returnType.breakdown.codeNoPackages
+      val resultN       = m.returnType.simplifiedCode
       Func(
         m.name,
         params.toMethodDeclArguments,
@@ -38,5 +38,5 @@ object Func:
   private def toParams(m: EMethod): Params = {
     val paramsFlat = m.paramss.flatten
     val last       = paramsFlat.lastOption
-    Params(paramsFlat.map(ep => Param(ep.name, ep.`type`.breakdown.codeNoPackages, last.isEmpty || ep.eq(last.get))))
+    Params(paramsFlat.map(ep => Param(ep.name, ep.`type`.simplifiedCode, last.isEmpty || ep.eq(last.get))))
   }
