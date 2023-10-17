@@ -67,6 +67,10 @@ class CatsStructureExtractorSuite extends AnyFunSuiteLike:
     )
   }
 
+  test("simplifiedCode for method cats return type with 2 type args") {
+    noCatsDivide.returnType.simplifiedCode should be("Either[Int, String]")
+  }
+
   test("method cats return type F with type with 2 type args") {
     catsDivide.returnType should be(
       eType(
@@ -75,4 +79,8 @@ class CatsStructureExtractorSuite extends AnyFunSuiteLike:
         Seq(eType("Either", "scala.util.Either[scala.Int, scala.Predef.String]", Seq(eType("Int", "scala.Int"), eType("String", "scala.Predef.String"))))
       )
     )
+  }
+
+  test("simplifiedCode for method cats return type F with type with 2 type args") {
+    catsDivide.returnType.simplifiedCode should be("F[Either[Int, String]]")
   }
