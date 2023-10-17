@@ -8,7 +8,7 @@ import {{.}}
 class {{className}}(
   {{#functions}}
     {{functionN}}Deserializer: Array[Byte] => {{methodParams}}.{{caseClassName}},
-    {{functionN}}ReturnTypeSerializer: {{resultN}} => Array[Byte],
+    {{functionN}}ReturnTypeSerializer: {{resultNNoFramework}} => Array[Byte],
   {{/functions}}
     f: {{exportedType.name}}
 ) extends FunctionsReceiver:
