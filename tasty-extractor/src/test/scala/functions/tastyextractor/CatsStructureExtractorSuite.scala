@@ -10,6 +10,9 @@ class CatsStructureExtractorSuite extends AnyFunSuiteLike:
   val testsCatsFunctions        = e.find(_.types.exists(_.name == "TestsCatsFunctions")).get
   val testsCatsFunctionsTrait   = testsCatsFunctions.types.head
   val testsCatsFunctionsImports = testsCatsFunctions.imports
+  val catsAdd                   = testsCatsFunctionsTrait.methods.find(_.name == "catsAdd").get
+  val catsAddR                  = testsCatsFunctionsTrait.methods.find(_.name == "catsAddR").get
+  val catsAddLR                 = testsCatsFunctionsTrait.methods.find(_.name == "catsAddLR").get
 
   test("detects cats effect") {
     e.head.types.head.framework should be(Some(DetectedCatsEffect("F", "cats.effect.kernel.Async", "Async")))
@@ -25,24 +28,33 @@ class CatsStructureExtractorSuite extends AnyFunSuiteLike:
   }
 
   test("method cats return simple type") {
-    val catsAdd = testsCatsFunctionsTrait.methods.find(_.name == "catsAdd").get
     catsAdd.returnType should be(eType("F", "TestsCatsFunctions.this.F[scala.Int]", Seq(eType("Int", "scala.Int"))))
   }
 
+  test("simplifiedCode for method cats return simple type") {
+    catsAdd.returnType.simplifiedCode should be("F[Int]")
+  }
+
   test("method cats return type with case class type arg") {
-    val catsAdd = testsCatsFunctionsTrait.methods.find(_.name == "catsAddR").get
-    catsAdd.returnType should be(
+    catsAddR.returnType should be(
       eType("F", "TestsCatsFunctions.this.F[endtoend.tests.cats.model.Return1]", Seq(eType("Return1", "endtoend.tests.cats.model.Return1")))
     )
   }
 
+  test("simplifiedCode for method cats return type with case class type arg") {
+    catsAddR.returnType.simplifiedCode should be("F[Return1]")
+  }
+
   test("method cats return type with List of case class type arg") {
-    val catsAdd = testsCatsFunctionsTrait.methods.find(_.name == "catsAddLR").get
-    catsAdd.returnType should be(
+    catsAddLR.returnType should be(
       eType(
         "F",
         "TestsCatsFunctions.this.F[scala.collection.immutable.List[endtoend.tests.cats.model.Return1]]",
         Seq(eType("List", "scala.collection.immutable.List[endtoend.tests.cats.model.Return1]", Seq(eType("Return1", "endtoend.tests.cats.model.Return1"))))
       )
     )
+  }
+
+  test("simplifiedCode for method cats return type with List of case class type arg") {
+    catsAddLR.returnType.simplifiedCode should be("F[List[Return1]]")
   }
