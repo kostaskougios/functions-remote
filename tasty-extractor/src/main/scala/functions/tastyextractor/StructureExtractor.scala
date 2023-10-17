@@ -36,9 +36,10 @@ private class StructureExtractorInspector extends Inspector:
         c.body.take(2) match
           case Seq(TypeDef(name, _), ValDef(_, typeTree, _)) =>
             typeTree.tpe match
-              case AppliedType(TypeRef(repr, name2), typeReprs) if repr.show.startsWith("cats.effect") =>
-                List(DetectedCatsEffect(name, repr.show + "." + name2))
-              case _                                                                                   => Nil
+              case AppliedType(TypeRef(repr, catsClassName), typeReprs) if repr.show.startsWith("cats.effect") =>
+                val fullCatsClassName = repr.show + "." + catsClassName
+                List(DetectedCatsEffect(name, fullCatsClassName, catsClassName))
+              case _                                                                                           => Nil
           case _                                             => Nil
 
       def foldTree(existing: List[EType], tree: Tree)(owner: Symbol): List[EType] =

@@ -8,8 +8,8 @@ class CatsStructureExtractorSuite extends AnyFunSuiteLike:
   val e       = new StructureExtractor().fromJars(List(Jars.Cats))
   val imports = e.flatMap(_.imports)
 
-  test("type args for type") {
-    e.head.types.head.frameworks should be(List(DetectedCatsEffect("F", "cats.effect.kernel.Async")))
+  test("detects cats effect") {
+    e.head.types.head.frameworks should be(List(DetectedCatsEffect("F", "cats.effect.kernel.Async", "Async")))
   }
 
   test("imports not including F") {
