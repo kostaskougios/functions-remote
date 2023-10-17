@@ -18,7 +18,7 @@ class GenericTypeGenerator(
     `package`.types.map(apply(`package`, _))
 
   def apply(`package`: EPackage, `type`: EType): Code =
-    val imports   = `type`.importsForTypesInMethods.toSet
+    val imports   = `package`.imports.map(_.fullName).toSet
     val className = namingConventions.className(`type`)
     val mpt       = namingConventions.methodParamsTraitName(`type`)
     val functions = model.Func(`type`, namingConventions)

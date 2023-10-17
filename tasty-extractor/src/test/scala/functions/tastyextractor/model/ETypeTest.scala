@@ -12,15 +12,6 @@ class ETypeTest extends AnyFunSuiteLike:
     EType.code("List", "scala.List[Int]").breakdown should be(ETypeBreakdown(List("scala"), "List", Some("Int")))
   }
 
-  test("isAlwaysImported positive") {
-    EType.code("List", "scala.List[Int]").isAlwaysImported should be(true)
-  }
-
-  test("isAlwaysImported negative") {
-    EType.code("List", "custom.List[Int]").isAlwaysImported should be(false)
-    EType.code("List", "scala.some.List[Int]").isAlwaysImported should be(false)
-  }
-
   test("codeNoTypeArgs") {
     ETypeBreakdown(List("scala"), "List", Some("Int")).codeNoTypeArgs should be("scala.List")
   }
