@@ -3,7 +3,7 @@ package functions.tastyextractor.model
 import org.apache.commons.lang3
 import org.apache.commons.lang3.StringUtils
 
-case class EType(name: String, code: String, scalaDocs: Option[String], methods: Seq[EMethod]):
+case class EType(name: String, code: String, frameworks: Seq[DetectedFramework], scalaDocs: Option[String], methods: Seq[EMethod]):
   def asImport: String                      = if code.contains('[') then StringUtils.substringBefore(code, "[") else code
   def importsForTypesInMethods: Seq[String] =
     methods
@@ -26,4 +26,4 @@ case class ETypeBreakdown(packages: List[String], name: String, typeArgs: Option
     name + ta
 
 object EType:
-  def code(name: String, code: String) = EType(name, code, None, Nil)
+  def code(name: String, code: String) = EType(name, code, Nil, None, Nil)

@@ -1,7 +1,7 @@
 package functions.tastyextractor
 
 import functions.model.GeneratorConfig
-import functions.tastyextractor.model.{EMethod, EPackage, EParam, EType}
+import functions.tastyextractor.model.{DetectedCatsEffect, EMethod, EPackage, EParam, EType}
 
 import scala.collection.mutable
 import scala.quoted.*
@@ -30,11 +30,21 @@ private class StructureExtractorInspector extends Inspector:
     end MethodTraverser
 
     object TypeTraverser extends TreeAccumulator[List[EType]]:
+      private def detectCats(c: ClassDef) =
+        c.body.take(2) match
+          case Seq(TypeDef(name, _), ValDef(_, typeTree, _)) =>
+            typeTree.tpe match
+              case AppliedType(TypeRef(repr, name2), typeReprs) if repr.show.startsWith("cats.effect") =>
+                List(DetectedCatsEffect(name, repr.show + "." + name2))
+              case _                                                                                   => Nil
+          case _                                             => Nil
+
       def foldTree(existing: List[EType], tree: Tree)(owner: Symbol): List[EType] =
         val r = tree match
           case c: ClassDef =>
-            val methods = MethodTraverser.foldTree(Nil, c)(owner)
-            val t       = EType(c.name, c.name, c.symbol.docstring, methods)
+            val frameworks = detectCats(c)
+            val methods    = MethodTraverser.foldTree(Nil, c)(owner)
+            val t          = EType(c.name, c.name, frameworks, c.symbol.docstring, methods)
             List(t)
           case _           =>
             Nil
