@@ -1,15 +1,16 @@
 package functions.tastyextractor.model
 
+import functions.tastyextractor.model.EBuilders.eType
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers.*
 
 class ETypeTest extends AnyFunSuiteLike:
   test("breakdown with no type args") {
-    EType.code("String", "scala.String").breakdown should be(ETypeBreakdown(List("scala"), "String", None))
+    eType("String", "scala.String").breakdown should be(ETypeBreakdown(List("scala"), "String", None))
   }
 
   test("breakdown with type args") {
-    EType.code("List", "scala.List[Int]").breakdown should be(ETypeBreakdown(List("scala"), "List", Some("Int")))
+    eType("List", "scala.List[Int]").breakdown should be(ETypeBreakdown(List("scala"), "List", Some("Int")))
   }
 
   test("codeNoTypeArgs") {
