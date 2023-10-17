@@ -1,11 +1,13 @@
 package functions.tastyextractor
 
 import functions.model.GeneratorConfig
-import functions.tastyextractor.model.{DetectedCatsEffect, EMethod, EPackage, EParam, EType}
+import functions.tastyextractor.model.{DetectedCatsEffect, EImport, EMethod, EPackage, EParam, EType}
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable
 import scala.quoted.*
 import scala.tasty.inspector.*
+import dotty.tools.dotc.ast.untpd.ImportSelector
 
 private class StructureExtractorInspector extends Inspector:
   val packages = mutable.ListBuffer.empty[EPackage]
@@ -51,12 +53,24 @@ private class StructureExtractorInspector extends Inspector:
         foldOverTree(existing ++ r, tree)(owner)
     end TypeTraverser
 
+    object ImportTraverser extends TreeAccumulator[List[EImport]]:
+      def foldTree(existing: List[EImport], tree: Tree)(owner: Symbol): List[EImport] =
+        val r = tree match
+          case Import(module, paths) =>
+            for case ImportSelector(ident, _, _) <- paths
+            yield EImport(module.show + "." + ident.name.toString)
+
+          case _ => Nil
+        foldOverTree(existing ++ r, tree)(owner)
+    end ImportTraverser
+
     object PackageTraverser extends TreeAccumulator[List[EPackage]]:
       def foldTree(existing: List[EPackage], tree: Tree)(owner: Symbol): List[EPackage] =
         val r = tree match
           case p: PackageClause =>
-            val types = TypeTraverser.foldTree(Nil, p)(owner)
-            val t     = EPackage(p.pid.show, types)
+            val types   = TypeTraverser.foldTree(Nil, p)(owner)
+            val imports = ImportTraverser.foldTree(Nil, p)(owner)
+            val t       = EPackage(p.pid.show, imports, types)
             List(t)
           case _                =>
             Nil
