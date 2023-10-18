@@ -11,14 +11,14 @@ case class Vals(
     methodParams: String,
     functions: Many[Func]
 ):
-  def exportedTypeTypeArgs: String = if exportedType.isCatsEffect then s"[$frameworkTypeArg]" else ""
+  def exportedTypeTypeArgs: String = if exportedType.hasFramework then s"[$frameworkTypeArg]" else ""
   def exportedTypeFull: String     = exportedType.name + exportedTypeTypeArgs
   def frameworkTypeArg: String     = exportedType.framework
     .map:
       case ce: DetectedCatsEffect => ce.typeArg
     .getOrElse("")
 
-  def frameworkTypeArgOpen: String  = frameworkTypeArg + "["
+  def frameworkTypeArgOpen: String  = if exportedType.hasFramework then frameworkTypeArg + "[" else ""
   def frameworkTypeArgClose: String = if exportedType.isCatsEffect then "]" else ""
   def frameworkTypeArgFull: String  = exportedType.framework
     .map { case ce: DetectedCatsEffect =>

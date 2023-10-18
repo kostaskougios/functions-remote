@@ -6,4 +6,4 @@ deleteScalaFiles(TargetRoot)
 generateCaller(generatorConfig)
     .includeAvroSerialization
     .includeJsonSerialization
-    .generate(TargetRoot, ExportsDep)
+    .generate(TargetRoot, ExportsCatsDep)

@@ -6,7 +6,7 @@ import {{.}}
 {{/imports}}
 
 object {{className}} /* extends CallerFactory[{{exportedType.name}}] */:
-  def createCaller{{frameworkTypeArgFull}}(transport: (String, Array[Byte]) => Array[Byte]):  {{exportedTypeFull}}  =
+  def createCaller{{frameworkTypeArgFull}}(transport: (String, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}):  {{exportedTypeFull}}  =
     val serializer = new {{exportedType.name}}CirceJsonSerializer
     new {{exportedType.name}}Caller(
       Serializer.Json,
