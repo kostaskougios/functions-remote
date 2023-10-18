@@ -11,11 +11,14 @@ class {{className}}{{frameworkTypeArgFull}}(
     {{functionN}}ReturnTypeSerializer: {{resultNNoFramework}} => Array[Byte],
   {{/functions}}
     f: {{exportedTypeFull}}
-) extends FunctionsReceiver:
+) /* extends FunctionsReceiver */:
+
+  /*
   override val invoke: PartialFunction[(String, Array[Byte]) , Array[Byte]] =
     {{#functions}}
       case ({{methodParams}}.Methods.{{caseClassName}}, data) => {{functionN}}(data)
     {{/functions}}
+  */
 
   {{#functions}}
   {{#mapResults}}
