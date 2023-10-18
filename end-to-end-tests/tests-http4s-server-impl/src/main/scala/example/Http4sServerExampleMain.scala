@@ -2,7 +2,6 @@ package example
 
 import cats.effect.{Async, IO, IOApp, Sync}
 import com.comcast.ip4s.*
-import endtoend.tests.{SimpleFunctions, SimpleFunctionsImpl}
 import fs2.io.net.Network
 import functions.http4s.RequestProcessor
 import functions.receiver.FunctionsInvoker
@@ -35,10 +34,10 @@ object QuickstartServer:
   }.useForever
 
 def simpleFunctionsRoutes[F[_]: Sync]: HttpRoutes[F] =
-  val invoker          = FunctionsInvoker.withFunctions(RegisteredFunction[SimpleFunctions](new SimpleFunctionsImpl))
-  val requestProcessor = new RequestProcessor[F](invoker)
-  val dsl              = new Http4sDsl[F] {}
+//  val invoker          = FunctionsInvoker.withFunctions(RegisteredFunction[SimpleFunctions](new SimpleFunctionsImpl))
+//  val requestProcessor = new RequestProcessor[F](invoker)
+  val dsl = new Http4sDsl[F] {}
   import dsl.*
 
   HttpRoutes.of[F]:
-    case req @ PUT -> Root / format / method => requestProcessor.invoke(req, format, method)
+    case req @ PUT -> Root / format / method => Ok("Hello")
