@@ -20,12 +20,12 @@ class {{className}}{{frameworkTypeArgFull}}(
   {{#functions}}
   def {{functionN}}(data: Array[Byte]): Array[Byte] =
     val params = {{functionN}}Deserializer(data)
-    {{#mapResult}}
+    {{#mapResults}}
     f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}}).map: r=>
       {{functionN}}ReturnTypeSerializer(r)
-    {{/mapResult}}
-    {{^mapResult}}
+    {{/mapResults}}
+    {{^mapResults}}
     val r      = f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
     {{functionN}}ReturnTypeSerializer(r)
-    {{/mapResult}}
+    {{/mapResults}}
   {{/functions}}

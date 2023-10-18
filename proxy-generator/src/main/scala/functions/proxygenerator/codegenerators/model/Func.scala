@@ -13,7 +13,7 @@ case class Func(
     paramsRaw: Many[Param],
     resultN: String,
     resultNNoFramework: String,
-    mapResult: Boolean,
+    mapResults: Boolean,
     caseClass: String,
     caseClassName: String,
     last: Boolean
@@ -28,6 +28,7 @@ object Func:
       val rTpe               = m.returnType
       val resultN            = rTpe.simplifiedCode
       val resultNNoFramework = `type`.typeNoFramework(rTpe).simplifiedCode
+      val mapResults         = `type`.isFrameworkType(rTpe)
       Func(
         m.name,
         params.toMethodDeclArguments,
@@ -35,7 +36,7 @@ object Func:
         params.params,
         resultN,
         resultNNoFramework,
-        `type`.isFrameworkType(rTpe),
+        mapResults,
         methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
         caseClassName,
         m eq last
