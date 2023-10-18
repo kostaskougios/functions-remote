@@ -10,7 +10,10 @@ val ExportsCatsDep  = "functions.end-to-end-tests:tests-cats-exports_3:0.1-SNAPS
 val generatorConfig = GeneratorConfig.withDefaults(s"$ProjectRoot/config")
 
 @main def generateCatsExporter(): Unit =
-  exportFor(s"$ProjectRoot/tests-cats-impl/src/main/generated", ExportsCatsDep)
+  exportFor(s"$ProjectRoot/tests-http4s-server-impl/src/main/generated", ExportsCatsDep)
+
+@main def generateCatsImporter(): Unit =
+  importsFor(s"$ProjectRoot/tests-http4s-client-impl/src/main/generated", ExportsCatsDep)
 
 def deleteScalaFiles(dir: String) =
   val f = new File(dir)
@@ -22,4 +25,11 @@ def exportFor(targetRoot: String, exportDep: String) =
   deleteScalaFiles(targetRoot)
 
   generateReceiver(generatorConfig).includeAvroSerialization.includeJsonSerialization
+    .generate(targetRoot, exportDep)
+
+def importsFor(targetRoot: String, exportDep: String) =
+  println(s"---- Importing $exportDep")
+  deleteScalaFiles(targetRoot)
+
+  generateCaller(generatorConfig).includeAvroSerialization.includeJsonSerialization
     .generate(targetRoot, exportDep)
