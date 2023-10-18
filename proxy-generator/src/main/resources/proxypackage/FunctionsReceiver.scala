@@ -18,14 +18,16 @@ class {{className}}{{frameworkTypeArgFull}}(
     {{/functions}}
 
   {{#functions}}
-  def {{functionN}}(data: Array[Byte]): Array[Byte] =
+  {{#mapResults}}
+  def {{functionN}}(data: Array[Byte]): {{frameworkTypeArg}}[Array[Byte]] =
     val params = {{functionN}}Deserializer(data)
-    {{#mapResults}}
     f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}}).map: r=>
       {{functionN}}ReturnTypeSerializer(r)
-    {{/mapResults}}
-    {{^mapResults}}
+  {{/mapResults}}
+  {{^mapResults}}
+  def {{functionN}}(data: Array[Byte]): Array[Byte] =
+    val params = {{functionN}}Deserializer(data)
     val r      = f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
     {{functionN}}ReturnTypeSerializer(r)
-    {{/mapResults}}
+  {{/mapResults}}
   {{/functions}}
