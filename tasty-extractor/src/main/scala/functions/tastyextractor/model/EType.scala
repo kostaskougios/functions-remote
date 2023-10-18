@@ -1,7 +1,5 @@
 package functions.tastyextractor.model
 
-import org.apache.commons.lang3
-
 case class EType(name: String, code: String, typeArgs: Seq[EType], framework: Option[DetectedFramework], scalaDocs: Option[String], methods: Seq[EMethod]):
   def simplifiedCode: String = if typeArgs.isEmpty then name else s"$name[${typeArgs.map(_.simplifiedCode).mkString(", ")}]"
 
@@ -13,6 +11,7 @@ case class EType(name: String, code: String, typeArgs: Seq[EType], framework: Op
     case Some(DetectedCatsEffect(typeArg, _, _)) if rTpe.name == typeArg => true
     case _                                                               => false
 
+  def hasFramework: Boolean = isCatsEffect
   def isCatsEffect: Boolean = framework match
     case Some(_: DetectedCatsEffect) => true
     case _                           => false

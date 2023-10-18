@@ -18,7 +18,9 @@ case class Vals(
       case ce: DetectedCatsEffect => ce.typeArg
     .getOrElse("")
 
-  def frameworkTypeArgFull: String = exportedType.framework
+  def frameworkTypeArgOpen: String  = frameworkTypeArg + "["
+  def frameworkTypeArgClose: String = if exportedType.isCatsEffect then "]" else ""
+  def frameworkTypeArgFull: String  = exportedType.framework
     .map { case ce: DetectedCatsEffect =>
       s"[${ce.typeArg}[_] : ${ce.catsClassName}]"
     }
