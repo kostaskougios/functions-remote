@@ -13,6 +13,7 @@ case class Func(
     paramsRaw: Many[Param],
     resultN: String,
     resultNNoFramework: String,
+    mapResult: Boolean,
     caseClass: String,
     caseClassName: String,
     last: Boolean
@@ -34,6 +35,7 @@ object Func:
         params.params,
         resultN,
         resultNNoFramework,
+        `type`.isFrameworkType(rTpe),
         methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
         caseClassName,
         m eq last

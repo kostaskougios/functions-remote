@@ -5,7 +5,7 @@ import functions.model.FunctionsReceiver
 import {{.}}
 {{/imports}}
 
-class {{className}}(
+class {{className}}{{frameworkTypeArgFull}}(
   {{#functions}}
     {{functionN}}Deserializer: Array[Byte] => {{methodParams}}.{{caseClassName}},
     {{functionN}}ReturnTypeSerializer: {{resultNNoFramework}} => Array[Byte],
@@ -20,6 +20,12 @@ class {{className}}(
   {{#functions}}
   def {{functionN}}(data: Array[Byte]): Array[Byte] =
     val params = {{functionN}}Deserializer(data)
+    {{#mapResult}}
+    f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}}).map: r=>
+      {{functionN}}ReturnTypeSerializer(r)
+    {{/mapResult}}
+    {{^mapResult}}
     val r      = f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
     {{functionN}}ReturnTypeSerializer(r)
+    {{/mapResult}}
   {{/functions}}

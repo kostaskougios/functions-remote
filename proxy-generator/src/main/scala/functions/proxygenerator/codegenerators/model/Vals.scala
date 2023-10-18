@@ -1,6 +1,6 @@
 package functions.proxygenerator.codegenerators.model
 
-import functions.tastyextractor.model.EType
+import functions.tastyextractor.model.{DetectedCatsEffect, EType}
 import mustache.integration.model.Many
 
 case class Vals(
@@ -11,5 +11,15 @@ case class Vals(
     methodParams: String,
     functions: Many[Func]
 ):
-  def exportedTypeTypeArgs: String = if exportedType.isCatsEffect then "[_]" else ""
+  def exportedTypeTypeArgs: String = if exportedType.isCatsEffect then s"[$frameworkTypeArg]" else ""
   def exportedTypeFull: String     = exportedType.name + exportedTypeTypeArgs
+  def frameworkTypeArg: String     = exportedType.framework
+    .map:
+      case ce: DetectedCatsEffect => ce.typeArg
+    .getOrElse("")
+
+  def frameworkTypeArgFull: String = exportedType.framework
+    .map { case ce: DetectedCatsEffect =>
+      s"[${ce.typeArg}[_] : ${ce.catsClassName}]"
+    }
+    .getOrElse("")

@@ -7,9 +7,11 @@ case class EType(name: String, code: String, typeArgs: Seq[EType], framework: Op
 
   /** drops the framework type (if it is present). i.e. if rTpe = F[Int], then F is dropped and Int is returned
     */
-  def typeNoFramework(rTpe: EType): EType = framework match
-    case Some(DetectedCatsEffect(typeArg, _, _)) if rTpe.name == typeArg => rTpe.typeArgs.head
-    case _                                                               => rTpe
+  def typeNoFramework(rTpe: EType): EType = if isFrameworkType(rTpe) then rTpe.typeArgs.head else rTpe
+
+  def isFrameworkType(rTpe: EType) = framework match
+    case Some(DetectedCatsEffect(typeArg, _, _)) if rTpe.name == typeArg => true
+    case _                                                               => false
 
   def isCatsEffect: Boolean = framework match
     case Some(_: DetectedCatsEffect) => true
