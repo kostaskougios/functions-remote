@@ -35,10 +35,14 @@ object QuickstartServer:
   }.useForever
 
 def simpleFunctionsRoutes[F[_]: Async](receiver: TestsCatsFunctionsReceiver[F], mediaType: `Content-Type`): HttpRoutes[F] =
-  val dsl = new Http4sDsl[F] {}
+  val routes = new Routes[F](receiver, mediaType)
+  HttpRoutes.of[F](routes.route1)
+
+class Routes[F[_]: Async](receiver: TestsCatsFunctionsReceiver[F], mediaType: `Content-Type`):
+  private val dsl = new Http4sDsl[F] {}
   import dsl.*
 
-  HttpRoutes.of[F]:
+  def route1: PartialFunction[Request[F], F[Response[F]]] =
     case req @ PUT -> Root / "catsAddR" =>
       val r = for
         inData <- req.body.compile.to(Array)
