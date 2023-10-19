@@ -1,19 +1,16 @@
 package example
 
-import cats.effect.{Async, IO, IOApp, Sync}
+import cats.effect.{Async, IO, IOApp}
+import cats.syntax.all.*
 import com.comcast.ip4s.*
-import endtoend.tests.cats.{TestsCatsFunctionsImpl, TestsCatsFunctionsReceiverCirceJsonSerializedFactory}
+import endtoend.tests.cats.{TestsCatsFunctionsImpl, TestsCatsFunctionsReceiver, TestsCatsFunctionsReceiverCirceJsonSerializedFactory}
 import fs2.io.net.Network
-import functions.http4s.RequestProcessor
-import functions.receiver.FunctionsInvoker
-import functions.receiver.model.RegisteredFunction
 import org.http4s.dsl.Http4sDsl
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.headers.`Content-Type`
 import org.http4s.implicits.*
 import org.http4s.server.middleware.Logger
 import org.http4s.{HttpRoutes, MediaType, Request, Response}
-import cats.syntax.all.*
 
 object Http4sServerExampleMain extends IOApp.Simple:
   val run = QuickstartServer.run[IO]
@@ -21,7 +18,8 @@ object Http4sServerExampleMain extends IOApp.Simple:
 object QuickstartServer:
 
   def run[F[_]: Async: Network]: F[Nothing] = {
-    val httpApp = simpleFunctionsRoutes[F].orNotFound
+    val receiver = TestsCatsFunctionsReceiverCirceJsonSerializedFactory.createReceiver[F](new TestsCatsFunctionsImpl[F])
+    val httpApp  = simpleFunctionsRoutes[F](receiver).orNotFound
 
     // With Middlewares in place
     val finalHttpApp = Logger.httpApp(true, true)(httpApp)
@@ -36,11 +34,10 @@ object QuickstartServer:
     } yield ()
   }.useForever
 
-def simpleFunctionsRoutes[F[_]: Async]: HttpRoutes[F] =
+def simpleFunctionsRoutes[F[_]: Async](receiver: TestsCatsFunctionsReceiver[F]): HttpRoutes[F] =
 //  val invoker          = FunctionsInvoker.withFunctions(RegisteredFunction[SimpleFunctions](new SimpleFunctionsImpl))
 //  val requestProcessor = new RequestProcessor[F](invoker)
-  val receiver = TestsCatsFunctionsReceiverCirceJsonSerializedFactory.createReceiver[F](new TestsCatsFunctionsImpl[F])
-  val dsl      = new Http4sDsl[F] {}
+  val dsl = new Http4sDsl[F] {}
   import dsl.*
 
   HttpRoutes.of[F]:
