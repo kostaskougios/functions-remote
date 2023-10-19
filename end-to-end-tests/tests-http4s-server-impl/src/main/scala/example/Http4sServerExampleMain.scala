@@ -35,8 +35,6 @@ object QuickstartServer:
   }.useForever
 
 def simpleFunctionsRoutes[F[_]: Async](receiver: TestsCatsFunctionsReceiver[F], mediaType: `Content-Type`): HttpRoutes[F] =
-//  val invoker          = FunctionsInvoker.withFunctions(RegisteredFunction[SimpleFunctions](new SimpleFunctionsImpl))
-//  val requestProcessor = new RequestProcessor[F](invoker)
   val dsl = new Http4sDsl[F] {}
   import dsl.*
 
