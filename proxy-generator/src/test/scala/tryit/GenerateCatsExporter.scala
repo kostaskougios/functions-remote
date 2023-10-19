@@ -24,7 +24,7 @@ def exportFor(targetRoot: String, exportDep: String) =
   println(s"---- Exporting $exportDep")
   deleteScalaFiles(targetRoot)
 
-  generateReceiver(generatorConfig).includeAvroSerialization.includeJsonSerialization
+  generateReceiver(generatorConfig).includeAvroSerialization.includeJsonSerialization.includeHttp4sRoutes
     .generate(targetRoot, exportDep)
 
 def importsFor(targetRoot: String, exportDep: String) =
