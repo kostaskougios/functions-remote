@@ -1,9 +1,9 @@
 package {{proxypackage}}
 
 import functions.model.ReceiverFactory
-{{#imports}}
+{{#frameworkImports}}
 import {{.}}
-{{/imports}}
+{{/frameworkImports}}
 
 object {{className}} /* extends ReceiverFactory[{{exportedTypeFull}}] */:
   def createReceiver{{frameworkTypeArgFull}}(functions: {{exportedTypeFull}}): {{exportedType.name}}Receiver{{exportedTypeTypeArgs}} =

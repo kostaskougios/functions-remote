@@ -1,9 +1,9 @@
 package {{proxypackage}}
 
 import functions.model.FunctionsReceiver
-{{#imports}}
+{{#allImports}}
 import {{.}}
-{{/imports}}
+{{/allImports}}
 
 class {{className}}{{frameworkTypeArgFull}}(
   {{#functions}}

@@ -1,9 +1,9 @@
 package {{proxypackage}}
 
 import functions.model.Serializer
-{{#imports}}
+{{#allImports}}
 import {{.}}
-{{/imports}}
+{{/allImports}}
 
 class {{className}}{{frameworkTypeArgFull}}(
   serializer: Serializer,

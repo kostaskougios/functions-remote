@@ -7,6 +7,8 @@ case class Vals(
     exportedType: EType,
     proxypackage: String,
     imports: Many[String],
+    frameworkImports: Many[String],
+    allImports: Many[String],
     className: String,
     methodParams: String,
     functions: Many[Func]
