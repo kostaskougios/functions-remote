@@ -11,15 +11,19 @@ import {{.}}
 
 class {{className}}{{frameworkTypeArgFull}}(
   receiver: {{exportedType.name}}Receiver{{exportedTypeTypeArgs}},
-  mediaType: `Content-Type`
+  mediaType: `Content-Type`,
+  protocol: String = "Json"
 ):
   private val dsl = new Http4sDsl{{exportedTypeTypeArgs}} {}
   import dsl.*
 
-  def route1: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] =
-    case req @ PUT -> Root / "catsAddR" =>
+  {{#functions}}
+  def {{functionN}}: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] =
+    case req @ PUT -> Root / `protocol` / "{{exportedType.name}}" / "{{functionN}}" =>
       val r = for
         inData <- req.body.compile.to(Array)
-        res    <- receiver.catsAddR(inData)
+        res    <- receiver.{{functionN}}(inData)
       yield res
       Ok(r).map(_.withContentType(mediaType))
+
+  {{/functions}}
