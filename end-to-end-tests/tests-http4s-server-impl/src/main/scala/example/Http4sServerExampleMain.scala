@@ -19,7 +19,7 @@ object QuickstartServer:
 
   def run[F[_]: Async: Network]: F[Nothing] = {
     val receiver = TestsCatsFunctionsReceiverCirceJsonSerializedFactory.createReceiver[F](new TestsCatsFunctionsImpl[F])
-    val httpApp  = simpleFunctionsRoutes[F](receiver).orNotFound
+    val httpApp  = simpleFunctionsRoutes[F](receiver, `Content-Type`(MediaType.application.`octet-stream`)).orNotFound
 
     // With Middlewares in place
     val finalHttpApp = Logger.httpApp(true, true)(httpApp)
@@ -34,7 +34,7 @@ object QuickstartServer:
     } yield ()
   }.useForever
 
-def simpleFunctionsRoutes[F[_]: Async](receiver: TestsCatsFunctionsReceiver[F]): HttpRoutes[F] =
+def simpleFunctionsRoutes[F[_]: Async](receiver: TestsCatsFunctionsReceiver[F], mediaType: `Content-Type`): HttpRoutes[F] =
 //  val invoker          = FunctionsInvoker.withFunctions(RegisteredFunction[SimpleFunctions](new SimpleFunctionsImpl))
 //  val requestProcessor = new RequestProcessor[F](invoker)
   val dsl = new Http4sDsl[F] {}
@@ -46,4 +46,4 @@ def simpleFunctionsRoutes[F[_]: Async](receiver: TestsCatsFunctionsReceiver[F]):
         inData <- req.body.compile.to(Array)
         res    <- receiver.catsAddR(inData)
       yield res
-      Ok(r).map(_.withContentType(`Content-Type`(MediaType.application.`octet-stream`)))
+      Ok(r).map(_.withContentType(mediaType))
