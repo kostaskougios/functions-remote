@@ -4,6 +4,7 @@ import cats.effect.{Async, Concurrent, IO, IOApp}
 import endtoend.tests.cats.{TestsCatsFunctionsCallerAvroSerializedFactory, TestsCatsFunctionsCallerCirceJsonSerializedFactory}
 import fs2.Stream
 import fs2.io.net.Network
+import functions.model.Coordinates
 import org.http4s.*
 import org.http4s.Method.*
 import org.http4s.client.Client
@@ -27,8 +28,8 @@ object Http4sClientExample extends IOApp.Simple:
     val dsl = new Http4sClientDsl[F] {}
     import dsl.*
 
-    val Array(clz, method, serializer) = coordinates.split(":")
-    val u                              = uri"http://localhost:8080" / clz / method / serializer
+    val Coordinates(clz, method, serializer) = coordinates
+    val u                                    = uri"http://localhost:8080" / clz / method / serializer.toString
     println(s"uri: $u")
     client.expect[Array[Byte]](
       PUT(u).withBodyStream(Stream.emits(data)).withContentType(contentType)

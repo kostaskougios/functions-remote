@@ -16,11 +16,14 @@ class {{className}}{{frameworkTypeArgFull}}(
 ):
   private val dsl = new Http4sDsl{{exportedTypeTypeArgs}} {}
   import dsl.*
+  // Override this if you want to change the paths
+  def pathFor(fullClassName: String, method: String) = Root / fullClassName / method / protocol
 
   val allRoutes: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] = {{#functions}}{{functionN}} {{^last}}orElse{{/last}} {{/functions}}
+
   {{#functions}}
   def {{functionN}}: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] =
-    case req @ PUT -> Root / "{{proxypackage}}.{{exportedType.name}}" / "{{functionN}}" / `protocol` =>
+    case req @ PUT -> p if p == pathFor("{{proxypackage}}.{{exportedType.name}}","{{functionN}}") =>
       val r = for
         inData <- req.body.compile.to(Array)
         res    <- receiver.{{functionN}}(inData)
