@@ -20,7 +20,7 @@ class {{className}}{{frameworkTypeArgFull}}(
   val allRoutes: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] = {{#functions}}{{functionN}} {{^last}}orElse{{/last}} {{/functions}}
   {{#functions}}
   def {{functionN}}: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] =
-    case req @ PUT -> Root / `protocol` / "{{exportedType.name}}" / "{{functionN}}" =>
+    case req @ PUT -> Root / "{{proxypackage}}.{{exportedType.name}}" / "{{functionN}}" / `protocol` =>
       val r = for
         inData <- req.body.compile.to(Array)
         res    <- receiver.{{functionN}}(inData)
