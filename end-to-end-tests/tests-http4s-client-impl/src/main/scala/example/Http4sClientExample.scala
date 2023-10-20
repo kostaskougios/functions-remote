@@ -4,7 +4,7 @@ import cats.effect.{Async, Concurrent, IO, IOApp}
 import endtoend.tests.cats.{TestsCatsFunctionsCallerAvroSerializedFactory, TestsCatsFunctionsCallerCirceJsonSerializedFactory}
 import fs2.Stream
 import fs2.io.net.Network
-import functions.model.Coordinates
+import functions.model.{Coordinates, Serializer}
 import org.http4s.*
 import org.http4s.Method.*
 import org.http4s.client.Client
@@ -16,31 +16,30 @@ import org.http4s.implicits.*
 object Http4sClientExample extends IOApp.Simple:
   val run = for {
     x <- EmberClientBuilder.default[IO].build.use { client =>
-      for
-        r1 <- doJsonRequest[IO](client)
-        r2 <- doAvroRequest[IO](client)
-      yield (r1, r2)
+      val jsonClient = new FunctionsClient[IO](client, uri"http://localhost:8080")
+      val jsonCaller = TestsCatsFunctionsCallerCirceJsonSerializedFactory.createCaller[IO](jsonClient.transportFunction)
+
+      for r1 <- jsonCaller.catsAdd(5, 6)
+      yield r1
     }
     _ = println(x)
   } yield ()
 
-  def transportFunction[F[_]: Concurrent](client: Client[F], contentType: `Content-Type`, coordinates: String, data: Array[Byte]): F[Array[Byte]] =
-    val dsl = new Http4sClientDsl[F] {}
-    import dsl.*
+class FunctionsClient[F[_]: Async](client: Client[F], serverUri: Uri):
+  private val dsl = new Http4sClientDsl[F] {}
+  import dsl.*
 
+  protected def request(u: Uri, data: Array[Byte], contentType: `Content-Type`): Request[F] =
+    PUT(u).withBodyStream(Stream.emits(data)).withContentType(contentType)
+
+  protected def fullUri(clz: String, method: String, serializer: Serializer) = serverUri / clz / method / serializer.toString
+
+  def transportFunction(coordinates: String, data: Array[Byte]): F[Array[Byte]] =
     val Coordinates(clz, method, serializer) = coordinates
-    val u                                    = uri"http://localhost:8080" / clz / method / serializer.toString
+    val contentType                          = serializer match
+      case Serializer.Json => `Content-Type`(MediaType.application.json)
+      case Serializer.Avro => `Content-Type`(MediaType.application.`octet-stream`)
+
+    val u = fullUri(clz, method, serializer)
     println(s"uri: $u")
-    client.expect[Array[Byte]](
-      PUT(u).withBodyStream(Stream.emits(data)).withContentType(contentType)
-    )
-
-  def doJsonRequest[F[_]: Async](client: Client[F]) =
-    val caller =
-      TestsCatsFunctionsCallerCirceJsonSerializedFactory.createCaller[F](transportFunction[F](client, `Content-Type`(MediaType.application.json), _, _))
-    caller.catsAddR(5, 6)
-
-  def doAvroRequest[F[_]: Async](client: Client[F]) =
-    val caller =
-      TestsCatsFunctionsCallerAvroSerializedFactory.createCaller[F](transportFunction[F](client, `Content-Type`(MediaType.application.`octet-stream`), _, _))
-    caller.catsAddLR(10, 5)
+    client.expect[Array[Byte]](request(u, data, contentType))
