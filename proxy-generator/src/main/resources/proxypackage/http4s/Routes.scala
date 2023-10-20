@@ -2,7 +2,7 @@ package {{proxypackage}}
 
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
-import org.http4s.{Request, Response}
+import org.http4s.{MediaType, Request, Response}
 import cats.syntax.all.*
 
 {{#frameworkImports}}
@@ -11,7 +11,7 @@ import {{.}}
 
 class {{className}}{{frameworkTypeArgFull}}(
   receiver: {{exportedType.name}}Receiver{{exportedTypeTypeArgs}},
-  contentType: `Content-Type`,
+  contentType: `Content-Type` = `Content-Type`(MediaType.application.json),
   protocol: String = "Json"
 ):
   private val dsl = new Http4sDsl{{exportedTypeTypeArgs}} {}

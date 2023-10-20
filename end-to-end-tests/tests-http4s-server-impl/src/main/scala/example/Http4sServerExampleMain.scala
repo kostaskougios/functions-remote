@@ -24,7 +24,7 @@ object QuickstartServer:
     val impl           = new TestsCatsFunctionsImpl[F]
     val jsonReceiver   = TestsCatsFunctionsReceiverCirceJsonSerializedFactory.createReceiver[F](impl)
     val avroReceiver   = TestsCatsFunctionsReceiverAvroSerializedFactory.createReceiver[F](impl)
-    val testRoutesJson = new TestsCatsFunctionsHttp4sRoutes[F](jsonReceiver, `Content-Type`(MediaType.application.json))
+    val testRoutesJson = new TestsCatsFunctionsHttp4sRoutes[F](jsonReceiver)
     val testRoutesAvro = new TestsCatsFunctionsHttp4sRoutes[F](avroReceiver, `Content-Type`(MediaType.application.`octet-stream`), "Avro")
     val routes         = HttpRoutes.of[F](testRoutesJson.allRoutes orElse testRoutesAvro.allRoutes)
     val httpApp        = routes.orNotFound
