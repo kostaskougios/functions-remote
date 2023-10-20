@@ -29,7 +29,6 @@ object QuickstartServer:
     val routes         = HttpRoutes.of[F](testRoutesJson.allRoutes orElse testRoutesAvro.allRoutes)
     val httpApp        = routes.orNotFound
 
-    // With Middlewares in place
     val finalHttpApp = Logger.httpApp(true, true)(httpApp)
     for {
       _ <-
