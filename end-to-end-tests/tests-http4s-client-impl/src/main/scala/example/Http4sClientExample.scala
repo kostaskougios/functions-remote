@@ -9,6 +9,7 @@ import org.http4s.Method.*
 import org.http4s.client.Client
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.ember.client.EmberClientBuilder
+import org.http4s.headers.`Content-Type`
 import org.http4s.implicits.*
 
 object Http4sClientExample extends IOApp.Simple:
@@ -22,7 +23,7 @@ object Http4sClientExample extends IOApp.Simple:
     _ = println(x)
   } yield ()
 
-  def transportFunction[F[_]: Concurrent](client: Client[F], coordinates: String, data: Array[Byte]): F[Array[Byte]] =
+  def transportFunction[F[_]: Concurrent](client: Client[F], contentType: `Content-Type`, coordinates: String, data: Array[Byte]): F[Array[Byte]] =
     val dsl = new Http4sClientDsl[F] {}
     import dsl.*
 
@@ -30,15 +31,15 @@ object Http4sClientExample extends IOApp.Simple:
     val u                              = uri"http://localhost:8080" / clz / method / serializer
     println(s"uri: $u")
     client.expect[Array[Byte]](
-      PUT(u).withBodyStream(
-        Stream.emits(data)
-      )
+      PUT(u).withBodyStream(Stream.emits(data)).withContentType(contentType)
     )
 
   def doJsonRequest[F[_]: Async](client: Client[F]) =
-    val caller = TestsCatsFunctionsCallerCirceJsonSerializedFactory.createCaller[F](transportFunction[F](client, _, _))
+    val caller =
+      TestsCatsFunctionsCallerCirceJsonSerializedFactory.createCaller[F](transportFunction[F](client, `Content-Type`(MediaType.application.json), _, _))
     caller.catsAddR(5, 6)
 
   def doAvroRequest[F[_]: Async](client: Client[F]) =
-    val caller = TestsCatsFunctionsCallerAvroSerializedFactory.createCaller[F](transportFunction[F](client, _, _))
+    val caller =
+      TestsCatsFunctionsCallerAvroSerializedFactory.createCaller[F](transportFunction[F](client, `Content-Type`(MediaType.application.`octet-stream`), _, _))
     caller.catsAddLR(10, 5)
