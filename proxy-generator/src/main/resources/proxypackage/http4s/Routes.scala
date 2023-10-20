@@ -11,7 +11,7 @@ import {{.}}
 
 class {{className}}{{frameworkTypeArgFull}}(
   receiver: {{exportedType.name}}Receiver{{exportedTypeTypeArgs}},
-  mediaType: `Content-Type`,
+  contentType: `Content-Type`,
   protocol: String = "Json"
 ):
   private val dsl = new Http4sDsl{{exportedTypeTypeArgs}} {}
@@ -25,6 +25,6 @@ class {{className}}{{frameworkTypeArgFull}}(
         inData <- req.body.compile.to(Array)
         res    <- receiver.{{functionN}}(inData)
       yield res
-      Ok(r).map(_.withContentType(mediaType))
+      Ok(r).map(_.withContentType(contentType))
 
   {{/functions}}
