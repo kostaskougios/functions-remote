@@ -1,7 +1,7 @@
 package example
 
-import cats.effect.{Async, Concurrent, IO, IOApp}
-import endtoend.tests.cats.{TestsCatsFunctionsCallerAvroSerializedFactory, TestsCatsFunctionsCallerCirceJsonSerializedFactory}
+import cats.effect.{Async, IO, IOApp}
+import endtoend.tests.cats.TestsCatsFunctionsCallerCirceJsonSerializedFactory
 import fs2.Stream
 import fs2.io.net.Network
 import functions.model.{Coordinates, Serializer}
