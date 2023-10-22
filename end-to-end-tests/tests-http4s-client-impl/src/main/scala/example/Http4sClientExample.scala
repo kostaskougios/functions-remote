@@ -26,13 +26,13 @@ object Http4sClientExample extends IOApp.Simple:
   } yield ()
 
 class FunctionsClient[F[_]: Async](client: Client[F], serverUri: Uri):
-  private val dsl = new Http4sClientDsl[F] {}
+  private val dsl = Http4sClientDsl[F]
   import dsl.*
 
   protected def request(u: Uri, data: Array[Byte], contentType: `Content-Type`): Request[F] =
     PUT(u).withBodyStream(Stream.emits(data)).withContentType(contentType)
 
-  protected def fullUri(clz: String, method: String, serializer: Serializer) = serverUri / clz / method / serializer.toString
+  protected def fullUri(clz: String, method: String, serializer: Serializer): Uri = serverUri / clz / method / serializer.toString
 
   def transportFunction(coordinates: String, data: Array[Byte]): F[Array[Byte]] =
     val Coordinates(clz, method, serializer) = coordinates

@@ -14,7 +14,7 @@ class {{className}}{{frameworkTypeArgFull}}(
   contentType: `Content-Type` = `Content-Type`(MediaType.application.json),
   protocol: String = "Json"
 ):
-  private val dsl = new Http4sDsl{{exportedTypeTypeArgs}} {}
+  private val dsl = Http4sDsl{{exportedTypeTypeArgs}}
   import dsl.*
   // Override this if you want to change the paths
   def pathFor(fullClassName: String, method: String) = Root / fullClassName / method / protocol
