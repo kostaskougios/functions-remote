@@ -9,6 +9,7 @@ import endtoend.tests.cats.{
   TestsCatsFunctionsReceiverCirceJsonSerializedFactory
 }
 import fs2.io.net.Network
+import functions.model.Serializer.Avro
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.headers.`Content-Type`
 import org.http4s.implicits.*
@@ -25,7 +26,7 @@ object QuickstartServer:
     val jsonReceiver   = TestsCatsFunctionsReceiverCirceJsonSerializedFactory.createReceiver[F](impl)
     val avroReceiver   = TestsCatsFunctionsReceiverAvroSerializedFactory.createReceiver[F](impl)
     val testRoutesJson = new TestsCatsFunctionsHttp4sRoutes[F](jsonReceiver)
-    val testRoutesAvro = new TestsCatsFunctionsHttp4sRoutes[F](avroReceiver, `Content-Type`(MediaType.application.`octet-stream`), "Avro")
+    val testRoutesAvro = new TestsCatsFunctionsHttp4sRoutes[F](avroReceiver, `Content-Type`(MediaType.application.`octet-stream`), Avro)
     val routes         = HttpRoutes.of[F](testRoutesJson.allRoutes orElse testRoutesAvro.allRoutes)
     val httpApp        = routes.orNotFound
 

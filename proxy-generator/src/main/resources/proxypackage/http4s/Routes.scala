@@ -1,5 +1,6 @@
 package {{proxypackage}}
 
+import functions.model.Serializer
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
 import org.http4s.{MediaType, Request, Response}
@@ -12,12 +13,12 @@ import {{.}}
 class {{className}}{{frameworkTypeArgFull}}(
   receiver: {{exportedType.name}}Receiver{{exportedTypeTypeArgs}},
   contentType: `Content-Type` = `Content-Type`(MediaType.application.json),
-  protocol: String = "Json"
+  serializer: Serializer = Serializer.Json
 ):
   private val dsl = Http4sDsl{{exportedTypeTypeArgs}}
   import dsl.*
   // Override this if you want to change the paths
-  def pathFor(fullClassName: String, method: String) = Root / fullClassName / method / protocol
+  def pathFor(fullClassName: String, method: String) = Root / fullClassName / method / serializer.toString
 
   val allRoutes: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] = {{#functions}}{{functionN}} {{^last}}orElse{{/last}} {{/functions}}
 

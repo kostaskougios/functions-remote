@@ -27,7 +27,7 @@ object QuickstartClient:
           val avroCaller    = TestsCatsFunctionsCallerAvroSerializedFactory.createCaller[F](transportAvro.transportFunction)
 
           val ios =
-            for i <- 1 to 10000
+            for i <- 1 to 10
             yield for
               r1 <- jsonCaller.catsAdd(5 + i, 6)
               r2 <- avroCaller.catsAdd(10 + i, 20)
