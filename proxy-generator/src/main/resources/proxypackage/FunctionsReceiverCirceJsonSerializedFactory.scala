@@ -6,12 +6,12 @@ import {{.}}
 {{/frameworkImports}}
 
 object {{className}} /* extends ReceiverFactory[{{exportedTypeFull}}] */:
+  val Serializer = new {{exportedType.name}}CirceJsonSerializer
   def createReceiver{{frameworkTypeArgFull}}(functions: {{exportedTypeFull}}): {{exportedType.name}}Receiver{{exportedTypeTypeArgs}} =
-    val serializer = new {{exportedType.name}}CirceJsonSerializer
     new {{exportedType.name}}Receiver(
       {{#functions}}
-      serializer.{{functionN}}Deserializer,
-      serializer.{{functionN}}ReturnTypeSerializer,
+      Serializer.{{functionN}}Deserializer,
+      Serializer.{{functionN}}ReturnTypeSerializer,
       {{/functions}}
       functions
     )

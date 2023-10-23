@@ -6,12 +6,12 @@ import {{.}}
 {{/imports}}
 
 object {{className}} /* extends CallerFactory[{{exportedType.name}}] */:
+  val Serializer = new {{exportedType.name}}AvroSerializer
   def createCaller{{frameworkTypeArgFull}}(transport: (Coordinates2, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}): {{exportedTypeFull}} =
-    val serializer = new {{exportedType.name}}AvroSerializer
     new {{exportedType.name}}Caller(
       {{#functions}}
-      serializer.{{functionN}}Serializer,
-      serializer.{{functionN}}ReturnTypeDeserializer,
+      Serializer.{{functionN}}Serializer,
+      Serializer.{{functionN}}ReturnTypeDeserializer,
       {{/functions}}
       transport
     )
