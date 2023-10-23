@@ -1,14 +1,15 @@
 package example
 
 import cats.effect.*
+import cats.syntax.all.*
 import endtoend.tests.cats.{TestsCatsFunctionsCallerAvroSerializedFactory, TestsCatsFunctionsCallerCirceJsonSerializedFactory}
 import fs2.io.net.Network
 import functions.http4s.Http4sTransport
+import functions.model.Serializer
+import functions.model.Serializer.Json
 import org.http4s.*
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.implicits.*
-import cats.syntax.all.*
-import functions.model.Serializer.Json
 
 object Http4sClientExample extends IOApp.Simple:
   val run = QuickstartClient.run[IO]
@@ -20,16 +21,20 @@ object QuickstartClient:
         .default[F]
         .build
         .use: client =>
-          val transport  = new Http4sTransport[F](client, uri"http://localhost:8080", Json)
-          val jsonCaller = TestsCatsFunctionsCallerCirceJsonSerializedFactory.createCaller[F](transport.transportFunction)
-          val avroCaller = TestsCatsFunctionsCallerAvroSerializedFactory.createCaller[F](transport.transportFunction)
+          val transportJson = new Http4sTransport[F](client, uri"http://localhost:8080", Serializer.Json)
+          val transportAvro = new Http4sTransport[F](client, uri"http://localhost:8080", Serializer.Avro)
+          val jsonCaller    = TestsCatsFunctionsCallerCirceJsonSerializedFactory.createCaller[F](transportJson.transportFunction)
+          val avroCaller    = TestsCatsFunctionsCallerAvroSerializedFactory.createCaller[F](transportAvro.transportFunction)
 
           val ios =
-            for i <- 1 to 100
+            for i <- 1 to 10000
             yield for
               r1 <- jsonCaller.catsAdd(5 + i, 6)
               r2 <- avroCaller.catsAdd(10 + i, 20)
-            yield (r1, r2)
+            yield
+              if r1 != 11 + i then throw new IllegalStateException(s"Invalid response : $r1")
+              if r2 != 30 + i then throw new IllegalStateException(s"Invalid response : $r2")
+              (r1, r2)
 
           ios.toList.sequence
       _ = println(x)
