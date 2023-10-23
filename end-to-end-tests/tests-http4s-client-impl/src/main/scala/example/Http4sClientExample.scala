@@ -10,20 +10,26 @@ import org.http4s.implicits.*
 import cats.syntax.all.*
 
 object Http4sClientExample extends IOApp.Simple:
-  val run = for {
-    x <- EmberClientBuilder.default[IO].build.use { client =>
-      val transport  = new Http4sTransport[IO](client, uri"http://localhost:8080")
-      val jsonCaller = TestsCatsFunctionsCallerCirceJsonSerializedFactory.createCaller[IO](transport.transportFunction)
-      val avroCaller = TestsCatsFunctionsCallerAvroSerializedFactory.createCaller[IO](transport.transportFunction)
+  val run = QuickstartClient.run[IO]
 
-      val ios =
-        for i <- 1 to 100
-        yield for
-          r1 <- jsonCaller.catsAdd(5 + i, 6)
-          r2 <- avroCaller.catsAdd(10 + i, 20)
-        yield (r1, r2)
+object QuickstartClient:
+  def run[F[_]: Async: Network]: F[Unit] =
+    for
+      x <- EmberClientBuilder
+        .default[F]
+        .build
+        .use: client =>
+          val transport  = new Http4sTransport[F](client, uri"http://localhost:8080")
+          val jsonCaller = TestsCatsFunctionsCallerCirceJsonSerializedFactory.createCaller[F](transport.transportFunction)
+          val avroCaller = TestsCatsFunctionsCallerAvroSerializedFactory.createCaller[F](transport.transportFunction)
 
-      ios.toList.sequence
-    }
-    _ = println(x)
-  } yield ()
+          val ios =
+            for i <- 1 to 100
+            yield for
+              r1 <- jsonCaller.catsAdd(5 + i, 6)
+              r2 <- avroCaller.catsAdd(10 + i, 20)
+            yield (r1, r2)
+
+          ios.toList.sequence
+      _ = println(x)
+    yield ()
