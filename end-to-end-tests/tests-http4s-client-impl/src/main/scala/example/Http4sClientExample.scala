@@ -8,6 +8,7 @@ import org.http4s.*
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.implicits.*
 import cats.syntax.all.*
+import functions.model.Serializer.Json
 
 object Http4sClientExample extends IOApp.Simple:
   val run = QuickstartClient.run[IO]
@@ -19,7 +20,7 @@ object QuickstartClient:
         .default[F]
         .build
         .use: client =>
-          val transport  = new Http4sTransport[F](client, uri"http://localhost:8080")
+          val transport  = new Http4sTransport[F](client, uri"http://localhost:8080", Json)
           val jsonCaller = TestsCatsFunctionsCallerCirceJsonSerializedFactory.createCaller[F](transport.transportFunction)
           val avroCaller = TestsCatsFunctionsCallerAvroSerializedFactory.createCaller[F](transport.transportFunction)
 

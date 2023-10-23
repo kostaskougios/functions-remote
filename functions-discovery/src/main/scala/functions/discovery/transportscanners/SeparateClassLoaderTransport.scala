@@ -3,7 +3,7 @@ package functions.discovery.transportscanners
 import functions.Log
 import functions.discovery.utils.ClassLoaderUtils
 import functions.discovery.utils.ClassLoaderUtils.withThreadContextClassLoader
-import functions.model.{Coordinates, RuntimeConfig, Transport, TransportFunction}
+import functions.model.{Coordinates3, RuntimeConfig, Transport, TransportFunction}
 import functions.serializerscanners.reflectivelyLoadObject
 
 import java.net.{URI, URL, URLClassLoader}
@@ -19,7 +19,7 @@ class SeparateClassLoaderTransport(runtimeConfig: RuntimeConfig) extends Transpo
       reflectivelyLoadObject[BiFunction[String, Array[Byte], Array[Byte]]](classLoader, "exported.Exported")
     Log.info(s"Exporter class loaded OK for $dependency")
     (coords, data) =>
-      val coordinates = Coordinates(coords)
+      val coordinates = Coordinates3(coords)
       Log.info(s"Invoking $coordinates")
       withThreadContextClassLoader(classLoader):
         biF(coords, data)

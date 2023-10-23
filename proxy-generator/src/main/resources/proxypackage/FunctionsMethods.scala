@@ -1,6 +1,7 @@
 package {{proxypackage}}
 
 import functions.model.FunctionsMethods
+import functions.model.Coordinates2
 {{#imports}}
 import {{.}}
 {{/imports}}
@@ -20,5 +21,5 @@ object {{className}} extends FunctionsMethods:
   val AllMethods = List({{#functions}}{{caseClassName}}{{^last}}, {{/last}}{{/functions}})
   object Methods:
     {{#functions}}
-    val {{caseClassName}} = "{{proxypackage}}.{{exportedType.name}}:{{functionN}}"
+    val {{caseClassName}} = Coordinates2("{{proxypackage}}.{{exportedType.name}}","{{functionN}}")
     {{/functions}}

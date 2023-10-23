@@ -1,14 +1,14 @@
 package functions.receiver
 
 import functions.Log
-import functions.model.{Coordinates, ReceiverFactory, Serializer}
+import functions.model.{Coordinates3, ReceiverFactory, Serializer}
 import functions.receiver.model.{AvailableFunction, RegisteredFunction}
 import functions.serializerscanners.GenericScanner
 
 class FunctionsInvoker(availableFunctions: Seq[AvailableFunction]):
   def invoke(coordinates: String, data: Array[Byte]): Array[Byte] =
     Log.info(s"Invoking $coordinates")
-    val c    = Coordinates(coordinates)
+    val c    = Coordinates3(coordinates)
     val args = (c.toCoordinatesNoSerializer, data)
     val f    = availableFunctions
       .find(af => af.serializer == c.serializer && af.functionsReceiver.invoke.isDefinedAt(args))
