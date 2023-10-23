@@ -18,9 +18,11 @@ class Http4sTransport[F[_]: Concurrent](client: Client[F], serverUri: Uri):
 
   protected def fullUri(clz: String, method: String, serializer: Serializer): Uri = serverUri / clz / method / serializer.toString
 
+  private val Json                                     = `Content-Type`(MediaType.application.json)
+  private val OctetStream                              = `Content-Type`(MediaType.application.`octet-stream`)
   protected def contentTypeFor(serializer: Serializer) = serializer match
-    case Serializer.Json => `Content-Type`(MediaType.application.json)
-    case Serializer.Avro => `Content-Type`(MediaType.application.`octet-stream`)
+    case Serializer.Json => Json
+    case Serializer.Avro => OctetStream
 
   def transportFunction(coordinates: String, data: Array[Byte]): F[Array[Byte]] =
     val Coordinates(clz, method, serializer) = coordinates
