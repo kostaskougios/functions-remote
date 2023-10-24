@@ -12,6 +12,7 @@ object ReceiverGenerator:
   def apply(
       namingConventions: NamingConventions = DefaultNamingConventions
   ) = new GenericTypeGenerator(
+    "Receiver",
     namingConventions,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsReceiver")
   )

@@ -13,6 +13,7 @@ object RoutesGenerator:
   def apply(
       namingConventions: NamingConventions = DefaultNamingConventions
   ) = new GenericTypeGenerator(
+    "Http4sRoutes",
     namingConventions,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.http4s.Routes")
   )

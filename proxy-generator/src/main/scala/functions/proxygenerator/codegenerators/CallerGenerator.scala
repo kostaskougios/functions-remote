@@ -14,6 +14,7 @@ object CallerGenerator:
   def apply(
       namingConventions: NamingConventions = DefaultNamingConventions
   ) = new GenericTypeGenerator(
+    "Caller",
     namingConventions,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsCaller")
   )

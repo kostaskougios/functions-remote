@@ -14,6 +14,7 @@ object EntryPointFactoryGenerator:
   def caller(
       namingConventions: NamingConventions = DefaultCallerNamingConventions
   ) = new GenericTypeGenerator(
+    "CallerEntryPointFactory",
     namingConventions,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.CallerFactory")
   )
@@ -24,6 +25,7 @@ object EntryPointFactoryGenerator:
   def receiver(
       namingConventions: NamingConventions = DefaultReceiverNamingConventions
   ) = new GenericTypeGenerator(
+    "ReceiverEntryPointFactory",
     namingConventions,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.ReceiverFactory")
   )

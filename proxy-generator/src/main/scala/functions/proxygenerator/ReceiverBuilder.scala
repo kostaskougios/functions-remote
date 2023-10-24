@@ -8,7 +8,8 @@ def generateReceiver(generatorConfig: GeneratorConfig): ReceiverBuilder = new Re
   generatorConfig,
   Seq(
     ReceiverGenerator(),
-    MethodToCaseClassGenerator()
+    MethodToCaseClassGenerator(),
+    EntryPointFactoryGenerator.receiver()
   ),
   Nil,
   false
@@ -26,5 +27,5 @@ class ReceiverBuilder(
     val (jsonGen, jsonSer) =
       if jsonSerialization then (List(CirceJsonSerializerGenerator(), JsonCirceFactories.receiver()), List(Serializer.Json)) else (Nil, Nil)
 
-    val http4sRoutesGen = if http4sRoutes then List(RoutesGenerator(), EntryPointFactoryGenerator.receiver()) else Nil
+    val http4sRoutesGen = if http4sRoutes then List(RoutesGenerator()) else Nil
     new ReceiverBuilder(generatorConfig, generators ++ avroGen ++ jsonGen ++ http4sRoutesGen, serializers ++ avroSer ++ jsonSer, http4sRoutes)

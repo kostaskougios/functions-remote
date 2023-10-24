@@ -8,6 +8,7 @@ import mustache.integration.model.{GeneratorFactories, Many}
 import scala.language.implicitConversions
 
 class GenericTypeGenerator(
+    val name:String,
     namingConventions: GenericTypeGenerator.NamingConventions,
     template: MustacheTemplate
 ):

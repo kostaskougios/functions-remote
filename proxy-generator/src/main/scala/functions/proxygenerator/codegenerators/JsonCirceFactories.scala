@@ -14,12 +14,14 @@ object JsonCirceFactories:
 
   def caller(namingConventions: GenericTypeGenerator.NamingConventions = DefaultCallerNamingConventions): GenericTypeGenerator =
     new GenericTypeGenerator(
+      "JsonCirceCallerFactory",
       namingConventions,
       MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsCallerCirceJsonSerializedFactory")
     )
 
   def receiver(namingConventions: GenericTypeGenerator.NamingConventions = DefaultReceiverNamingConventions): GenericTypeGenerator =
     new GenericTypeGenerator(
+      "JsonCirceReceiverFactory",
       namingConventions,
       MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsReceiverCirceJsonSerializedFactory")
     )

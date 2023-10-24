@@ -11,6 +11,7 @@ object AvroSerializerGenerator:
 
   def apply(namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions) =
     new GenericTypeGenerator(
+      "AvroSerializer",
       namingConventions,
       MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsAvroSerializer")
     )

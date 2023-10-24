@@ -14,6 +14,7 @@ object MethodToCaseClassGenerator:
   def apply(
       namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions
   ) = new GenericTypeGenerator(
+    "MethodToCaseClass",
     namingConventions,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsMethods")
   )

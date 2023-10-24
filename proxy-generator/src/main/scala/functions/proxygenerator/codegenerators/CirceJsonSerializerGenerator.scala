@@ -11,6 +11,7 @@ object CirceJsonSerializerGenerator:
 
   def apply(namingConventions: GenericTypeGenerator.NamingConventions = DefaultNamingConventions) =
     new GenericTypeGenerator(
+      "CirceJsonSerializer",
       namingConventions,
       MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsCirceJsonSerializer")
     )

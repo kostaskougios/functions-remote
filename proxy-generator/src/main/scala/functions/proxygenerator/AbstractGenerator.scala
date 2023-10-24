@@ -19,7 +19,9 @@ abstract class AbstractGenerator(
     if packages.isEmpty then throw new IllegalStateException("No exported trait found, did you marked it with //> exported ?")
     val generatorFactories = GeneratorFactories(serializers.map(_.toString), isHttp4s)
     val codes              = generators.flatMap(_(packages, generatorFactories))
-    println(s"Will write generated files under $targetDir")
+    println(s"Will write generated files under : $targetDir")
+    println(s"Serializers                      : ${serializers.mkString(", ")}")
+    println(s"Generators                       : ${generators.map(_.name).mkString(", ")}")
     for c <- codes do
       println(s"Creating ${c.file}")
       c.writeTo(targetDir)

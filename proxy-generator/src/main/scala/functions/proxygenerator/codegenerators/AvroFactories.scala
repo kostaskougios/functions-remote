@@ -14,12 +14,14 @@ object AvroFactories:
 
   def caller(namingConventions: GenericTypeGenerator.NamingConventions = DefaultCallerNamingConventions): GenericTypeGenerator =
     new GenericTypeGenerator(
+      "CallerAvroFactory",
       namingConventions,
       MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsCallerAvroSerializedFactory")
     )
 
   def receiver(namingConventions: GenericTypeGenerator.NamingConventions = DefaultReceiverNamingConventions): GenericTypeGenerator =
     new GenericTypeGenerator(
+      "ReceiverAvroFactory",
       namingConventions,
       MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.FunctionsReceiverAvroSerializedFactory")
     )
