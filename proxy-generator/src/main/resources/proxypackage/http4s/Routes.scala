@@ -12,11 +12,16 @@ import {{.}}
 
 class {{className}}{{frameworkTypeArgFull}}(
   receiver: {{exportedType.name}}Receiver{{exportedTypeTypeArgs}},
-  contentType: `Content-Type` = `Content-Type`(MediaType.application.json),
-  serializer: Serializer = Serializer.Json
+  serializer: Serializer
 ):
   private val dsl = Http4sDsl{{exportedTypeTypeArgs}}
   import dsl.*
+
+  // override this if you want to manually choose content type
+  def contentType: `Content-Type` =
+    serializer match
+      case Serializer.Json => `Content-Type`(MediaType.application.json)
+      case Serializer.Avro => `Content-Type`(MediaType.application.`octet-stream`)
   // Override this if you want to change the paths
   def pathFor(fullClassName: String, method: String) = Root / fullClassName / method / serializer.toString
 
