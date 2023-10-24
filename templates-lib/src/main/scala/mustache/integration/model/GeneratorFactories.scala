@@ -1,3 +1,6 @@
 package mustache.integration.model
 
-case class GeneratorFactories(serializers: Many[String])
+case class GeneratorFactories(
+    serializers: Many[String],
+    isHttp4s: Boolean
+)

@@ -10,12 +10,19 @@ def generateCaller(generatorConfig: GeneratorConfig): CallerBuilder = new Caller
     MethodToCaseClassGenerator(),
     FactoryGenerator.caller()
   ),
-  Nil
+  Nil,
+  false
 )
 
-class CallerBuilder(generatorConfig: GeneratorConfig, generators: Seq[GenericTypeGenerator], serializers: Seq[Serializer])
-    extends AbstractGenerator(generatorConfig, generators, serializers):
-  def includeAvroSerialization: CallerBuilder =
-    new CallerBuilder(generatorConfig, generators :+ AvroSerializerGenerator() :+ AvroFactories.caller(), serializers :+ Serializer.Avro)
-  def includeJsonSerialization: CallerBuilder =
-    new CallerBuilder(generatorConfig, generators :+ CirceJsonSerializerGenerator() :+ JsonCirceFactories.caller(), serializers :+ Serializer.Json)
+class CallerBuilder(
+    generatorConfig: GeneratorConfig,
+    generators: Seq[GenericTypeGenerator],
+    serializers: Seq[Serializer],
+    override protected val isHttp4s: Boolean
+) extends AbstractGenerator(generatorConfig, generators, serializers):
+
+  def capabilities(avroSerialization: Boolean = false, jsonSerialization: Boolean = false, http4sClient: Boolean = false): CallerBuilder =
+    val (avroGen, avroSer) = if avroSerialization then (List(AvroSerializerGenerator(), AvroFactories.caller()), List(Serializer.Avro)) else (Nil, Nil)
+    val (jsonGen, jsonSer) =
+      if jsonSerialization then (List(CirceJsonSerializerGenerator(), JsonCirceFactories.caller()), List(Serializer.Json)) else (Nil, Nil)
+    new CallerBuilder(generatorConfig, generators ++ avroGen ++ jsonGen, serializers ++ avroSer ++ jsonSer, http4sClient)
