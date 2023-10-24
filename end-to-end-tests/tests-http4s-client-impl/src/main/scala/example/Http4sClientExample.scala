@@ -2,11 +2,8 @@ package example
 
 import cats.effect.*
 import cats.syntax.all.*
-import endtoend.tests.cats.{TestsCatsFunctionsCallerAvroSerializedFactory, TestsCatsFunctionsCallerFactory, TestsCatsFunctionsCallerJsonSerializedFactory}
+import endtoend.tests.cats.TestsCatsFunctionsCallerFactory
 import fs2.io.net.Network
-import functions.http4s.Http4sTransport
-import functions.model.Serializer
-import functions.model.Serializer.Json
 import org.http4s.*
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.implicits.*
