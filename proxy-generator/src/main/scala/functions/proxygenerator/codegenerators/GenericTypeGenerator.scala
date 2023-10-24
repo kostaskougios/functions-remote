@@ -3,7 +3,7 @@ package functions.proxygenerator.codegenerators
 import functions.proxygenerator.codegenerators.model.{Code, Func, Vals}
 import functions.tastyextractor.model.{EMethod, EPackage, EType}
 import mustache.integration.MustacheTemplate
-import mustache.integration.model.Many
+import mustache.integration.model.{GeneratorFactories, Many}
 
 import scala.language.implicitConversions
 
@@ -11,13 +11,13 @@ class GenericTypeGenerator(
     namingConventions: GenericTypeGenerator.NamingConventions,
     template: MustacheTemplate
 ):
-  def apply(packages: Seq[EPackage]): Seq[Code] =
-    packages.flatMap(apply)
+  def apply(packages: Seq[EPackage], generatorFactories: GeneratorFactories): Seq[Code] =
+    packages.flatMap(apply(_, generatorFactories))
 
-  def apply(`package`: EPackage): Seq[Code] =
-    `package`.types.map(apply(`package`, _))
+  def apply(`package`: EPackage, generatorFactories: GeneratorFactories): Seq[Code] =
+    `package`.types.map(apply(`package`, _, generatorFactories))
 
-  def apply(`package`: EPackage, `type`: EType): Code =
+  def apply(`package`: EPackage, `type`: EType, generatorFactories: GeneratorFactories): Code =
     val imports          = `package`.imports.map(_.fullName)
     val frameworkImports = `type`.framework.toSeq.flatMap(_.imports).toSet
     val className        = namingConventions.className(`type`)
@@ -32,7 +32,8 @@ class GenericTypeGenerator(
       imports ++ frameworkImports,
       className,
       mpt,
-      functions
+      functions,
+      generatorFactories
     )
     val code = template(vals)
     Code(

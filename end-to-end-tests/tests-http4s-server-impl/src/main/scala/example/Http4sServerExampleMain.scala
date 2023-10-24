@@ -6,7 +6,7 @@ import endtoend.tests.cats.{
   TestsCatsFunctionsHttp4sRoutes,
   TestsCatsFunctionsImpl,
   TestsCatsFunctionsReceiverAvroSerializedFactory,
-  TestsCatsFunctionsReceiverCirceJsonSerializedFactory
+  TestsCatsFunctionsReceiverJsonSerializedFactory
 }
 import fs2.io.net.Network
 import functions.model.Serializer
@@ -22,7 +22,7 @@ object QuickstartServer:
 
   def run[F[_]: Async: Network]: F[Nothing] = {
     val impl           = new TestsCatsFunctionsImpl[F]
-    val jsonReceiver   = TestsCatsFunctionsReceiverCirceJsonSerializedFactory.createReceiver[F](impl)
+    val jsonReceiver   = TestsCatsFunctionsReceiverJsonSerializedFactory.createReceiver[F](impl)
     val avroReceiver   = TestsCatsFunctionsReceiverAvroSerializedFactory.createReceiver[F](impl)
     val testRoutesJson = new TestsCatsFunctionsHttp4sRoutes[F](jsonReceiver, Serializer.Json)
     val testRoutesAvro = new TestsCatsFunctionsHttp4sRoutes[F](avroReceiver, Serializer.Avro)

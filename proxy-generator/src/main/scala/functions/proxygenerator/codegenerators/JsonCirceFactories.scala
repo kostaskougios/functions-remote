@@ -7,10 +7,10 @@ import mustache.integration.model.ResourceTemplatesSourceLocation
 
 object JsonCirceFactories:
   object DefaultCallerNamingConventions extends GenericTypeGenerator.NamingConventions:
-    override def className(`type`: EType) = `type`.name + "CallerCirceJsonSerializedFactory"
+    override def className(`type`: EType) = `type`.name + "CallerJsonSerializedFactory"
 
   object DefaultReceiverNamingConventions extends GenericTypeGenerator.NamingConventions:
-    override def className(`type`: EType) = `type`.name + "ReceiverCirceJsonSerializedFactory"
+    override def className(`type`: EType) = `type`.name + "ReceiverJsonSerializedFactory"
 
   def caller(namingConventions: GenericTypeGenerator.NamingConventions = DefaultCallerNamingConventions): GenericTypeGenerator =
     new GenericTypeGenerator(

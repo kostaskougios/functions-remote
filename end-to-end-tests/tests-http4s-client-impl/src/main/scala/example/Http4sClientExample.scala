@@ -2,7 +2,7 @@ package example
 
 import cats.effect.*
 import cats.syntax.all.*
-import endtoend.tests.cats.{TestsCatsFunctionsCallerAvroSerializedFactory, TestsCatsFunctionsCallerCirceJsonSerializedFactory}
+import endtoend.tests.cats.{TestsCatsFunctionsCallerAvroSerializedFactory, TestsCatsFunctionsCallerJsonSerializedFactory}
 import fs2.io.net.Network
 import functions.http4s.Http4sTransport
 import functions.model.Serializer
@@ -23,7 +23,7 @@ object QuickstartClient:
         .use: client =>
           val transportJson = new Http4sTransport[F](client, uri"http://localhost:8080", Serializer.Json)
           val transportAvro = new Http4sTransport[F](client, uri"http://localhost:8080", Serializer.Avro)
-          val jsonCaller    = TestsCatsFunctionsCallerCirceJsonSerializedFactory.createCaller[F](transportJson.transportFunction)
+          val jsonCaller    = TestsCatsFunctionsCallerJsonSerializedFactory.createCaller[F](transportJson.transportFunction)
           val avroCaller    = TestsCatsFunctionsCallerAvroSerializedFactory.createCaller[F](transportAvro.transportFunction)
 
           val ios =

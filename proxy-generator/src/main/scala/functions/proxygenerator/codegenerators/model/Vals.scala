@@ -1,7 +1,7 @@
 package functions.proxygenerator.codegenerators.model
 
 import functions.tastyextractor.model.{DetectedCatsEffect, EType}
-import mustache.integration.model.Many
+import mustache.integration.model.{GeneratorFactories, Many}
 
 case class Vals(
     exportedType: EType,
@@ -11,7 +11,8 @@ case class Vals(
     allImports: Many[String],
     className: String,
     methodParams: String,
-    functions: Many[Func]
+    functions: Many[Func],
+    generatorFactories: GeneratorFactories
 ):
   def exportedTypeTypeArgs: String = if exportedType.hasFramework then s"[$frameworkTypeArg]" else ""
   def exportedTypeFull: String     = exportedType.name + exportedTypeTypeArgs
