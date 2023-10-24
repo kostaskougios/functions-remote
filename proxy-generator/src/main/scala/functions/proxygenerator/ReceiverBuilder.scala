@@ -26,5 +26,5 @@ class ReceiverBuilder(
     val (jsonGen, jsonSer) =
       if jsonSerialization then (List(CirceJsonSerializerGenerator(), JsonCirceFactories.receiver()), List(Serializer.Json)) else (Nil, Nil)
 
-    val http4sRoutesGen = if http4sRoutes then List(RoutesGenerator()) else Nil
+    val http4sRoutesGen = if http4sRoutes then List(RoutesGenerator(), EntryPointFactoryGenerator.receiver()) else Nil
     new ReceiverBuilder(generatorConfig, generators ++ avroGen ++ jsonGen ++ http4sRoutesGen, serializers ++ avroSer ++ jsonSer, http4sRoutes)

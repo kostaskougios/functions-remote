@@ -5,7 +5,9 @@ import functions.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
 
-object FactoryGenerator:
+/** Generates factories code that serve as entry points of using the generated classes
+  */
+object EntryPointFactoryGenerator:
   object DefaultCallerNamingConventions extends GenericTypeGenerator.NamingConventions:
     def className(`type`: EType) = s"${`type`.name}CallerFactory"
 
@@ -14,4 +16,14 @@ object FactoryGenerator:
   ) = new GenericTypeGenerator(
     namingConventions,
     MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.CallerFactory")
+  )
+
+  object DefaultReceiverNamingConventions extends GenericTypeGenerator.NamingConventions:
+    def className(`type`: EType) = s"${`type`.name}ReceiverFactory"
+
+  def receiver(
+      namingConventions: NamingConventions = DefaultReceiverNamingConventions
+  ) = new GenericTypeGenerator(
+    namingConventions,
+    MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.ReceiverFactory")
   )

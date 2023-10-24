@@ -8,7 +8,7 @@ def generateCaller(generatorConfig: GeneratorConfig): CallerBuilder = new Caller
   Seq(
     CallerGenerator(),
     MethodToCaseClassGenerator(),
-    FactoryGenerator.caller()
+    EntryPointFactoryGenerator.caller()
   ),
   Nil,
   false
