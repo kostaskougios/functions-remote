@@ -3,7 +3,7 @@ package {{proxypackage}}
 import {{.}}
 {{/frameworkImports}}
 
-object {{className}} /* extends ReceiverFactory[{{exportedTypeFull}}] */:
+object {{className}}:
   val Serializer = new {{exportedType.name}}AvroSerializer
   def createReceiver{{frameworkTypeArgFull}}(functions: {{exportedTypeFull}}): {{exportedType.name}}Receiver{{exportedTypeTypeArgs}} =
     new {{exportedType.name}}Receiver(

@@ -4,7 +4,7 @@ import functions.model.Coordinates2
 import {{.}}
 {{/imports}}
 
-object {{className}} /* extends CallerFactory[{{exportedType.name}}] */:
+object {{className}}:
   val Serializer = new {{exportedType.name}}CirceJsonSerializer
   def createCaller{{frameworkTypeArgFull}}(transport: (Coordinates2, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}):  {{exportedTypeFull}}  =
     new {{exportedType.name}}Caller(

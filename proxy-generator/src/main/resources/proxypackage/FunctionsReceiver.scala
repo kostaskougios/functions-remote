@@ -9,7 +9,7 @@ class {{className}}{{frameworkTypeArgFull}}(
     {{functionN}}ReturnTypeSerializer: {{resultNNoFramework}} => Array[Byte],
   {{/functions}}
     f: {{exportedTypeFull}}
-) /* extends FunctionsReceiver */:
+):
 
   /*
   override val invoke: PartialFunction[(String, Array[Byte]) , Array[Byte]] =
