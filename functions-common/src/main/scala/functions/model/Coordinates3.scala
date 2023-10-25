@@ -6,6 +6,8 @@ case class Coordinates3(className: String, method: String, serializer: Serialize
 case class Coordinates2(className: String, method: String)
 
 object Coordinates3:
+  def apply(coordinates2: Coordinates2, serializer: Serializer): Coordinates3 = Coordinates3(coordinates2.className, coordinates2.method, serializer)
+
   def apply(coords: String): Coordinates3   = coords.split(':') match
     case Array(className, method, serializer) =>
       Coordinates3(className, method, Serializer.valueOf(serializer))
