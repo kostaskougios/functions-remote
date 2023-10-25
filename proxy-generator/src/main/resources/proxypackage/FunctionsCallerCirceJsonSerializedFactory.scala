@@ -1,5 +1,4 @@
 package {{proxypackage}}
-import functions.model.CallerFactory
 import functions.model.Coordinates2
 {{#imports}}
 import {{.}}

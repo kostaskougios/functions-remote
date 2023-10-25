@@ -2,6 +2,7 @@ package functions.model
 
 case class Coordinates3(className: String, method: String, serializer: Serializer):
   def toCoordinatesNoSerializer: String = s"$className:$method"
+  def toRawCoordinates: String          = s"$toCoordinatesNoSerializer:$serializer"
 
 case class Coordinates2(className: String, method: String)
 

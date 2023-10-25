@@ -1,7 +1,7 @@
 package endtoend.tests
 
-import functions.discovery.FunctionsDiscovery
 import functions.model.RuntimeConfig
+import functions.transports.SeparateClassLoaderTransport
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.io.File
@@ -13,4 +13,5 @@ class AbstractEndToEndSuite extends AnyFunSuite:
     else new File("end-to-end-tests/config") // sbt
 
   println(s"config path: $configPath")
-  val discovery = FunctionsDiscovery(RuntimeConfig.withDefaults(configRootDirectory = configPath.getAbsolutePath))
+  val runtimeConfig        = RuntimeConfig.withDefaults(configRootDirectory = configPath.getAbsolutePath)
+  val classLoaderTransport = new SeparateClassLoaderTransport(runtimeConfig)
