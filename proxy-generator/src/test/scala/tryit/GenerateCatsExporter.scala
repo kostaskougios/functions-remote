@@ -21,14 +21,12 @@ object CatsExporter:
     println(s"---- Exporting $exportDep")
     deleteScalaFiles(targetRoot)
 
-    generateReceiver(generatorConfig)
-      .capabilities(avroSerialization = true, jsonSerialization = true, http4sRoutes = true)
+    generateReceiver(generatorConfig, avroSerialization = true, jsonSerialization = true, http4sRoutes = true)
       .generate(targetRoot, exportDep)
 
   def importsFor(targetRoot: String, exportDep: String) =
     println(s"---- Importing $exportDep")
     deleteScalaFiles(targetRoot)
 
-    generateCaller(generatorConfig)
-      .capabilities(avroSerialization = true, jsonSerialization = true, http4sClient = true)
+    generateCaller(generatorConfig, avroSerialization = true, jsonSerialization = true, http4sClient = true)
       .generate(targetRoot, exportDep)

@@ -6,13 +6,12 @@ import functions.tastyextractor.StructureExtractor
 import mustache.integration.model.GeneratorFactories
 import scala.language.implicitConversions
 
-abstract class AbstractGenerator(
+class Generator(
     generatorConfig: GeneratorConfig,
     generators: Seq[GenericTypeGenerator],
-    serializers: Seq[Serializer]
+    serializers: Seq[Serializer],
+    isHttp4s: Boolean
 ):
-  protected def isHttp4s: Boolean
-
   def generate(targetDir: String, exportDependency: String): Unit =
     val structureExtractor = StructureExtractor()
     val packages           = structureExtractor.forDependency(generatorConfig, exportDependency)

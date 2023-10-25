@@ -20,7 +20,7 @@ object FunctionsInvoker:
   def apply(classLoader: ClassLoader, functions: Seq[RegisteredFunction[_]]): FunctionsInvoker =
     val scanners           = Seq(
       GenericScanner[ReceiverFactory[_]](classLoader, Serializer.Avro, "ReceiverAvroSerializedFactory"),
-      GenericScanner[ReceiverFactory[_]](classLoader, Serializer.Json, "ReceiverCirceJsonSerializedFactory")
+      GenericScanner[ReceiverFactory[_]](classLoader, Serializer.Json, "ReceiverJsonSerializedFactory")
     )
     val availableFunctions = for
       f               <- functions
