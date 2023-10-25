@@ -1,6 +1,4 @@
 package {{proxypackage}}
-
-import functions.model.FunctionsReceiver
 {{#allImports}}
 import {{.}}
 {{/allImports}}

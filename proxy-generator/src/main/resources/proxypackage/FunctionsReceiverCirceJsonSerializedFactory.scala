@@ -1,6 +1,4 @@
 package {{proxypackage}}
-
-import functions.model.ReceiverFactory
 {{#frameworkImports}}
 import {{.}}
 {{/frameworkImports}}
