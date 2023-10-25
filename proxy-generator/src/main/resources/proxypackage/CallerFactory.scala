@@ -11,8 +11,8 @@ object {{className}}:
   {{! ------------------------------------ Generic --------------------------------------------- }}
   // generic factories
   {{#generatorFactories.serializers}}
-  def new{{.}}{{exportedType.name}}{{frameworkTypeArgFull}}(transport : (Coordinates2, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}) : {{exportedTypeFull}} =
-    {{exportedType.name}}Caller{{.}}SerializedFactory.createCaller(transport)
+  def new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(transport : (Coordinates2, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}) : {{exportedTypeFull}} =
+    {{exportedType.name}}Caller{{serializer}}SerializedFactory.createCaller(transport)
   {{/generatorFactories.serializers}}
 
   {{! ------------------------------------ Http4s ---------------------------------------------- }}
@@ -23,9 +23,9 @@ object {{className}}:
   import org.http4s.*
   {{#generatorFactories.serializers}}
 
-  def newHttp4s{{.}}{{exportedType.name}}{{frameworkTypeArgFull}}(client: Client[{{frameworkTypeArg}}], serverUri: Uri) : {{exportedTypeFull}} =
-    val transport = new Http4sTransport[{{frameworkTypeArg}}](client, serverUri, Serializer.{{.}})
-    {{exportedType.name}}Caller{{.}}SerializedFactory.createCaller(transport.transportFunction)
+  def newHttp4s{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(client: Client[{{frameworkTypeArg}}], serverUri: Uri) : {{exportedTypeFull}} =
+    val transport = new Http4sTransport[{{frameworkTypeArg}}](client, serverUri, Serializer.{{serializer}})
+    {{exportedType.name}}Caller{{serializer}}SerializedFactory.createCaller(transport.transportFunction)
 
   {{/generatorFactories.serializers}}
   {{/generatorFactories.isHttp4s}}

@@ -1,18 +1,14 @@
 package exported
 
-import endtoend.tests.{NestedTypeParamsFunctions, NestedTypeParamsFunctionsImpl, SimpleFunctions, SimpleFunctionsImpl, SimpleFunctionsReceiverFactory}
-import functions.receiver.FunctionsInvoker
-import functions.receiver.model.RegisteredFunction
+import endtoend.tests.{SimpleFunctionsImpl, SimpleFunctionsReceiverFactory}
+import functions.model.Coordinates3
 
 import java.util.function.BiFunction
 
 object Exported extends BiFunction[String, Array[Byte], Array[Byte]]:
-  private val functions = FunctionsInvoker.withFunctions(
-    RegisteredFunction[SimpleFunctions](new SimpleFunctionsImpl),
-    RegisteredFunction[NestedTypeParamsFunctions](new NestedTypeParamsFunctionsImpl)
-  )
+  private val receiver = SimpleFunctionsReceiverFactory.invokerMap(new SimpleFunctionsImpl)
 
-  private val simpleFunctionsAvro = SimpleFunctionsReceiverFactory.newAvroSimpleFunctions(new SimpleFunctionsImpl)
-  private val simpleFunctionsJson = SimpleFunctionsReceiverFactory.newJsonSimpleFunctions(new SimpleFunctionsImpl)
-
-  override def apply(method: String, data: Array[Byte]) = functions.invoke(method, data)
+  override def apply(method: String, data: Array[Byte]): Array[Byte] =
+    val coordinates3 = Coordinates3(method)
+    val function     = receiver(coordinates3)
+    function(data)
