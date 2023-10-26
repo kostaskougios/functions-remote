@@ -21,8 +21,8 @@ object {{className}}:
 
   def newClassloaderBuilder(runtimeConfig: RuntimeConfig): ClassloaderBuilder = new ClassloaderBuilder(runtimeConfig)
   class ClassloaderBuilder(runtimeConfig: RuntimeConfig):
-    // we need 1 classloader transport so that we load this function only once
     val classLoader = new SeparateClassLoaderTransport(runtimeConfig)
+    // we need to reuse this classloader transport so that we class-load this function only once
     val transport = classLoader.createTransport(BuildInfo.organization, BuildInfo.exportedArtifact, BuildInfo.version)
     {{#generatorFactories.serializers}}
     def new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}: {{exportedTypeFull}} =
