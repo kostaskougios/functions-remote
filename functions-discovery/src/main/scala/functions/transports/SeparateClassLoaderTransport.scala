@@ -9,6 +9,9 @@ import functions.serializerscanners.reflectivelyLoadObject
 import java.net.{URI, URL, URLClassLoader}
 
 class SeparateClassLoaderTransport(runtimeConfig: RuntimeConfig):
+  def createTransport(organization: String, exportedArtifact: String, version: String): TransportFunction =
+    createTransport(s"$organization:$exportedArtifact:$version")
+
   def createTransport(dependency: String): TransportFunction =
     Log.info(s"scanning for dependency $dependency")
     val deps        = runtimeConfig.dependenciesFor(dependency)
