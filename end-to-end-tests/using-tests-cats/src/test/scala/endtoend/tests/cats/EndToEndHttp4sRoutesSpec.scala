@@ -38,8 +38,8 @@ class EndToEndHttp4sRoutesSpec extends AsyncFreeSpec with AsyncTestSuite with As
 
   "TestsCatsFunctions" - {
     "catsAdd" in {
-      (server[IO], client[IO]).tupled.use: (s, c) =>
-        val avroCaller = TestsCatsFunctionsCallerFactory.newHttp4sAvroTestsCatsFunctions(c, serverUri)
+      (server[IO], client[IO]).tupled.use: (_, client) =>
+        val avroCaller = TestsCatsFunctionsCallerFactory.newHttp4sAvroTestsCatsFunctions(client, serverUri)
         for r <- avroCaller.catsAdd(1, 2) yield r should be(3)
     }
   }
