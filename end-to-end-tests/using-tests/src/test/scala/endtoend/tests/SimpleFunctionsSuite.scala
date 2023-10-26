@@ -5,11 +5,11 @@ import functions.model.Serializer.Avro
 import org.scalatest.matchers.should.Matchers.*
 
 class SimpleFunctionsSuite extends AbstractEndToEndSuite:
-  val transport = classLoaderTransport.createTransport(BuildInfo.organization, BuildInfo.exportedArtifact, BuildInfo.version)
+  val functionBuilder = SimpleFunctionsCallerFactory.newClassloaderBuilder(runtimeConfig)
 
   for (serializer, function) <- Seq(
-      (Serializer.Avro, SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport)),
-      (Serializer.Json, SimpleFunctionsCallerFactory.newJsonSimpleFunctions(transport))
+      (Serializer.Avro, functionBuilder.newAvroSimpleFunctions),
+      (Serializer.Json, functionBuilder.newJsonSimpleFunctions)
     )
   do
     test(s"add using $serializer") {

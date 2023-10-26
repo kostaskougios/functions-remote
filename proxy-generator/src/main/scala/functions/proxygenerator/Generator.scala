@@ -11,13 +11,14 @@ class Generator(
     generatorConfig: GeneratorConfig,
     generators: Seq[GenericTypeGenerator],
     serializers: Seq[Serializer],
+    isClassloader: Boolean,
     isHttp4s: Boolean
 ):
   def generate(targetDir: String, exportDependency: String): Unit =
     val structureExtractor = StructureExtractor()
     val packages           = structureExtractor.forDependency(generatorConfig, exportDependency)
     if packages.isEmpty then throw new IllegalStateException("No exported trait found, did you marked it with //> exported ?")
-    val generatorFactories = GeneratorFactories(SerializerS.from(serializers.map(_.toString)), isHttp4s)
+    val generatorFactories = GeneratorFactories(SerializerS.from(serializers.map(_.toString)), isClassloader, isHttp4s)
     val codes              = generators.flatMap(_(packages, generatorFactories))
     println(s"Will write generated files under : $targetDir")
     println(s"Serializers                      : ${serializers.mkString(", ")}")

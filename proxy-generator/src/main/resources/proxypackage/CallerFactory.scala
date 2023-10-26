@@ -14,7 +14,23 @@ object {{className}}:
     {{exportedType.name}}Caller{{serializer}}SerializedFactory.createCaller(transport)
   {{/generatorFactories.serializers}}
 
-  {{! ------------------------------------ Http4s ---------------------------------------------- }}
+  {{! ------------------------------------ Classloader transports ---------------------------------------------- }}
+  {{#generatorFactories.isClassloader}}
+  import functions.model.RuntimeConfig
+  import functions.transports.SeparateClassLoaderTransport
+
+  def newClassloaderBuilder(runtimeConfig: RuntimeConfig): ClassloaderBuilder = new ClassloaderBuilder(runtimeConfig)
+  class ClassloaderBuilder(runtimeConfig: RuntimeConfig):
+    // we need 1 classloader transport so that we load this function only once
+    val classLoader = new SeparateClassLoaderTransport(runtimeConfig)
+    val transport = classLoader.createTransport(BuildInfo.organization, BuildInfo.exportedArtifact, BuildInfo.version)
+    {{#generatorFactories.serializers}}
+    def new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}: {{exportedTypeFull}} =
+      {{className}}.new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(transport)
+    {{/generatorFactories.serializers}}
+
+  {{/generatorFactories.isClassloader}}
+  {{! ------------------------------------ Http4s transports      ---------------------------------------------- }}
   {{#generatorFactories.isHttp4s}}
   // Http4s factories
   import functions.http4s.Http4sTransport

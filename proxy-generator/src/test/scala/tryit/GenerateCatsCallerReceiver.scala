@@ -28,5 +28,5 @@ object CatsExporter:
     println(s"---- Importing $exportDep")
     deleteScalaFiles(targetRoot)
 
-    generateCaller(generatorConfig, avroSerialization = true, jsonSerialization = true, http4sClient = true)
+    generateCaller(generatorConfig, avroSerialization = true, jsonSerialization = true, http4sClientTransport = true)
       .generate(targetRoot, exportDep)

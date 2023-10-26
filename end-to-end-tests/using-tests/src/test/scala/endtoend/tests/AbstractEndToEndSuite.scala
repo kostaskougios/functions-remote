@@ -13,5 +13,4 @@ class AbstractEndToEndSuite extends AnyFunSuite:
     else new File("end-to-end-tests/config") // sbt
 
   println(s"config path: $configPath")
-  val runtimeConfig        = RuntimeConfig.withDefaults(configRootDirectory = configPath.getAbsolutePath)
-  val classLoaderTransport = new SeparateClassLoaderTransport(runtimeConfig)
+  val runtimeConfig = RuntimeConfig.withDefaults(configRootDirectory = configPath.getAbsolutePath)

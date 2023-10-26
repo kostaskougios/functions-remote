@@ -21,4 +21,4 @@ def generateReceiver(
     MethodToCaseClassGenerator(),
     EntryPointFactoryGenerator.receiver()
   )
-  new Generator(generatorConfig, generators ++ avroGen ++ jsonGen ++ http4sRoutesGen, avroSer ++ jsonSer, http4sRoutes)
+  new Generator(generatorConfig, generators ++ avroGen ++ jsonGen ++ http4sRoutesGen, avroSer ++ jsonSer, false, http4sRoutes)
