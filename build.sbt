@@ -51,6 +51,8 @@ val Http4sClient = Seq(
 val Http4sCirce = Seq("org.http4s" %% "http4s-circe" % Http4sVersion)
 
 val CatsEffect = "org.typelevel" %% "cats-effect" % "3.5.2"
+
+val CatsEffectsTesting = "org.typelevel" %% "cats-effect-testing-scalatest" % "1.5.0" % Test
 // ----------------------- modules --------------------------------
 
 val commonSettings = Seq(
@@ -184,7 +186,7 @@ lazy val `using-tests-cats` = project
   .in(file("end-to-end-tests/using-tests-cats"))
   .settings(
     endToEndTestsSettings,
-    libraryDependencies ++= Seq(ScalaTest)
+    libraryDependencies ++= Seq(ScalaTest, CatsEffectsTesting)
   )
   .dependsOn(`tests-http4s-client-impl`, `tests-http4s-server-impl`)
 
