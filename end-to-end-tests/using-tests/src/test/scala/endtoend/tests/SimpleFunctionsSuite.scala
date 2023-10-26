@@ -4,6 +4,9 @@ import functions.model.Serializer
 import functions.model.Serializer.Avro
 import org.scalatest.matchers.should.Matchers.*
 
+/** To run this, first the SimpleFunctions function must be published locally and the .local/dependencies folder should contain the classpath files for
+  * SimpleFunctions
+  */
 class SimpleFunctionsSuite extends AbstractEndToEndSuite:
   val functionBuilder = SimpleFunctionsCallerFactory.newClassloaderBuilder(runtimeConfig)
 

@@ -7,6 +7,11 @@ import functions.utils.ClassLoaderUtils.withThreadContextClassLoader
 
 import java.net.{URI, URL, URLClassLoader}
 
+/** A transport that uses a separate classloader to fully load a function and all it's dependencies. Then it will send the Array[Byte] serialized function
+  * params to it via exported.Exported class which the function's jar should contain.
+  * @param runtimeConfig
+  *   the RuntimeConfig used to trace the function's jar and dependencies
+  */
 class SeparateClassLoaderTransport(runtimeConfig: RuntimeConfig):
   def createTransport(organization: String, exportedArtifact: String, version: String): TransportFunction =
     createTransport(s"$organization:$exportedArtifact:$version")
