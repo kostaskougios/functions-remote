@@ -1,7 +1,6 @@
 package {{proxypackage}}
 
 import functions.model.Coordinates3
-import functions.model.Serializer
 
 {{#frameworkImports}}
 import {{.}}

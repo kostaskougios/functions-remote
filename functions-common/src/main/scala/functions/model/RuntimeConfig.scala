@@ -10,7 +10,7 @@ case class RuntimeConfig(
     configRootDirectory: String
 ):
   val local: File                                 = new File(configRootDirectory, ".local")
-  val localDependencies                           = new File(local, "dependencies")
+  val localDependencies: File                     = new File(local, "dependencies")
   def dependenciesFor(dep: String): Array[String] = FileUtils.readFile(new File(localDependencies, dep + ".classpath")).toArray
 
 object RuntimeConfig:

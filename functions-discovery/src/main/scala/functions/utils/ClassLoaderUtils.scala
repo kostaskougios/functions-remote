@@ -1,4 +1,4 @@
-package functions.discovery.utils
+package functions.utils
 
 object ClassLoaderUtils:
   def withThreadContextClassLoader[R](cl: ClassLoader)(f: => R): R =
