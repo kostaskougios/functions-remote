@@ -5,6 +5,7 @@ import cats.effect.{Async, IO}
 import cats.syntax.all.*
 import com.comcast.ip4s.*
 import fs2.io.net.Network
+import functions.model.Serializer
 import org.http4s.HttpRoutes
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server.EmberServerBuilder
@@ -22,8 +23,7 @@ class EndToEndHttp4sRoutesSpec extends AsyncFreeSpec with AsyncTestSuite with As
     val testRoutesJson = TestsCatsFunctionsReceiverFactory.newJsonTestsCatsFunctionsRoutes(impl)
     val testRoutesAvro = TestsCatsFunctionsReceiverFactory.newAvroTestsCatsFunctionsRoutes(impl)
     val routes         = HttpRoutes.of(testRoutesJson.allRoutes orElse testRoutesAvro.allRoutes)
-    val httpApp        = routes.orNotFound
-    val finalHttpApp   = Logger.httpApp(true, true)(httpApp)
+    val finalHttpApp   = Logger.httpApp(true, true)(routes.orNotFound)
 
     EmberServerBuilder.default
       .withHost(ipv4"0.0.0.0")
@@ -31,15 +31,20 @@ class EndToEndHttp4sRoutesSpec extends AsyncFreeSpec with AsyncTestSuite with As
       .withHttpApp(finalHttpApp)
       .build
 
-  def client[F[_]: Async] =
+  def client[F[_]: Async: Network] =
     EmberClientBuilder
       .default[F]
       .build
 
   "TestsCatsFunctions" - {
-    "catsAdd" in {
-      (server[IO], client[IO]).tupled.use: (_, client) =>
-        val avroCaller = TestsCatsFunctionsCallerFactory.newHttp4sAvroTestsCatsFunctions(client, serverUri)
-        for r <- avroCaller.catsAdd(1, 2) yield r should be(3)
-    }
+    for (serializer, functions) <- Seq(
+        (Serializer.Avro, TestsCatsFunctionsCallerFactory.newHttp4sAvroTestsCatsFunctions[IO](_, serverUri)),
+        (Serializer.Json, TestsCatsFunctionsCallerFactory.newHttp4sJsonTestsCatsFunctions[IO](_, serverUri))
+      )
+    do
+      s"$serializer: catsAdd" in {
+        (server[IO], client[IO]).tupled.use: (_, client) =>
+          val avroCaller = functions(client)
+          for r <- avroCaller.catsAdd(1, 2) yield r should be(3)
+      }
   }
