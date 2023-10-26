@@ -6,7 +6,7 @@ import org.scalatest.matchers.should.Matchers.*
 
 class SimpleFunctionsSuite extends AbstractEndToEndSuite:
   val serializer = Serializer.Avro
-  val transport  = classLoaderTransport.createTransport(s"${BuildInfo.organization}:${BuildInfo.exportedArtifact}:${BuildInfo.version}", serializer)
+  val transport  = classLoaderTransport.createTransport(s"${BuildInfo.organization}:${BuildInfo.exportedArtifact}:${BuildInfo.version}")
   val function   = SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport)
 
   test(s"add using $transport / $serializer") {

@@ -1,6 +1,6 @@
 package {{proxypackage}}
 
-import functions.model.Coordinates2
+import functions.model.Coordinates3
 import functions.model.Serializer
 
 {{#frameworkImports}}
@@ -11,7 +11,7 @@ object {{className}}:
   {{! ------------------------------------ Generic --------------------------------------------- }}
   // generic factories
   {{#generatorFactories.serializers}}
-  def new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(transport : (Coordinates2, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}) : {{exportedTypeFull}} =
+  def new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(transport : (Coordinates3, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}) : {{exportedTypeFull}} =
     {{exportedType.name}}Caller{{serializer}}SerializedFactory.createCaller(transport)
   {{/generatorFactories.serializers}}
 
@@ -24,7 +24,7 @@ object {{className}}:
   {{#generatorFactories.serializers}}
 
   def newHttp4s{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(client: Client[{{frameworkTypeArg}}], serverUri: Uri) : {{exportedTypeFull}} =
-    val transport = new Http4sTransport[{{frameworkTypeArg}}](client, serverUri, Serializer.{{serializer}})
+    val transport = new Http4sTransport[{{frameworkTypeArg}}](client, serverUri)
     {{exportedType.name}}Caller{{serializer}}SerializedFactory.createCaller(transport.transportFunction)
 
   {{/generatorFactories.serializers}}

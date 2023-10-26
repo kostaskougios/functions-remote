@@ -4,7 +4,8 @@ case class Coordinates3(className: String, method: String, serializer: Serialize
   def toCoordinatesNoSerializer: String = s"$className:$method"
   def toRawCoordinates: String          = s"$toCoordinatesNoSerializer:$serializer"
 
-case class Coordinates2(className: String, method: String)
+case class Coordinates2(className: String, method: String):
+  def withSerializer(serializer: Serializer): Coordinates3 = Coordinates3(className, method, serializer)
 
 object Coordinates3:
   def apply(coordinates2: Coordinates2, serializer: Serializer): Coordinates3 = Coordinates3(coordinates2.className, coordinates2.method, serializer)
