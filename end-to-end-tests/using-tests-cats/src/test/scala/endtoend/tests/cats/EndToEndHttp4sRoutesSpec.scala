@@ -4,6 +4,7 @@ import cats.effect.testing.scalatest.AsyncIOSpec
 import cats.effect.{Async, IO}
 import cats.syntax.all.*
 import com.comcast.ip4s.*
+import endtoend.tests.cats.model.Return1
 import fs2.io.net.Network
 import functions.model.Serializer
 import org.http4s.HttpRoutes
@@ -46,5 +47,15 @@ class EndToEndHttp4sRoutesSpec extends AsyncFreeSpec with AsyncTestSuite with As
         (server[IO], client[IO]).tupled.use: (_, client) =>
           val avroCaller = functions(client)
           for r <- avroCaller.catsAdd(1, 2) yield r should be(3)
+      }
+      s"$serializer: catsAddR" in {
+        (server[IO], client[IO]).tupled.use: (_, client) =>
+          val avroCaller = functions(client)
+          for r <- avroCaller.catsAddR(1, 2) yield r should be(Return1(3))
+      }
+      s"$serializer: catsAddLR" in {
+        (server[IO], client[IO]).tupled.use: (_, client) =>
+          val avroCaller = functions(client)
+          for r <- avroCaller.catsAddLR(1, 2) yield r should be(List(Return1(3)))
       }
   }
