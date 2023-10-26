@@ -2,12 +2,13 @@ package example
 
 import cats.effect.{Async, IO, IOApp}
 import com.comcast.ip4s.*
-import endtoend.tests.cats.{TestsCatsFunctionsImpl, TestsCatsFunctionsReceiverFactory}
+import endtoend.tests.cats.TestsCatsFunctionsReceiverFactory
 import fs2.io.net.Network
 import org.http4s.HttpRoutes
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits.*
 import org.http4s.server.middleware.Logger
+import tests.cats.TestsCatsFunctionsImpl
 
 object Http4sServerExampleMain extends IOApp.Simple:
   val run = QuickstartServer.run[IO]

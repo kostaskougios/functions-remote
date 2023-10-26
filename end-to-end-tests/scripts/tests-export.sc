@@ -8,4 +8,3 @@ def exportFor(targetRoot:String,exportDep:String)=
         .generate(targetRoot, exportDep)
 
 exportFor(s"$ProjectRoot/tests-impl/src/main/generated",ExportsDep)
-exportFor(s"$ProjectRoot/tests-cats-impl/src/main/generated",ExportsCatsDep)

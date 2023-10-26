@@ -1,7 +1,8 @@
-package endtoend.tests.cats
+package tests.cats
 
 import cats.effect.kernel.Async
 import cats.implicits.*
+import endtoend.tests.cats.TestsCatsFunctions
 import endtoend.tests.cats.model.Return1
 
 class TestsCatsFunctionsImpl[F[_]: Async] extends TestsCatsFunctions[F]:
