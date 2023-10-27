@@ -12,3 +12,5 @@ trait TestsCatsFunctions[F[_]: Async]:
   def catsAddR(a: Int, b: Int): F[Return1]
   def catsAddLR(a: Int, b: Int): F[List[Return1]]
   def catsDivide(a: Int, b: Int): F[Either[Int, String]]
+  def alwaysFails(a: Int): F[String]
+  def alwaysFailsBeforeCreatingF(a: Int): F[String]
