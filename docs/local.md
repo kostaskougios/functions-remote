@@ -89,7 +89,8 @@ Now locally we have the jars and are ready to use the code generator. Because th
 within sbt, so we have to i.e. use `scala-cli` (or just some code in a separate module). 
 The `scala-cli` scripts are [here](../example-commands/scripts). For example the generator for the caller:
 
-ls-caller.sc:
+
+`ls-caller.sc`:
 ```scala
 import functions.proxygenerator.*
 
@@ -103,7 +104,9 @@ We generate a caller with support for avro and json (circe) serialization. We al
 classloader transport. This transport allows us to call `ls-receiver` without having it as a dependency of `ls-caller`.
 
 On the receiver side we need something like this:
-ls-receiver.sc:
+
+
+`ls-receiver.sc`:
 ```scala
 import functions.proxygenerator.*
 
