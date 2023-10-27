@@ -32,6 +32,4 @@ We can then use functions-remote to create code for us that:
 A call to a function is done via a generated `Caller` class, serialized, transferred to the `Receiver` via a `transport` and the `Receiver` takes 
 care of actually calling the function implementation.
 
-```
 Our code invokes `LsFunctions.ls()` ➡️ `ls()` args are copied to the generated `Ls` case class ➡️ `Ls` is serialized to `Array[Byte]` ➡️ the transport is used to transfer the bytes to the `Receiver` ➡️ on the `Receiver` side we deserialize `Ls` and use it to invoke the actual `LsFunctionsImpl` ➡️ `LsResult` is serialized and send back to the caller
-```
