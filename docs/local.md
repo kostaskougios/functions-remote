@@ -116,6 +116,13 @@ val TargetRoot = s"$ProjectRoot/ls-receiver/src/main/generated"
 generateReceiver(generatorConfig, avroSerialization = true, jsonSerialization = true)
     .generate(TargetRoot, LsExportsDep)
 ```
+We can run the scripts in the terminal:
+
+```shell
+cd <project root directory>
+scala-cli scripts scripts/ls-receiver.sc
+scala-cli scripts scripts/ls-caller.sc
+```
 
 We now have all the generated classes for both the caller and receiver and we can use them to do actual calls.
 
