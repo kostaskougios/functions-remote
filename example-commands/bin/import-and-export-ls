@@ -1,2 +1,6 @@
+cd example-commands
 scala-cli scripts scripts/ls-export.sc
 scala-cli scripts scripts/ls-import.sc
+
+cd functions-remote-config
+scala-cli import-dependencies.sc
