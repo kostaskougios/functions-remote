@@ -1,5 +1,3 @@
 package commands.model
 
-case class LsFile(
-    name: String
-)
+case class LsFile(name: String)
