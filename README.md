@@ -10,6 +10,8 @@ Note: Only for scala3. Currently, circe-json and avro4s serializations are suppo
 
 The generated code is very readable and as if written by a person.
 
+[toc]
+
 ## How it works
 
 Let's say we have the following functionality that simulates the `ls` command line tool:
