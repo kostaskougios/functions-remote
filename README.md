@@ -3,8 +3,8 @@
 It would be nice if there was a simple way to call remote functions as if they were local. RPC but with a twist that we'll see below.
 
 Functions-remote is a code generator for calling functions "remotely", using different serialization methods (like json or avro), and different remote transports (like http).
-Remotely means we may use http as a transport (i.e. via http4s) or just use an isolated classloader as transport. We'll
-see all these in more details below.
+Remotely means we may use http as a transport (i.e. via http4s) or just use an isolated classloader as transport so that we can
+execute the function locally. We'll see all these in more details below as well as why it can be useful to use different transports.
 
 Note: Only for scala3. Currently, circe-json and avro4s serializations are supported.
 

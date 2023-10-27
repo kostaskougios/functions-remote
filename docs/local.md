@@ -1,5 +1,10 @@
 # Calling functions locally but without having them into your app classpath
 
+Functions-remote can be useful when we want to call functions but not include all their code and dependencies into
+our own classpath. This can be useful i.e. if we have 2 codebases with incompatible dependencies but still we want
+to use functions of one in the other or if we use functions-remote http transport for production but for development
+we want to just invoke the functions via an isolated classloader so that we don't run a bunch of http services locally.
+
 Let's see the structure of our LsFunctions example. We will impl both the caller and receiver.
 All files can be found [here](../example-commands). The build config is the most complicated part
 of functions-remote at the moment but it will be simplified in the future.
