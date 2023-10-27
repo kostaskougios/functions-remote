@@ -5,7 +5,7 @@ import functions.coursier._
 val LsVersion = "0.1-SNAPSHOT"
 
 val functionsDependencies = Seq(
-    s"com.example:ls_3:$LsVersion"
+    s"com.example:ls-receiver_3:$LsVersion"
 )
 val exportsDependencies   = Seq(
     s"com.example:ls-exports_3:$LsVersion"

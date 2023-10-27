@@ -200,13 +200,13 @@ lazy val `ls-exports`       = project
   .settings(
     exampleCommandsSettings,
     libraryDependencies ++= Seq(ScalaTest),
-    buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "ls_3"),
+    buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "ls-receiver_3"),
     buildInfoPackage := "commands.ls"
   )
   .enablePlugins(BuildInfoPlugin)
 
-lazy val ls = project
-  .in(file("example-commands/ls"))
+lazy val `ls-receiver` = project
+  .in(file("example-commands/ls-receiver"))
   .settings(
     exampleCommandsSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
@@ -214,8 +214,8 @@ lazy val ls = project
   )
   .dependsOn(`ls-exports`, `functions-invoker`)
 
-lazy val `using-commands` = project
-  .in(file("example-commands/using-commands"))
+lazy val `ls-caller` = project
+  .in(file("example-commands/ls-caller"))
   .settings(
     exampleCommandsSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",

@@ -10,8 +10,6 @@ Note: Only for scala3. Currently, circe-json and avro4s serializations are suppo
 
 The generated code is very readable and as if written by a person.
 
-`[toc]`
-
 ## How it works
 
 Let's say we have the following functionality that simulates the `ls` command line tool:
@@ -35,3 +33,32 @@ A call to a function is done via a generated `Caller` class, serialized, transfe
 care of actually calling the function implementation.
 
 Our code invokes `LsFunctions.ls()` ➡️ `ls()` args are copied to the generated `Ls` case class ➡️ `Ls` is serialized to `Array[Byte]` ➡️ the transport is used to transfer the bytes to the `Receiver` ➡️ on the `Receiver` side we deserialize `Ls` and use it to invoke the actual `LsFunctionsImpl` ➡️ `LsResult` is serialized and send back to the caller
+
+## Structure of the code for `Receiver` (or how to export a trait's functions)
+
+We will need 2 modules:
+- a module with the trait with the exported traits and related (serializable) case classes
+- a module to implement the traits and be able to receive requests via it's transport
+
+```
+<project>
+    |- ls-exports           : exported traits and related case classes, no extra code here, minimum or none external dependencies
+    |- ls-receiver          : depends on ls-exports and implements the exported traits along with some extra code for the transport
+```
+
+## Structure of the code for `Caller` of functions
+
+This should be just a standard module that depends on `ls-exports` only.
+
+# Integrations
+
+## http4s 
+
+We can use the generator to integrate with http4s i.e. create routes for the receiver and create an http4s client for the caller.
+
+[HTTP4S Integration](docs/http4s.md)
+
+
+## Executing functions locally via an isolated classloader or spawning a jvm for each call
+
+[local receivers](docs/local.md)
