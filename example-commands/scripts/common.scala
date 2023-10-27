@@ -1,3 +1,5 @@
+// Common config and methods for caller & receiver scripts
+
 import functions.model.GeneratorConfig
 import java.io.File
 import org.apache.commons.io.FileUtils
