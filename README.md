@@ -10,7 +10,7 @@ Note: Only for scala3. Currently, circe-json and avro4s serializations are suppo
 
 The generated code is very readable and as if written by a person.
 
-[toc]
+`[toc]`
 
 ## How it works
 
