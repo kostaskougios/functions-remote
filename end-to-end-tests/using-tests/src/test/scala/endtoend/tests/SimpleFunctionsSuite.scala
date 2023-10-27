@@ -34,3 +34,8 @@ class SimpleFunctionsSuite extends AbstractEndToEndSuite:
     test(s"listParam using $serializer") {
       function.listParam(List(2, 4)) should be(6)
     }
+
+    test(s"failure using $serializer") {
+      an[IllegalArgumentException] should be thrownBy:
+        function.failure(3)
+    }
