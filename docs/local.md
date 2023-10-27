@@ -85,8 +85,8 @@ sbt ls-exports/publishLocal
 
 ## Using an isolated classloader
 
-Now locally we have the jars. We can now use the code generator. Because the generator is impl in scala 3, we can't use it
-within sbt, so we can use i.e. `scala-cli` (or i.e. just some code in a separate module). 
+Now locally we have the jars and are ready to use the code generator. Because the generator is impl in scala 3, we can't use it
+within sbt, so we have to i.e. use `scala-cli` (or just some code in a separate module). 
 The `scala-cli` scripts are [here](../example-commands/scripts). For example the generator for the caller:
 
 ls-caller.sc:
