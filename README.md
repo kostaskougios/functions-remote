@@ -30,6 +30,12 @@ We can then use functions-remote to create code for us that:
 - create a `transport` for http4s, or locally via a classloader (we'll see that later on) etc
 - create an `LsFunctionsReceiver` that receives the `Array[Byte]` and converts it to a call to `LsFunctionsImpl`
 
+After the code generation, we can use the generated code to call the function "remotely" (note for http4s and cats-effects, see the http4s integration):
+```scala
+val lsFunctions: LsFunctions = builder.newAvroLsFunctions
+val result: LsResult         = lsFunctions.ls("/tmp")
+```
+
 ## Architecture and Terminology
 
 A call to a function is done via a generated `Caller` class, serialized, transferred to the `Receiver` via a `transport` and the `Receiver` takes 
