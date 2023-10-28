@@ -1,9 +1,10 @@
 package functions.coursier.utils
 
 object Env {
-  private val ConfigDir = "functions-remote.config.dir"
+  private val ConfigDir = "functions_remote_config_dir"
+  val UserHome          = sys.props("user.home")
   val FunctionsHome     = sys.env.getOrElse(
     ConfigDir,
-    throw new IllegalStateException(s"Please set env variable $ConfigDir to point to the config directory of functions-remote")
+    s"$UserHome/.functions-remote-config"
   )
 }

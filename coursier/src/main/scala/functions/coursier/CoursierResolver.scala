@@ -2,13 +2,14 @@ package functions.coursier
 import coursier._
 import functions.coursier.utils.Env.FunctionsHome
 import functions.coursier.utils.FileUtils
-import functions.coursier.utils.FileUtils.readTextFile
 
 import java.io.File
 
 /** see https://get-coursier.io/docs/api
   */
 class CoursierResolver(functionsHome: String = FunctionsHome) {
+  println(s"functions-remote config dir is $functionsHome")
+
   def importExports(artifacts: Seq[String]) = for (artifact <- artifacts) {
     print(s"Importing exports dependencies from $artifact ... ")
     val depFile   = resolve(toDependency(artifact)).head

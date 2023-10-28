@@ -102,23 +102,23 @@ lazy val `templates-lib` = project.settings(
 
 lazy val `functions-common` = project.settings(commonSettings).dependsOn(`runtime-and-generator-common`)
 
-lazy val `functions-discovery` = project.settings(commonSettings).dependsOn(`functions-common`)
+lazy val `functions-caller` = project.settings(commonSettings).dependsOn(`functions-common`)
 
-lazy val `functions-invoker` = project.settings(commonSettings).dependsOn(`functions-common`)
+lazy val `functions-receiver` = project.settings(commonSettings).dependsOn(`functions-common`)
 
 lazy val `http4s-server` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Http4sServer ++ Seq(ScalaTest)
   )
-  .dependsOn(`functions-invoker`)
+  .dependsOn(`functions-receiver`)
 
 lazy val `http4s-client` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Http4sClient ++ Seq(ScalaTest)
   )
-  .dependsOn(`functions-discovery`)
+  .dependsOn(`functions-caller`)
 
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
@@ -153,7 +153,7 @@ lazy val `tests-impl` = project
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
-  .dependsOn(`tests-exports`, `functions-invoker`)
+  .dependsOn(`tests-exports`, `functions-receiver`)
 
 lazy val `tests-http4s-server-impl` = project
   .in(file("end-to-end-tests/tests-http4s-server-impl"))
@@ -171,7 +171,7 @@ lazy val `tests-http4s-client-impl` = project
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe ++ Http4sClient ++ Http4sCirce
   )
-  .dependsOn(`tests-cats-exports`, `functions-invoker`, `http4s-client`)
+  .dependsOn(`tests-cats-exports`, `functions-receiver`, `http4s-client`)
 
 lazy val `using-tests` = project
   .in(file("end-to-end-tests/using-tests"))
@@ -180,7 +180,7 @@ lazy val `using-tests` = project
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
-  .dependsOn(`tests-exports`, `functions-discovery`)
+  .dependsOn(`tests-exports`, `functions-caller`)
 
 lazy val `using-tests-cats` = project
   .in(file("end-to-end-tests/using-tests-cats"))
@@ -189,36 +189,3 @@ lazy val `using-tests-cats` = project
     libraryDependencies ++= Seq(ScalaTest, CatsEffectsTesting)
   )
   .dependsOn(`tests-http4s-client-impl`, `tests-http4s-server-impl`)
-
-// ----------------------- Example commands ---------------------------------------
-val exampleCommandsSettings = Seq(
-  organization := "com.example",
-  version      := "0.1-SNAPSHOT"
-)
-lazy val `ls-exports`       = project
-  .in(file("example-commands/ls-exports"))
-  .settings(
-    exampleCommandsSettings,
-    libraryDependencies ++= Seq(ScalaTest),
-    buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "ls-receiver_3"),
-    buildInfoPackage := "commands.ls"
-  )
-  .enablePlugins(BuildInfoPlugin)
-
-lazy val `ls-receiver` = project
-  .in(file("example-commands/ls-receiver"))
-  .settings(
-    exampleCommandsSettings,
-    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
-    libraryDependencies ++= Seq(Avro4s) ++ Circe
-  )
-  .dependsOn(`ls-exports`, `functions-invoker`)
-
-lazy val `ls-caller` = project
-  .in(file("example-commands/ls-caller"))
-  .settings(
-    exampleCommandsSettings,
-    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
-    libraryDependencies ++= Seq(Avro4s) ++ Circe
-  )
-  .dependsOn(`ls-exports`, `functions-discovery`)

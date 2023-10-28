@@ -14,5 +14,7 @@ case class RuntimeConfig(
   def dependenciesFor(dep: String): Array[String] = FileUtils.readFile(new File(localDependencies, dep + ".classpath")).toArray
 
 object RuntimeConfig:
-  def withDefaults(classLoader: ClassLoader = Thread.currentThread().getContextClassLoader, configRootDirectory: String = Env.FunctionsHome): RuntimeConfig =
-    RuntimeConfig(classLoader, configRootDirectory)
+  def withDefaults(
+      classLoader: ClassLoader = Thread.currentThread().getContextClassLoader,
+      configRootDirectory: String = Env.FunctionsHome
+  ): RuntimeConfig = RuntimeConfig(classLoader, configRootDirectory)

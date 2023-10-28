@@ -15,8 +15,8 @@ To make it work there are a few steps:
 
 
 Let's see the structure of our LsFunctions example. We will impl both the caller and receiver.
-All files can be found [here](../example-commands). The build config is the most complicated part
-of functions-remote at the moment but it will be simplified in the future.
+All files can be found [here](../example-commands). The build configuration is the most complicated part
+of functions-remote at the moment, but it will be simplified in the future.
 
 ```
 ├── functions-remote-config     : contains information on how functions-remote can locate all jars of ls-receiver at runtime

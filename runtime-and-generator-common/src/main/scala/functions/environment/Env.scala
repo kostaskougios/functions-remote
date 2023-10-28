@@ -1,8 +1,14 @@
 package functions.environment
 
+import functions.Log
+
 object Env:
-  private val ConfigDir = "functions-remote.config.dir"
+  // NOTE: any changes should be copied to coursier module's Env class
+
+  private val ConfigDir = "functions_remote_config_dir"
+  val UserHome          = sys.props("user.home")
   val FunctionsHome     = sys.env.getOrElse(
     ConfigDir,
-    throw new IllegalStateException(s"Please set env variable $ConfigDir to point to the config directory of functions-remote")
+    s"$UserHome/.functions-remote-config"
   )
+  Log.info(s"functions_remote_config_dir is at $FunctionsHome")

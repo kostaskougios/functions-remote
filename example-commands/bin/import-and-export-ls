@@ -1,6 +1,0 @@
-cd example-commands
-scala-cli scripts scripts/ls-receiver.sc
-scala-cli scripts scripts/ls-caller.sc
-
-cd functions-remote-config
-scala-cli import-dependencies.sc
