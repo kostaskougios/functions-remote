@@ -10,8 +10,6 @@ import java.io.File
 class CoursierResolver(functionsHome: String = FunctionsHome) {
   println(s"functions-remote config dir is $functionsHome")
 
-  def createDependencyFileForExport(artifact: String): Unit = createDependencyFileForExports(Seq(artifact))
-
   def createDependencyFileForExports(artifacts: Seq[String]): Unit =
     for (artifact <- artifacts) {
       print(s"Importing exports dependencies from $artifact ... ")
