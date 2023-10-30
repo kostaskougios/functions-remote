@@ -151,6 +151,7 @@ lazy val `tests-impl` = project
   .settings(
     endToEndTestsSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
+    cleanFiles += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
   .dependsOn(`tests-exports`, `functions-receiver`)
@@ -160,6 +161,7 @@ lazy val `tests-http4s-server-impl` = project
   .settings(
     endToEndTestsSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
+    cleanFiles += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe ++ Http4sServer
   )
   .dependsOn(`tests-cats-exports`, `http4s-server`)
@@ -169,6 +171,7 @@ lazy val `tests-http4s-client-impl` = project
   .settings(
     endToEndTestsSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
+    cleanFiles += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe ++ Http4sClient ++ Http4sCirce
   )
   .dependsOn(`tests-cats-exports`, `functions-receiver`, `http4s-client`)
@@ -178,6 +181,7 @@ lazy val `using-tests` = project
   .settings(
     endToEndTestsSettings,
     Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
+    cleanFiles += baseDirectory.value / "src" / "main" / "generated",
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
   .dependsOn(`tests-exports`, `functions-caller`)

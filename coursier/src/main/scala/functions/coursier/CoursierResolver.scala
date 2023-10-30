@@ -14,7 +14,6 @@ class CoursierResolver(functionsHome: String = FunctionsHome) {
     val targetDir = new File(functionsHome + "/local/dependencies")
     targetDir.mkdirs()
     for (artifact <- artifacts) yield {
-      print(s"Importing $artifact ... ")
       val d      = toDependency(artifact)
       val r      = resolve(d)
       val output = r.mkString("\n")
