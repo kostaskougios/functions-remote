@@ -5,4 +5,8 @@ sbt clean tests-exports/publishLocal tests-cats-exports/publishLocal
 
 scala-cli end-to-end-tests/scripts2.13/import-dependencies.sc
 end-to-end-tests/bin/import-and-export-functions
+
+sbt tests-impl/publishLocal
+
+
 sbt using-tests/test
