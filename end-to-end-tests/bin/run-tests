@@ -3,11 +3,6 @@
 echo "Publishing artifacts"
 sbt publishLocal
 
-cd end-to-end-tests/config
-scala-cli import-dependencies.sc
-
-cd ..
-bin/import-and-export-functions
-
-cd ..
+scala-cli end-to-end-tests/scripts2.13/import-dependencies.sc
+end-to-end-tests/bin/import-and-export-functions
 sbt using-tests/test

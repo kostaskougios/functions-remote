@@ -16,7 +16,8 @@ object {{className}}:
 
   {{! ------------------------------------ Classloader transports ---------------------------------------------- }}
   {{#generatorFactories.isClassloader}}
-  import functions.model.RuntimeConfig
+
+  import functions.environment.RuntimeConfig
   import functions.transports.SeparateClassLoaderTransport
 
   def newClassloaderBuilder(runtimeConfig: RuntimeConfig): ClassloaderBuilder = new ClassloaderBuilder(runtimeConfig)

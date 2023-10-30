@@ -10,29 +10,16 @@ import java.io.File
 class CoursierResolver(functionsHome: String = FunctionsHome) {
   println(s"functions-remote config dir is $functionsHome")
 
-  def createDependencyFileForExports(artifacts: Seq[String]): Unit =
-    for (artifact <- artifacts) {
-      print(s"Importing exports dependencies from $artifact ... ")
-      val depFile   = resolve(toDependency(artifact)).head
-      val targetDir = new File(functionsHome + "/.local/exports")
-      targetDir.mkdirs()
-      FileUtils.writeTextFile(targetDir, s"$artifact.export", depFile.getAbsolutePath)
-      println(s"Created dependencies text file $targetDir/$artifact.export")
-    }
-
-  def createDependenciesForArtifact(artifact: String): Unit = createDependenciesForArtifacts(Seq(artifact))
-
-  def createDependenciesForArtifacts(artifacts: Seq[String]): Unit = {
-    val targetDir = new File(functionsHome + "/.local/dependencies")
+  def createDependenciesForArtifacts(artifacts: Seq[String]): Seq[String] = {
+    val targetDir = new File(functionsHome + "/local/dependencies")
     targetDir.mkdirs()
-    println(s"Importing to directory ${targetDir.getAbsolutePath}")
-    for (artifact <- artifacts) {
+    for (artifact <- artifacts) yield {
       print(s"Importing $artifact ... ")
       val d      = toDependency(artifact)
       val r      = resolve(d)
       val output = r.mkString("\n")
       FileUtils.writeTextFile(targetDir, s"$artifact.classpath", output)
-      println(s"${r.size} jars")
+      s"$targetDir/$artifact.classpath"
     }
   }
 

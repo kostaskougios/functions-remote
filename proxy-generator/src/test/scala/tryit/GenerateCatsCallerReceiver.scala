@@ -16,7 +16,7 @@ import CatsExporter.*
 object CatsExporter:
   val ProjectRoot                                        = "../end-to-end-tests"
   val ExportsCatsDep                                     = "functions.end-to-end-tests:tests-cats-exports_3:0.1-SNAPSHOT"
-  val generatorConfig                                    = GeneratorConfig.withDefaults(s"$ProjectRoot/config")
+  val generatorConfig                                    = GeneratorConfig.withDefaults()
   def receiverFor(targetRoot: String, exportDep: String) =
     println(s"---- Exporting $exportDep")
     deleteScalaFiles(targetRoot)

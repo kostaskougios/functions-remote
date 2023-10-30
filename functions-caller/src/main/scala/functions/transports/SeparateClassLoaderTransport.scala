@@ -1,7 +1,8 @@
 package functions.transports
 
 import functions.Log
-import functions.model.{RuntimeConfig, TransportFunction, TransportFunctionRaw}
+import functions.environment.RuntimeConfig
+import functions.model.{TransportFunction, TransportFunctionRaw}
 import functions.serializerscanners.reflectivelyLoadObject
 import functions.utils.ClassLoaderUtils.withThreadContextClassLoader
 

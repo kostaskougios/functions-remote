@@ -17,7 +17,7 @@ import tryit.Exporter.*
 object Exporter:
   val ProjectRoot     = "../end-to-end-tests"
   val ExportsDep      = "functions.end-to-end-tests:tests-exports_3:0.1-SNAPSHOT"
-  val generatorConfig = GeneratorConfig.withDefaults(s"$ProjectRoot/config")
+  val generatorConfig = GeneratorConfig.withDefaults()
 
   def receiverFor(targetRoot: String, exportDep: String) =
     println(s"---- Exporting $exportDep")
@@ -30,5 +30,5 @@ object Exporter:
     println(s"---- Importing $exportDep")
     deleteScalaFiles(targetRoot)
 
-    generateCaller(generatorConfig, avroSerialization = true, jsonSerialization = true, classloaderTransport=true)
+    generateCaller(generatorConfig, avroSerialization = true, jsonSerialization = true, classloaderTransport = true)
       .generate(targetRoot, exportDep)
