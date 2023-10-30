@@ -5,7 +5,7 @@ import functions.model.Serializer
 import org.scalatest.matchers.should.Matchers.*
 
 class NestedTypeParamsFunctionsSuite extends AbstractEndToEndSuite:
-  val functionBuilder = NestedTypeParamsFunctionsCallerFactory.newClassloaderBuilder(runtimeConfig)
+  val functionBuilder = NestedTypeParamsFunctionsCallerFactory.newIsolatedClassloaderBuilder(runtimeConfig)
 
   for (serializer, function) <- Seq(
       (Serializer.Avro, functionBuilder.newAvroNestedTypeParamsFunctions),

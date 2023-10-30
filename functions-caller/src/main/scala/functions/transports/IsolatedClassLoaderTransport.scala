@@ -13,7 +13,7 @@ import java.net.{URI, URL, URLClassLoader}
   * @param runtimeConfig
   *   the RuntimeConfig used to trace the function's jar and dependencies
   */
-class SeparateClassLoaderTransport(runtimeConfig: RuntimeConfig):
+class IsolatedClassLoaderTransport(runtimeConfig: RuntimeConfig):
   def createTransport(organization: String, exportedArtifact: String, version: String): TransportFunction =
     createTransport(s"$organization:$exportedArtifact:$version")
 

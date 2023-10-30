@@ -8,7 +8,7 @@ import org.scalatest.matchers.should.Matchers.*
   * SimpleFunctions
   */
 class SimpleFunctionsSuite extends AbstractEndToEndSuite:
-  val functionBuilder = SimpleFunctionsCallerFactory.newClassloaderBuilder(runtimeConfig)
+  val functionBuilder = SimpleFunctionsCallerFactory.newIsolatedClassloaderBuilder(runtimeConfig)
 
   for (serializer, function) <- Seq(
       (Serializer.Avro, functionBuilder.newAvroSimpleFunctions),
