@@ -1,15 +1,17 @@
 # functions-remote
 
-It would be nice if there was a simple way to call remote functions as if they were local. RPC but with a twist that we'll see below.
+Note: Only for scala3. Currently, circe-json and avro4s serializations are supported.
 
-So lets say we have a function `def add(a: Int, b: Int): Int`. With functions-remote we will be able to call it on machine A normally (i.e. `add(5,6)`) 
-and it's implementation be executed on machine B. The result then becomes available on A. All these with configurable serialization and transports.
+
+For scala, the most important ability of the language is the ability to call a function `f(x) = y` and get its results.
+And while we can do that within a jvm instance, it would be useful to be able to call functions this easily across jvms that
+are running in the same box or remote boxes.
 
 Functions-remote is a code generator for calling functions "remotely", using different serialization methods (like json or avro), and different remote transports (like http).
 Remotely means we may use http as a transport (i.e. via http4s) or just use an isolated classloader as transport so that we can
 execute the function locally. We'll see all these in more details below as well as why it can be useful to use different transports.
 
-Note: Only for scala3. Currently, circe-json and avro4s serializations are supported.
+Effectively functions-remote allows the simplicity of `f(x) = y` no matter where `f` will really run. 
 
 The generated code is very readable and as if written by a person.
 
