@@ -37,7 +37,7 @@ object {{className}}:
   {{#generatorFactories.isHttp4s}}
   // Http4s factories
   {{#generatorFactories.serializers}}
-  // {{.}} serialized routes
+  // {{serializer}} serialized routes
   def new{{serializer}}{{exportedType.name}}Routes{{frameworkTypeArgFull}}(impl: {{exportedTypeFull}}): {{exportedType.name}}Http4sRoutes{{exportedTypeTypeArgs}} =
     val receiver = new{{serializer}}{{exportedType.name}}{{exportedTypeTypeArgs}}(impl)
     new {{exportedType.name}}Http4sRoutes{{exportedTypeTypeArgs}}(receiver, Serializer.{{serializer}})
