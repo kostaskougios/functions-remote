@@ -80,7 +80,7 @@ lazy val `tasty-extractor` = project
 lazy val `proxy-generator` = project
   .settings(
     commonSettings,
-    libraryDependencies ++= Seq(ScalaTest)
+    libraryDependencies ++= Seq(ScalaTest, Avro4s)
   )
   .dependsOn(`templates-lib`, `tasty-extractor`, `proxy-generator-common`, `functions-common`)
   .enablePlugins(PackPlugin)
