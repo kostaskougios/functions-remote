@@ -27,7 +27,6 @@ val CommonsIO   = "commons-io"         % "commons-io"      % "2.11.0"
 
 val Avro4s   = "com.sksamuel.avro4s"              %% "avro4s-core" % "5.0.5"
 val Mustache = "com.github.spullara.mustache.java" % "compiler"    % "0.9.10"
-val Coursier = "io.get-coursier"                  %% "coursier"    % "2.1.7"
 
 val CirceVersion = "0.14.1"
 
@@ -78,15 +77,6 @@ lazy val `tasty-extractor` = project
   )
   .dependsOn(`proxy-generator-common`)
 
-lazy val coursier = project
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(Coursier, ScalaTest),
-    scalaVersion                           := "2.13.12",
-    scalacOptions -= "-Xmax-inlines",
-    Compile / packageDoc / publishArtifact := false
-  )
-
 lazy val `proxy-generator` = project
   .settings(
     commonSettings,
@@ -134,7 +124,7 @@ lazy val `tests-exports` = project
     buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "tests-impl_3"),
     buildInfoPackage := "endtoend.tests"
   )
-  .enablePlugins(BuildInfoPlugin)
+  .enablePlugins(BuildInfoPlugin, FunctionsRemotePlugin)
 
 lazy val `tests-cats-exports` = project
   .in(file("end-to-end-tests/tests-cats-exports"))
