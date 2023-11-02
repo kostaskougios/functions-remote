@@ -140,7 +140,6 @@ lazy val `tests-impl` = project
   .in(file("end-to-end-tests/tests-impl"))
   .settings(
     endToEndTestsSettings,
-    functionsRemoteReceiver := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
   .dependsOn(`tests-exports`, `functions-receiver`)
@@ -170,8 +169,8 @@ lazy val `using-tests` = project
   .in(file("end-to-end-tests/using-tests"))
   .settings(
     endToEndTestsSettings,
-    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
-    cleanFiles += baseDirectory.value / "src" / "main" / "generated",
+    functionsRemoteReceiver.exports           := Seq(s"functions.end-to-end-tests:tests-exports_3:${version.value}"),
+    functionsRemoteReceiver.avroSerialization := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
   .dependsOn(`tests-exports`, `functions-caller`)
