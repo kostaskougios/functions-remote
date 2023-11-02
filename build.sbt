@@ -174,6 +174,7 @@ lazy val `using-tests` = project
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
   .dependsOn(`tests-exports`, `functions-caller`)
+  .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `using-tests-cats` = project
   .in(file("end-to-end-tests/using-tests-cats"))
