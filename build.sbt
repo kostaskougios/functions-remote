@@ -134,7 +134,7 @@ lazy val `tests-cats-exports` = project
     buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "tests-cats-impl_3"),
     buildInfoPackage := "endtoend.tests.cats"
   )
-  .enablePlugins(BuildInfoPlugin)
+  .enablePlugins(BuildInfoPlugin, FunctionsRemotePlugin)
 
 lazy val `tests-impl` = project
   .in(file("end-to-end-tests/tests-impl"))
@@ -145,6 +145,7 @@ lazy val `tests-impl` = project
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
   .dependsOn(`tests-exports`, `functions-receiver`)
+  .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `tests-http4s-server-impl` = project
   .in(file("end-to-end-tests/tests-http4s-server-impl"))
