@@ -140,6 +140,9 @@ lazy val `tests-impl` = project
   .in(file("end-to-end-tests/tests-impl"))
   .settings(
     endToEndTestsSettings,
+    functionsRemoteReceiver.exports           := Seq(s"functions.end-to-end-tests:tests-exports_3:${version.value}"),
+    functionsRemoteReceiver.jsonSerialization := true,
+    functionsRemoteReceiver.avroSerialization := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
   .dependsOn(`tests-exports`, `functions-receiver`)

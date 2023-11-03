@@ -4,6 +4,8 @@ import com.sksamuel.avro4s.AvroInputStream
 import functions.model.GeneratorConfig
 import functions.proxygenerator.generateCaller
 
+/** Used by the sbt plugin
+  */
 class SbtCaller extends java.util.function.Function[Array[Byte], String] {
   override def apply(in: Array[Byte]): String =
     val is     = AvroInputStream.data[SbtCallerParams].from(in).build
