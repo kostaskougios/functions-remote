@@ -157,11 +157,14 @@ lazy val `tests-http4s-client-impl` = project
   .in(file("end-to-end-tests/tests-http4s-client-impl"))
   .settings(
     endToEndTestsSettings,
-    Compile / unmanagedSourceDirectories += baseDirectory.value / "src" / "main" / "generated",
-    cleanFiles += baseDirectory.value / "src" / "main" / "generated",
+    functionsRemoteCaller.exports               := Seq(s"functions.end-to-end-tests:tests-cats-exports_3:${version.value}"),
+    functionsRemoteCaller.avroSerialization     := true,
+    functionsRemoteCaller.jsonSerialization     := true,
+    functionsRemoteCaller.http4sClientTransport := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe ++ Http4sClient ++ Http4sCirce
   )
   .dependsOn(`tests-cats-exports`, `functions-receiver`, `http4s-client`)
+  .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `using-tests` = project
   .in(file("end-to-end-tests/using-tests"))
