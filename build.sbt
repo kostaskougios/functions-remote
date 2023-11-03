@@ -178,10 +178,11 @@ lazy val `using-tests` = project
   .in(file("end-to-end-tests/using-tests"))
   .settings(
     endToEndTestsSettings,
-    functionsRemoteCaller.exports              := Seq(s"functions.end-to-end-tests:tests-exports_3:${version.value}"),
-    functionsRemoteCaller.avroSerialization    := true,
-    functionsRemoteCaller.jsonSerialization    := true,
-    functionsRemoteCaller.classloaderTransport := true,
+    functionsRemoteCaller.exports                 := Seq(s"functions.end-to-end-tests:tests-exports_3:${version.value}"),
+    functionsRemoteCaller.avroSerialization       := true,
+    functionsRemoteCaller.jsonSerialization       := true,
+    functionsRemoteCaller.classloaderTransport    := true,
+    functionsRemoteCaller.classloaderDependencies := Seq(s"functions.end-to-end-tests:tests-impl_3:${version.value}"),
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
   .dependsOn(`tests-exports`, `functions-caller`)
