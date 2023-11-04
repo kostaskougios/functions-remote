@@ -112,11 +112,8 @@ lazy val `http4s-client` = project
 
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
-  organization    := "functions.end-to-end-tests",
-  version         := "0.1-SNAPSHOT",
-  publishArtifact := false,
-  publish         := ((): Unit),
-  publishLocal    := ((): Unit)
+  organization := "functions.end-to-end-tests",
+  version      := "0.1-SNAPSHOT"
 )
 
 lazy val `tests-exports` = project
