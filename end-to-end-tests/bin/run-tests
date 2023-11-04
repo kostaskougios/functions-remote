@@ -1,9 +1,0 @@
-# run me from the root directory of the project
-
-echo "Publishing artifacts"
-sbt clean tests-exports/publishLocal tests-cats-exports/publishLocal
-
-scala-cli end-to-end-tests/scripts2.13/import-dependencies.sc
-end-to-end-tests/bin/import-and-export-functions
-
-sbt tests-impl/publishLocal using-tests/test
