@@ -1,0 +1,1 @@
+sbt clean tests-exports/publishLocal tests-cats-exports/publishLocal compile tests-impl/publishLocal test
