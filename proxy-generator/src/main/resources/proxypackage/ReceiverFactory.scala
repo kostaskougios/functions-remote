@@ -15,19 +15,19 @@ object {{className}}:
   {{/generatorFactories.serializers}}
 
   {{^exportedType.hasFramework}}
-  import functions.model.Coordinates3
-  def invokerMap(impl: {{exportedTypeFull}}): Map[Coordinates3, Array[Byte] => Array[Byte]] =
+  import functions.model.Coordinates4
+  def invokerMap(impl: {{exportedTypeFull}}): Map[Coordinates4, Array[Byte] => Array[Byte]] =
     {{#generatorFactories.serializers}}
     invoker{{serializer}}Map(impl) {{^last}} ++ {{/last}}
     {{/generatorFactories.serializers}}
 
   {{#generatorFactories.serializers}}
-  def invoker{{serializer}}Map(impl: {{exportedTypeFull}}): Map[Coordinates3, Array[Byte] => Array[Byte]] =
+  def invoker{{serializer}}Map(impl: {{exportedTypeFull}}): Map[Coordinates4, Array[Byte] => Array[Byte]] =
     val i = new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(impl)
     val s = Serializer.valueOf("{{serializer}}")
     Map(
     {{#functions}}
-      Coordinates3({{exportedType.name}}Methods.Methods.{{caseClassName}}, s) -> i.{{functionN}}{{^last}},{{/last}}
+      Coordinates4({{exportedType.name}}Methods.Methods.{{caseClassName}}, s) -> i.{{functionN}}{{^last}},{{/last}}
     {{/functions}}
     )
   {{/generatorFactories.serializers}}

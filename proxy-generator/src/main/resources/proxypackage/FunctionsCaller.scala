@@ -1,7 +1,7 @@
 package {{proxypackage}}
 
 import functions.model.Serializer
-import functions.model.Coordinates3
+import functions.model.Coordinates4
 {{#allImports}}
 import {{.}}
 {{/allImports}}
@@ -13,7 +13,7 @@ class {{className}}{{frameworkTypeArgFull}}(
   {{functionN}}ReturnTypeFromByteArray: Array[Byte] => {{resultNNoFramework}},
   {{/functions}}
   // this should transport the data to the remote function and get the response from that function
-  transport: (Coordinates3, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}},
+  transport: (Coordinates4, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}},
   serializer: Serializer
 ) extends {{exportedTypeFull}}:
 

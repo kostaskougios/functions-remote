@@ -1,6 +1,6 @@
 package {{proxypackage}}
 
-import functions.model.Coordinates3
+import functions.model.Coordinates4
 
 {{#frameworkImports}}
 import {{.}}
@@ -10,7 +10,7 @@ object {{className}}:
   {{! ------------------------------------ Generic --------------------------------------------- }}
   // generic factories
   {{#generatorFactories.serializers}}
-  def new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(transport : (Coordinates3, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}) : {{exportedTypeFull}} =
+  def new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(transport : (Coordinates4, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}) : {{exportedTypeFull}} =
     {{exportedType.name}}Caller{{serializer}}SerializedFactory.createCaller(transport)
   {{/generatorFactories.serializers}}
 
