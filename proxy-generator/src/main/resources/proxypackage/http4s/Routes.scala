@@ -1,6 +1,6 @@
 package {{proxypackage}}
 
-import functions.model.Serializer
+import functions.model.{Coordinates3, Serializer}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
 import org.http4s.{MediaType, Request, Response}
@@ -23,7 +23,7 @@ class {{className}}{{frameworkTypeArgFull}}(
       case Serializer.Json => `Content-Type`(MediaType.application.json)
       case Serializer.Avro => `Content-Type`(MediaType.application.`octet-stream`)
   // Override this if you want to change the paths
-  def pathFor(fullClassName: String, method: String, version:String) = Root / fullClassName / method/ version / serializer.toString
+  def pathFor(coordinates: Coordinates3) = Root / coordinates.className / coordinates.method / coordinates.version / serializer.toString
 
   val allRoutes: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] = {{#functions}}{{functionN}} {{^last}}orElse{{/last}} {{/functions}}
 
@@ -35,8 +35,7 @@ class {{className}}{{frameworkTypeArgFull}}(
     Ok(r).map(_.withContentType(contentType))
 
   {{#functions}}
-  private def {{functionN}}MethodCoordinates = {{methodParams}}.Methods.{{caseClassName}}
-  private val {{functionN}}Path = pathFor({{functionN}}MethodCoordinates.className, {{functionN}}MethodCoordinates.method, {{functionN}}MethodCoordinates.version)
+  private val {{functionN}}Path = pathFor({{methodParams}}.Methods.{{caseClassName}})
   def {{functionN}}: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] =
     case req @ PUT -> p if p == {{functionN}}Path => routeFor(req, receiver.{{functionN}})
 
