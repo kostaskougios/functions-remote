@@ -11,13 +11,6 @@ class {{className}}{{frameworkTypeArgFull}}(
     f: {{exportedTypeFull}}
 ):
 
-  /*
-  override val invoke: PartialFunction[(String, Array[Byte]) , Array[Byte]] =
-    {{#functions}}
-      case ({{methodParams}}.Methods.{{caseClassName}}, data) => {{functionN}}(data)
-    {{/functions}}
-  */
-
   {{#functions}}
   {{#mapResults}}
   def {{functionN}}(data: Array[Byte]): {{frameworkTypeArg}}[Array[Byte]] =

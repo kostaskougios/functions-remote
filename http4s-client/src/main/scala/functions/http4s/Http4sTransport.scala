@@ -16,7 +16,8 @@ class Http4sTransport[F[_]: Concurrent](client: Client[F], serverUri: Uri):
   protected def request(u: Uri, data: Array[Byte], contentType: `Content-Type`): Request[F] =
     PUT(u).withBodyStream(Stream.emits(data)).withContentType(contentType)
 
-  protected def fullUri(coordinates: Coordinates3): Uri = serverUri / coordinates.className / coordinates.method / coordinates.serializer.toString
+  protected def fullUri(coordinates: Coordinates3): Uri =
+    serverUri / coordinates.className / coordinates.method / coordinates.version / coordinates.serializer.toString
 
   protected def contentType(serializer: Serializer) = serializer match
     case Serializer.Json => `Content-Type`(MediaType.application.json)
