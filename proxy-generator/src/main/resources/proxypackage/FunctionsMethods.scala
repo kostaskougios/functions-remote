@@ -17,9 +17,10 @@ object {{className}} extends FunctionsMethods:
 
   // Make sure you generate the BuildInfo class i.e. via sbt build-info plugin as described in the functions-remote docs.
   override def artifactCoordinates = s"${BuildInfo.organization}:${BuildInfo.exportedArtifact}:${BuildInfo.version}"
+  override def version: String = BuildInfo.version
 
   val AllMethods = List({{#functions}}{{caseClassName}}{{^last}}, {{/last}}{{/functions}})
   object Methods:
     {{#functions}}
-    val {{caseClassName}} = Coordinates2("{{proxypackage}}.{{exportedType.name}}","{{functionN}}")
+    val {{caseClassName}} = Coordinates2("{{proxypackage}}.{{exportedType.name}}", "{{functionN}}", version)
     {{/functions}}
