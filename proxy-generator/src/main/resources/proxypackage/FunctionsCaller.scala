@@ -19,16 +19,15 @@ class {{className}}{{frameworkTypeArgFull}}(
 
   {{#functions}}
   // {{functionN}} function
-  private val coords{{methodParams}}{{caseClassName}} = {{methodParams}}.Methods.{{caseClassName}}
   def {{functionN}}({{params}}): {{resultN}} =
     val c  = {{caseClass}}({{paramsCall}})
     val binIn = {{functionN}}ToByteArray(c)
     {{#exportedType.hasFramework}}
-    transport(coords{{methodParams}}{{caseClassName}}.withSerializer(serializer), binIn).map: binOut=>
+    transport({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer), binIn).map: binOut=>
       {{functionN}}ReturnTypeFromByteArray(binOut)
     {{/exportedType.hasFramework}}
     {{^exportedType.hasFramework}}
-    val binOut = transport(coords{{methodParams}}{{caseClassName}}.withSerializer(serializer), binIn)
+    val binOut = transport({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer), binIn)
     {{functionN}}ReturnTypeFromByteArray(binOut)
     {{/exportedType.hasFramework}}
   {{/functions}}
