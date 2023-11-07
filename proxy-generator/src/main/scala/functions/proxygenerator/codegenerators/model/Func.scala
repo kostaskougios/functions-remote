@@ -23,9 +23,10 @@ case class Func(
     last: Boolean,
     extras: Any
 ):
-  def isUnitReturnType: Boolean = resultNNoFramework == "Unit"
-  def firstParamsAndParens      = if firstParamsRaw.isEmpty then "" else s"($firstParams)"
-  def firstParamsCallAndParens  = if firstParamsRaw.isEmpty then "" else s"($firstParamsCall)"
+  def isUnitReturnType: Boolean        = resultNNoFramework == "Unit"
+  def firstParamsAndParens: String     = if firstParamsRaw.isEmpty then "" else s"($firstParams)"
+  def firstParamsCallAndParens: String = if firstParamsRaw.isEmpty then "" else s"($firstParamsCall)"
+  def firstParamsAsArray: String       = if firstParamsRaw.isEmpty then "Array.empty" else s"Array($firstParamsCall)"
 
 object Func:
   type ExtrasFunction = (EType, EMethod) => Any

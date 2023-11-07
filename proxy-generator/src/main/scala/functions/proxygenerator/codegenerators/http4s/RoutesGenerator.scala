@@ -5,7 +5,7 @@ import functions.proxygenerator.codegenerators.GenericTypeGenerator.NamingConven
 import functions.proxygenerator.codegenerators.model.Func
 import functions.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
-import mustache.integration.model.ResourceTemplatesSourceLocation
+import mustache.integration.model.{Param, ResourceTemplatesSourceLocation}
 
 object RoutesGenerator:
   object DefaultNamingConventions extends GenericTypeGenerator.NamingConventions:
@@ -23,13 +23,15 @@ object RoutesGenerator:
         httpArgs.params.nonEmpty,
         httpArgs.params
           .map: p =>
-            toHttp4sRouteType(p.`type`) + "(" + p.name + ")"
+            toHttp4sRouteType(p)
           .mkString(" / ")
       )
   )
-  private def toHttp4sRouteType(tpe: String) = tpe match
-    case "Int" => "IntVar"
-    case x     => throw new IllegalArgumentException(s"Not yet supported type: $x")
+  private def toHttp4sRouteType(p: Param) = p.`type` match
+    case "Int"    => s"IntVar(${p.name})"
+    case "Long"   => s"LongVar(${p.name})"
+    case "String" => p.name
+    case x        => throw new IllegalArgumentException(s"Not yet supported type: $x")
 
 case class RoutesExtras(
     hasHttpArgs: Boolean,
