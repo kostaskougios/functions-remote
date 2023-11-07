@@ -8,7 +8,7 @@ import mustache.integration.model.{GeneratorFactories, Many}
 import scala.language.implicitConversions
 
 class GenericTypeGenerator(
-    val name:String,
+    val name: String,
     namingConventions: GenericTypeGenerator.NamingConventions,
     template: MustacheTemplate
 ):
@@ -36,7 +36,7 @@ class GenericTypeGenerator(
       functions,
       generatorFactories
     )
-    val code = template(vals)
+    val code = s"// Generated via ${template.template}\n" + template(vals)
     Code(
       s"${`package`.toPath}/$className.scala",
       code

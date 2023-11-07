@@ -2,7 +2,7 @@ package functions.http4s
 
 import cats.effect.Concurrent
 import fs2.Stream
-import functions.model.{Coordinates4, Serializer}
+import functions.model.{Coordinates4, Serializer, TransportInput}
 import org.http4s.*
 import org.http4s.Method.*
 import org.http4s.client.Client
@@ -23,6 +23,6 @@ class Http4sTransport[F[_]: Concurrent](client: Client[F], serverUri: Uri):
     case Serializer.Json => `Content-Type`(MediaType.application.json)
     case Serializer.Avro => `Content-Type`(MediaType.application.`octet-stream`)
 
-  def transportFunction(coordinates: Coordinates4, data: Array[Byte]): F[Array[Byte]] =
-    val u = fullUri(coordinates)
-    client.expect[Array[Byte]](request(u, data, contentType(coordinates.serializer)))
+  def transportFunction(in: TransportInput): F[Array[Byte]] =
+    val u = fullUri(in.coordinates4)
+    client.expect[Array[Byte]](request(u, in.data, contentType(in.coordinates4.serializer)))

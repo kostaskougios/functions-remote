@@ -6,7 +6,7 @@ import mustache.integration.model.TemplatesSourceLocation
 
 import java.io.{StringReader, StringWriter}
 
-class MustacheTemplate(mustache: Mustache):
+class MustacheTemplate(val template: String, mustache: Mustache):
   def apply(vals: Product): String =
     val w = new StringWriter(8192)
     mustache.execute(w, vals)
@@ -16,7 +16,7 @@ object MustacheTemplate:
   private val mf = new DefaultMustacheFactory
 
   def apply(code: String, name: String): MustacheTemplate =
-    new MustacheTemplate(mf.compile(new StringReader(code), name))
+    new MustacheTemplate(name, mf.compile(new StringReader(code), name))
 
   def apply(templatesSourceLocation: TemplatesSourceLocation, className: String): MustacheTemplate =
     apply(templatesSourceLocation.load(className), className)

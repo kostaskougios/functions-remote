@@ -25,7 +25,7 @@ class IsolatedClassLoaderTransport(runtimeConfig: RuntimeConfig):
     val biF         = withThreadContextClassLoader(classLoader):
       reflectivelyLoadObject[TransportFunctionRaw](classLoader, "exported.Exported")
     Log.info(s"Exporter class loaded OK for $dependency")
-    (coordinates3, data) =>
-      Log.info(s"Invoking $coordinates3")
+    in =>
+      Log.info(s"Invoking $in")
       withThreadContextClassLoader(classLoader):
-        biF(coordinates3.toRawCoordinates, data)
+        biF(in.coordinates4.toRawCoordinates, in.data)

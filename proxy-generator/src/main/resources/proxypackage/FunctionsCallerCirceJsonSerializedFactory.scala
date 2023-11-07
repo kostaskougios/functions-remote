@@ -1,6 +1,5 @@
 package {{proxypackage}}
-import functions.model.Coordinates4
-import functions.model.Serializer
+import functions.model.*
 
 {{#imports}}
 import {{.}}
@@ -8,7 +7,7 @@ import {{.}}
 
 object {{className}}:
   val JsonSerializer = new {{exportedType.name}}CirceJsonSerializer
-  def createCaller{{frameworkTypeArgFull}}(transport: (Coordinates4, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}):  {{exportedTypeFull}}  =
+  def createCaller{{frameworkTypeArgFull}}(transport: TransportInput => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}):  {{exportedTypeFull}}  =
     new {{exportedType.name}}Caller(
       {{#functions}}
       JsonSerializer.{{functionN}}Serializer,

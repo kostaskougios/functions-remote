@@ -1,7 +1,7 @@
 package {{proxypackage}}
 
 import functions.model.Serializer
-import functions.model.Coordinates4
+import functions.model.*
 {{#allImports}}
 import {{.}}
 {{/allImports}}
@@ -15,7 +15,7 @@ class {{className}}{{frameworkTypeArgFull}}(
   {{/isUnitReturnType}}
   {{/functions}}
   // this should transport the data to the remote function and get the response from that function
-  transport: (Coordinates4, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}},
+  transport: TransportInput => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}},
   serializer: Serializer
 ) extends {{exportedTypeFull}}:
 
@@ -24,13 +24,14 @@ class {{className}}{{frameworkTypeArgFull}}(
   def {{functionN}}{{firstParamsAndParens}}({{params}}): {{resultN}} =
     val c  = {{caseClass}}({{paramsCall}})
     val binIn = {{functionN}}ToByteArray(c)
+    val trIn = StdTransportInput({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer), binIn)
     {{#exportedType.hasFramework}}
-    transport({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer), binIn).map: binOut=>
+    transport(trIn).map: binOut=>
       {{^isUnitReturnType}}{{functionN}}ReturnTypeFromByteArray(binOut){{/isUnitReturnType}}
       {{#isUnitReturnType}}(){{/isUnitReturnType}}
     {{/exportedType.hasFramework}}
     {{^exportedType.hasFramework}}
-    val binOut = transport({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer), binIn)
+    val binOut = transport(trIn)
     {{^isUnitReturnType}}{{functionN}}ReturnTypeFromByteArray(binOut){{/isUnitReturnType}}
     {{#isUnitReturnType}}(){{/isUnitReturnType}}
 

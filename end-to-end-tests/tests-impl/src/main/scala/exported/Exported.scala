@@ -11,6 +11,6 @@ object Exported extends BiFunction[String, Array[Byte], Array[Byte]]:
       NestedTypeParamsFunctionsReceiverFactory.invokerMap(new NestedTypeParamsFunctionsImpl)
 
   override def apply(method: String, data: Array[Byte]): Array[Byte] =
-    val coordinates3 = Coordinates4(method)
-    val function     = receiver(coordinates3)
+    val coordinates = Coordinates4(method)
+    val function    = receiver(coordinates)
     function(data)
