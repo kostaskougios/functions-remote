@@ -16,13 +16,18 @@ class Http4sTransport[F[_]: Concurrent](client: Client[F], serverUri: Uri):
   protected def request(u: Uri, data: Array[Byte], contentType: `Content-Type`): Request[F] =
     PUT(u).withBodyStream(Stream.emits(data)).withContentType(contentType)
 
-  protected def fullUri(coordinates: Coordinates4): Uri =
+  protected def baseUrlOf(coordinates: Coordinates4) =
     serverUri / coordinates.className / coordinates.method / coordinates.version / coordinates.serializer.toString
+
+  protected def fullUri(input: TransportInput): Uri =
+    val coordinates = input.coordinates4
+    val baseUrl     = baseUrlOf(coordinates)
+    input.args.foldLeft(baseUrl)((u, arg) => u / arg.toString)
 
   protected def contentType(serializer: Serializer) = serializer match
     case Serializer.Json => `Content-Type`(MediaType.application.json)
     case Serializer.Avro => `Content-Type`(MediaType.application.`octet-stream`)
 
   def transportFunction(in: TransportInput): F[Array[Byte]] =
-    val u = fullUri(in.coordinates4)
+    val u = fullUri(in)
     client.expect[Array[Byte]](request(u, in.data, contentType(in.coordinates4.serializer)))
