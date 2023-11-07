@@ -16,6 +16,11 @@ class EndToEndHttp4sRoutesSpec extends AbstractHttp4sSpec:
         (Serializer.Json, TestsCatsFunctionsCallerFactory.newHttp4sJsonTestsCatsFunctions[IO](_, serverUri))
       )
     do
+      s"$serializer: catsUnitResult" in {
+        (server[IO], client[IO]).tupled.use: (_, client) =>
+          val f = functions(client)
+          for r <- f.catsUnitResult(1, 2) yield r should be(())
+      }
       s"$serializer: catsAdd" in {
         (server[IO], client[IO]).tupled.use: (_, client) =>
           val f = functions(client)
