@@ -4,7 +4,7 @@ import functions.proxygenerator.codegenerators.GenericTypeGenerator
 import functions.tastyextractor.model.{DetectedCatsEffect, EMethod, EType}
 import mustache.integration.model.{Many, Param, Params}
 
-import scala.language.implicitConversions
+import scala.language.{implicitConversions, reflectiveCalls}
 
 case class Func(
     functionN: String,
@@ -18,7 +18,8 @@ case class Func(
     caseClass: String,
     caseClassName: String,
     last: Boolean
-)
+):
+  def isUnitReturnType: Boolean = resultNNoFramework == "Unit"
 
 object Func:
   def apply(`type`: EType, methodToCaseClassNamingConventions: GenericTypeGenerator.NamingConventions): Seq[Func] =

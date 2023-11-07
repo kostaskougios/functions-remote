@@ -9,6 +9,7 @@ import endtoend.tests.cats.model.Return1
   */
 trait TestsCatsFunctions[F[_]: Async]:
   def catsAdd(a: Int, b: Int): F[Int]
+  def catsUnitResult(a: Int, b: Int): F[Unit]
   def catsAddR(a: Int, b: Int): F[Return1]
   def catsAddLR(a: Int, b: Int): F[List[Return1]]
   def catsDivide(a: Int, b: Int): F[Either[Int, String]]

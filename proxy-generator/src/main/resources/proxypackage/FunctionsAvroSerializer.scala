@@ -32,19 +32,19 @@ class {{className}}:
   private val {{functionN}}AvroOutputStream = AvroOutputStream.binary[{{caseClass}}]
   private val {{functionN}}AvroInputStream = AvroInputStream.binary[{{caseClass}}]
 
-  {{^returnType.isUnit}}
+  {{^isUnitReturnType}}
   private val {{functionN}}ReturnTypeAvroSchema = AvroSchema[{{resultNNoFramework}}]
   private val {{functionN}}ReturnTypeAvroOutputStream = AvroOutputStream.binary[{{resultNNoFramework}}]
   private val {{functionN}}ReturnTypeAvroInputStream = AvroInputStream.binary[{{resultNNoFramework}}]
-  {{/returnType.isUnit}}
+  {{/isUnitReturnType}}
 
   def {{functionN}}Serializer(value: {{caseClass}}): Array[Byte] = avroSerialize({{functionN}}AvroOutputStream, value)
   def {{functionN}}Deserializer(data: Array[Byte]): {{caseClass}} = avroDeserialize({{functionN}}AvroSchema, {{functionN}}AvroInputStream, data)
 
-  {{^returnType.isUnit}}
+  {{^isUnitReturnType}}
   def {{functionN}}ReturnTypeSerializer(value: {{resultNNoFramework}}): Array[Byte] = avroSerialize({{functionN}}ReturnTypeAvroOutputStream, value)
   def {{functionN}}ReturnTypeDeserializer(data: Array[Byte]): {{resultNNoFramework}} = avroDeserialize({{functionN}}ReturnTypeAvroSchema, {{functionN}}ReturnTypeAvroInputStream, data)
-  {{/returnType.isUnit}}
+  {{/isUnitReturnType}}
 
   {{/functions}}
 

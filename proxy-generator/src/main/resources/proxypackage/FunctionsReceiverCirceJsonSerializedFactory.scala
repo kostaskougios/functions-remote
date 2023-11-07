@@ -9,9 +9,9 @@ object {{className}}:
     new {{exportedType.name}}Receiver(
       {{#functions}}
       Serializer.{{functionN}}Deserializer,
-      {{^returnType.isUnit}}
+      {{^isUnitReturnType}}
       Serializer.{{functionN}}ReturnTypeSerializer,
-      {{/returnType.isUnit}}
+      {{/isUnitReturnType}}
       {{/functions}}
       functions
     )

@@ -10,9 +10,9 @@ class {{className}}{{frameworkTypeArgFull}}(
   {{#functions}}
   // {{functionN}} serialization
   {{functionN}}ToByteArray: {{methodParams}}.{{caseClassName}} => Array[Byte],
-  {{^returnType.isUnit}}
+  {{^isUnitReturnType}}
   {{functionN}}ReturnTypeFromByteArray: Array[Byte] => {{resultNNoFramework}},
-  {{/returnType.isUnit}}
+  {{/isUnitReturnType}}
   {{/functions}}
   // this should transport the data to the remote function and get the response from that function
   transport: (Coordinates4, Array[Byte]) => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}},
@@ -26,13 +26,13 @@ class {{className}}{{frameworkTypeArgFull}}(
     val binIn = {{functionN}}ToByteArray(c)
     {{#exportedType.hasFramework}}
     transport({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer), binIn).map: binOut=>
-      {{^returnType.isUnit}}{{functionN}}ReturnTypeFromByteArray(binOut){{/returnType.isUnit}}
-      {{#returnType.isUnit}}(){{/returnType.isUnit}}
+      {{^isUnitReturnType}}{{functionN}}ReturnTypeFromByteArray(binOut){{/isUnitReturnType}}
+      {{#isUnitReturnType}}(){{/isUnitReturnType}}
     {{/exportedType.hasFramework}}
     {{^exportedType.hasFramework}}
     val binOut = transport({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer), binIn)
-    {{^returnType.isUnit}}{{functionN}}ReturnTypeFromByteArray(binOut){{/returnType.isUnit}}
-    {{#returnType.isUnit}}(){{/returnType.isUnit}}
+    {{^isUnitReturnType}}{{functionN}}ReturnTypeFromByteArray(binOut){{/isUnitReturnType}}
+    {{#isUnitReturnType}}(){{/isUnitReturnType}}
 
     {{/exportedType.hasFramework}}
   {{/functions}}
