@@ -20,9 +20,8 @@ private class StructureExtractorInspector extends Inspector:
         val code = t.show
         EType.code(name, code)
       case at: AppliedType =>
-        val args     = at.args.map(eTypeOf)
-        val tycon    = at.tycon
-        val typeArgs = at.typeArgs
+        val args  = at.args.map(eTypeOf)
+        val tycon = at.tycon
         EType(tycon.typeSymbol.name, tpe.show, args, None, None, Nil)
 
     object MethodTraverser extends TreeAccumulator[List[EMethod]]:

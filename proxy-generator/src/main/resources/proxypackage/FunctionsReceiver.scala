@@ -15,9 +15,9 @@ class {{className}}{{frameworkTypeArgFull}}(
 
   {{#functions}}
   {{#mapResults}}
-  def {{functionN}}(data: Array[Byte]): {{frameworkTypeArg}}[Array[Byte]] =
+  def {{functionN}}{{firstParamsAndParens}}(data: Array[Byte]): {{frameworkTypeArg}}[Array[Byte]] =
     val params = {{functionN}}Deserializer(data)
-    f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}}).map: r=>
+    f.{{functionN}}{{firstParamsCallAndParens}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}}).map: r=>
       {{^isUnitReturnType}}
       {{functionN}}ReturnTypeSerializer(r)
       {{/isUnitReturnType}}
@@ -26,8 +26,13 @@ class {{className}}{{frameworkTypeArgFull}}(
   {{^mapResults}}
   def {{functionN}}(data: Array[Byte]): Array[Byte] =
     val params = {{functionN}}Deserializer(data)
+    {{^isUnitReturnType}}
     val r      = f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
-    {{^isUnitReturnType}}{{functionN}}ReturnTypeSerializer(r){{/isUnitReturnType}}
-    {{#isUnitReturnType}}Array.emptyByteArray{{/isUnitReturnType}}
+    {{functionN}}ReturnTypeSerializer(r)
+    {{/isUnitReturnType}}
+    {{#isUnitReturnType}}
+    f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
+    Array.emptyByteArray
+    {{/isUnitReturnType}}
   {{/mapResults}}
   {{/functions}}

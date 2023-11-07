@@ -21,7 +21,7 @@ class {{className}}{{frameworkTypeArgFull}}(
 
   {{#functions}}
   // {{functionN}} function
-  def {{functionN}}({{params}}): {{resultN}} =
+  def {{functionN}}{{firstParamsAndParens}}({{params}}): {{resultN}} =
     val c  = {{caseClass}}({{paramsCall}})
     val binIn = {{functionN}}ToByteArray(c)
     {{#exportedType.hasFramework}}
