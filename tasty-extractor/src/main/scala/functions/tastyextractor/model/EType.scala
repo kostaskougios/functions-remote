@@ -1,6 +1,7 @@
 package functions.tastyextractor.model
 
 case class EType(name: String, code: String, typeArgs: Seq[EType], framework: Option[DetectedFramework], scalaDocs: Option[String], methods: Seq[EMethod]):
+  def isUnit: Boolean        = code == "scala.Unit"
   def simplifiedCode: String = if typeArgs.isEmpty then name else s"$name[${typeArgs.map(_.simplifiedCode).mkString(", ")}]"
 
   /** drops the framework type (if it is present). i.e. if rTpe = F[Int], then F is dropped and Int is returned

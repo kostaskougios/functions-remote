@@ -27,6 +27,10 @@ class SimpleFunctionsSuite extends AbstractEndToEndSuite:
       function.noArg() should be(10)
     }
 
+    test(s"unitResult using $serializer") {
+      function.unitResult() should be(())
+    }
+
     test(s"toList using $serializer") {
       function.toList(1, 3) should be(List(1, 2, 3))
     }

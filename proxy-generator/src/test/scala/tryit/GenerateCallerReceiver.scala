@@ -9,10 +9,10 @@ import tryit.Exporter.*
   generateCallerApp()
 
 @main def generateReceiverApp(): Unit =
-  Exporter.receiverFor(s"$ProjectRoot/tests-impl/src/main/generated", ExportsDep)
+  Exporter.receiverFor(s"$ProjectRoot/tests-impl/src/main/functions-remote-generated", ExportsDep)
 
 @main def generateCallerApp(): Unit =
-  Exporter.callerFor(s"$ProjectRoot/using-tests/src/main/generated", ExportsDep)
+  Exporter.callerFor(s"$ProjectRoot/using-tests/src/main/functions-remote-generated", ExportsDep)
 
 object Exporter:
   val ProjectRoot     = "../end-to-end-tests"

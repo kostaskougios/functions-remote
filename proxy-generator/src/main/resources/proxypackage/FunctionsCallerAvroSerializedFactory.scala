@@ -12,7 +12,9 @@ object {{className}}:
     new {{exportedType.name}}Caller(
       {{#functions}}
       AvroSerializer.{{functionN}}Serializer,
+      {{^returnType.isUnit}}
       AvroSerializer.{{functionN}}ReturnTypeDeserializer,
+      {{/returnType.isUnit}}
       {{/functions}}
       transport,
       Serializer.Avro

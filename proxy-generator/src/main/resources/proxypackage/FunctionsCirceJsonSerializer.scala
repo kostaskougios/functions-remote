@@ -21,14 +21,17 @@ class {{className}}:
   private val {{functionN}}Encoder = Encoder[{{caseClass}}]
   private val {{functionN}}Decoder = Decoder[{{caseClass}}]
 
+  {{^returnType.isUnit}}
   private val {{functionN}}ReturnTypeEncoder = Encoder[{{resultNNoFramework}}]
   private val {{functionN}}ReturnTypeDecoder = Decoder[{{resultNNoFramework}}]
+  {{/returnType.isUnit}}
 
   def {{functionN}}Serializer(value: {{caseClass}}): Array[Byte] = toJson(value, {{functionN}}Encoder)
   def {{functionN}}Deserializer(data: Array[Byte]): {{caseClass}} = parseJson(data, {{functionN}}Decoder)
 
+  {{^returnType.isUnit}}
   def {{functionN}}ReturnTypeSerializer(value: {{resultNNoFramework}}): Array[Byte] = toJson(value, {{functionN}}ReturnTypeEncoder)
   def {{functionN}}ReturnTypeDeserializer(data: Array[Byte]): {{resultNNoFramework}} = parseJson(data, {{functionN}}ReturnTypeDecoder)
-
+  {{/returnType.isUnit}}
   {{/functions}}
 

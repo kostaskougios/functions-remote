@@ -6,6 +6,7 @@ package endtoend.tests
   */
 trait SimpleFunctions:
   def noArg(): Int
+  def unitResult(): Unit
   def add(a: Int, b: Int): Int
   def multiply(a: Int, b: Int): Int
   def toList(from: Int, to: Int): List[Int]

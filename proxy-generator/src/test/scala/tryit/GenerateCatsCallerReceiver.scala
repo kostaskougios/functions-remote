@@ -8,10 +8,10 @@ import CatsExporter.*
   generateCatsCaller()
 
 @main def generateCatsReceiver(): Unit =
-  receiverFor(s"$ProjectRoot/tests-http4s-server-impl/src/main/generated", ExportsCatsDep)
+  receiverFor(s"$ProjectRoot/tests-http4s-server-impl/src/main/functions-remote-generated", ExportsCatsDep)
 
 @main def generateCatsCaller(): Unit =
-  callerFor(s"$ProjectRoot/tests-http4s-client-impl/src/main/generated", ExportsCatsDep)
+  callerFor(s"$ProjectRoot/tests-http4s-client-impl/src/main/functions-remote-generated", ExportsCatsDep)
 
 object CatsExporter:
   val ProjectRoot                                        = "../end-to-end-tests"

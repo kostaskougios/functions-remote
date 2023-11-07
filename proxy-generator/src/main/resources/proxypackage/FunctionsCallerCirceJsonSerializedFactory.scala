@@ -12,7 +12,9 @@ object {{className}}:
     new {{exportedType.name}}Caller(
       {{#functions}}
       JsonSerializer.{{functionN}}Serializer,
+      {{^returnType.isUnit}}
       JsonSerializer.{{functionN}}ReturnTypeDeserializer,
+      {{/returnType.isUnit}}
       {{/functions}}
       transport,
       Serializer.Json
