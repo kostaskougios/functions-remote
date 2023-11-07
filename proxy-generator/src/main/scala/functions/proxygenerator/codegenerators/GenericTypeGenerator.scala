@@ -1,5 +1,6 @@
 package functions.proxygenerator.codegenerators
 
+import functions.proxygenerator.codegenerators.model.Func.ExtrasFunction
 import functions.proxygenerator.codegenerators.model.{Code, Func, Vals}
 import functions.tastyextractor.model.{EMethod, EPackage, EType}
 import mustache.integration.MustacheTemplate
@@ -10,7 +11,8 @@ import scala.language.implicitConversions
 class GenericTypeGenerator(
     val name: String,
     namingConventions: GenericTypeGenerator.NamingConventions,
-    template: MustacheTemplate
+    template: MustacheTemplate,
+    extrasCreator: ExtrasFunction = (_, _) => "No extras"
 ):
   def apply(packages: Seq[EPackage], generatorFactories: GeneratorFactories): Seq[Code] =
     packages.flatMap(apply(_, generatorFactories))
@@ -23,7 +25,7 @@ class GenericTypeGenerator(
     val frameworkImports = `type`.framework.toSeq.flatMap(_.imports).toSet
     val className        = namingConventions.className(`type`)
     val mpt              = namingConventions.methodParamsTraitName(`type`)
-    val functions        = model.Func(`type`, namingConventions)
+    val functions        = model.Func(`type`, namingConventions, extrasCreator)
 
     val vals = Vals(
       `type`,

@@ -20,14 +20,16 @@ case class Func(
     mapResults: Boolean,
     caseClass: String,
     caseClassName: String,
-    last: Boolean
+    last: Boolean,
+    extras: Any
 ):
   def isUnitReturnType: Boolean = resultNNoFramework == "Unit"
   def firstParamsAndParens      = if firstParamsRaw.isEmpty then "" else s"($firstParams)"
   def firstParamsCallAndParens  = if firstParamsRaw.isEmpty then "" else s"($firstParamsCall)"
 
 object Func:
-  def apply(`type`: EType, methodToCaseClassNamingConventions: GenericTypeGenerator.NamingConventions): Seq[Func] =
+  type ExtrasFunction = (EType, EMethod) => Any
+  def apply(`type`: EType, methodToCaseClassNamingConventions: GenericTypeGenerator.NamingConventions, extrasCreator: ExtrasFunction): Seq[Func] =
     val last = `type`.methods.last
     `type`.methods.map: m =>
       val (firstParams, secondParams) = toParams(m)
@@ -50,10 +52,11 @@ object Func:
         mapResults,
         methodToCaseClassNamingConventions.caseClassHolderObjectName(`type`) + "." + caseClassName,
         caseClassName,
-        m eq last
+        m eq last,
+        extrasCreator(`type`, m)
       )
 
-  private def toParams(m: EMethod) =
+  def toParams(m: EMethod) =
     val (firstParams, secondParams) = m.paramss match
       case List(ps)     => (Nil, ps)
       case List(p1, p2) => (p1, p2)
