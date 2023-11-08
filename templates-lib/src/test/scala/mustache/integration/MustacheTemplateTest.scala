@@ -45,6 +45,6 @@ class MustacheTemplateTest extends AnyFunSuiteLike:
   }
   test("functions") {
     case class Vals(name: String, f: TemplateFunction)
-    def f(s: String) = s"value of s = [$s]"
+    val f: TemplateFunction = s => s"value of s = [$s]"
     MustacheTemplate("{{#f}}hello{{/f}}", "test-template").apply(Vals("a-name", f)) should be("value of s = [hello]")
   }
