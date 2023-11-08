@@ -20,7 +20,6 @@ class {{className}}{{frameworkTypeArgFull}}(
 ) extends {{exportedTypeFull}}:
 
   {{#functions}}
-  // {{functionN}} function
   def {{functionN}}{{firstParamsAndParens}}({{params}}): {{resultN}} =
     val c  = {{caseClass}}({{paramsCall}})
     val binIn = {{functionN}}ToByteArray(c)
