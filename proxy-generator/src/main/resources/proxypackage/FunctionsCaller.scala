@@ -20,10 +20,6 @@ class {{className}}{{frameworkTypeArgFull}}(
 ) extends {{exportedTypeFull}}:
 
   {{#functions}}
-  def {{functionN}}{{firstParamsAndParens}}({{params}}): {{resultN}} =
-    {{^paramsRaw.isEmpty}}val c  = {{caseClass}}({{paramsCall}}){{/paramsRaw.isEmpty}}
-    val binIn = {{#paramsRaw.isEmpty}}Array.emptyByteArray{{/paramsRaw.isEmpty}}{{^paramsRaw.isEmpty}}{{functionN}}ToByteArray(c){{/paramsRaw.isEmpty}}
-    val trIn = StdTransportInput({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer), binIn, {{firstParamsAsArray}})
 {{{CatsFunctionImpl}}}
 {{{NoFrameworkImpl}}}
   {{/functions}}
