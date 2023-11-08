@@ -2,9 +2,9 @@ package mustache.integration.model
 
 import com.github.mustachejava.TemplateFunction
 
-case class Template(code: String) extends TemplateFunction:
+case class Template(name: String, code: String) extends TemplateFunction:
   override def apply(s: String) = code
 
 object Template:
-  def apply(templatesSourceLocation: TemplatesSourceLocation, resourceName: String): Template =
-    apply(templatesSourceLocation.load(resourceName))
+  def apply(name: String, templatesSourceLocation: TemplatesSourceLocation, resourceName: String): Template =
+    apply(name, templatesSourceLocation.load(resourceName))
