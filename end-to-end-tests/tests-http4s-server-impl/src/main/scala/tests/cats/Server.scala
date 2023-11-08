@@ -1,14 +1,14 @@
 package tests.cats
 
 import cats.effect.Async
+import cats.syntax.all.*
 import com.comcast.ip4s.*
 import endtoend.tests.cats.TestsCatsFunctionsReceiverFactory
 import fs2.io.net.Network
-import org.http4s.{HttpRoutes, Request, Response, Status}
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits.*
 import org.http4s.server.middleware.{ErrorAction, Logger}
-import cats.syntax.all.*
+import org.http4s.{HttpRoutes, Request}
 
 object Server:
   def newServer[F[_]: Async: Network](port: Port) =
