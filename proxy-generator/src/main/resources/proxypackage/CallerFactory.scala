@@ -32,7 +32,7 @@ object {{className}}:
 
   {{/generatorFactories.isClassloader}}
   {{! ------------------------------------ Http4s transports      ---------------------------------------------- }}
-  {{#generatorFactories.isHttp4s}}
+  {{#generatorFactories.http4sClientTransport}}
   // Http4s factories
   import functions.http4s.Http4sTransport
   import org.http4s.client.Client
@@ -44,4 +44,4 @@ object {{className}}:
     {{exportedType.name}}Caller{{serializer}}SerializedFactory.createCaller(transport.transportFunction)
 
   {{/generatorFactories.serializers}}
-  {{/generatorFactories.isHttp4s}}
+  {{/generatorFactories.http4sClientTransport}}

@@ -34,7 +34,7 @@ object {{className}}:
   {{/exportedType.hasFramework}}
 
   {{! ------------------------------------ Http4s ---------------------------------------------- }}
-  {{#generatorFactories.isHttp4s}}
+  {{#generatorFactories.http4sClientTransport}}
   // Http4s factories
   {{#generatorFactories.serializers}}
   // {{serializer}} serialized routes
@@ -43,4 +43,4 @@ object {{className}}:
     new {{exportedType.name}}Http4sRoutes{{exportedTypeTypeArgs}}(receiver, Serializer.{{serializer}})
 
   {{/generatorFactories.serializers}}
-  {{/generatorFactories.isHttp4s}}
+  {{/generatorFactories.http4sClientTransport}}
