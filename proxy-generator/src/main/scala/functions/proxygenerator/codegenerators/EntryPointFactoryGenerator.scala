@@ -21,7 +21,8 @@ object EntryPointFactoryGenerator:
       "proxypackage.CallerFactory",
       Seq(
         Template("Generic", ResourceTemplatesSourceLocation, "proxypackage.callerfactory.Generic"),
-        Template("IsolatedClassLoader", ResourceTemplatesSourceLocation, "proxypackage.callerfactory.IsolatedClassLoader")
+        Template("IsolatedClassLoader", ResourceTemplatesSourceLocation, "proxypackage.callerfactory.IsolatedClassLoader"),
+        Template("Http4sTransports", ResourceTemplatesSourceLocation, "proxypackage.http4s.Http4sTransports")
       )
     )
   )
