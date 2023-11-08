@@ -13,8 +13,8 @@ class TestsCatsFunctionsImpl[F[_]: Async] extends TestsCatsFunctions[F]:
   override def catsAddR(a: Int, b: Int): F[Return1]               = A.pure(Return1(a + b))
   override def catsAddLR(a: Int, b: Int): F[List[Return1]]        = catsAddR(a, b).map(r => List(r))
   override def catsDivide(a: Int, b: Int): F[Either[Int, String]] = A.pure(if b == 0 then Right("Div by zero") else Left(a / b))
-  override def alwaysFails(a: Int): F[String]                     = A.raiseError(new IllegalArgumentException(s"$a is invalid"))
-  override def alwaysFailsBeforeCreatingF(a: Int): F[String]      = throw new IllegalArgumentException(s"$a is invalid")
+  override def alwaysFails(a: Int): F[String]                     = A.raiseError(new ExpectedException(s"alwaysFails: $a is invalid"))
+  override def alwaysFailsBeforeCreatingF(a: Int): F[String]      = throw new ExpectedException(s"alwaysFailsBeforeCreatingF: $a is invalid")
 
   override def catsAddParams(a: Int, l: Long, s: String)(b: Int): F[Int]      = A.pure(a + b + l.toInt + s.toInt)
   override def catsAddParamsEmptySecond(a: Int, l: Long, s: String)(): F[Int] = A.pure(a + l.toInt + s.toInt)
