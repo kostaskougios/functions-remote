@@ -8,8 +8,14 @@ import endtoend.tests.cats.model.Return1
   *   The IO monad
   */
 trait TestsCatsFunctions[F[_]: Async]:
+  /** Use GET method for this: //> HTTP-GET
+    */
   def catsNoArgs(): F[Int]
+
+  /** Use GET method for this: //> HTTP-GET
+    */
   def catsNoArgsUnitReturnType(): F[Unit]
+
   def catsAdd(a: Int, b: Int): F[Int]
   def catsUnitResult(a: Int, b: Int): F[Unit]
   def catsAddR(a: Int, b: Int): F[Return1]
