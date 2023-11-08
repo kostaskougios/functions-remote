@@ -18,7 +18,7 @@ def generateReceiver(
 
   val generators = Seq(
     ReceiverGenerator(),
-    MethodToCaseClassGenerator(),
+    FunctionsMethodsGenerator(),
     EntryPointFactoryGenerator.receiver()
   )
   new Generator(generatorConfig, generators ++ avroGen ++ jsonGen ++ http4sRoutesGen, avroSer ++ jsonSer, false, http4sRoutes)

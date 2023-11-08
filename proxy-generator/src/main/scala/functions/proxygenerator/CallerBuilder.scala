@@ -16,7 +16,7 @@ def generateCaller(
 
   val generators = Seq(
     CallerGenerator(),
-    MethodToCaseClassGenerator(),
+    FunctionsMethodsGenerator(),
     EntryPointFactoryGenerator.caller()
   )
   new Generator(generatorConfig, generators ++ avroGen ++ jsonGen, avroSer ++ jsonSer, classloaderTransport, http4sClientTransport)

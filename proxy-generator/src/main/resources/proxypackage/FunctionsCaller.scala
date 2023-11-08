@@ -24,7 +24,7 @@ class {{className}}{{frameworkTypeArgFull}}(
   def {{functionN}}{{firstParamsAndParens}}({{params}}): {{resultN}} =
     val c  = {{caseClass}}({{paramsCall}})
     val binIn = {{functionN}}ToByteArray(c)
-    val trIn = StdTransportInput({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer), binIn,{{firstParamsAsArray}})
+    val trIn = StdTransportInput({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer), binIn, {{firstParamsAsArray}})
     {{#exportedType.hasFramework}}
     transport(trIn).map: binOut=>
       {{^isUnitReturnType}}{{functionN}}ReturnTypeFromByteArray(binOut){{/isUnitReturnType}}

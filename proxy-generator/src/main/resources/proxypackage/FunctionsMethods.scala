@@ -22,5 +22,5 @@ object {{className}} extends FunctionsMethods:
   val AllMethods = List({{#functions}}{{caseClassName}}{{^last}}, {{/last}}{{/functions}})
   object Methods:
     {{#functions}}
-    val {{caseClassName}} = Coordinates3("{{proxypackage}}.{{exportedType.name}}", "{{functionN}}", version)
+    val {{caseClassName}} = Coordinates3("{{proxypackage}}.{{exportedType.name}}", "{{functionN}}", version, Map({{{extras.coordinatesPropertiesValues}}}))
     {{/functions}}

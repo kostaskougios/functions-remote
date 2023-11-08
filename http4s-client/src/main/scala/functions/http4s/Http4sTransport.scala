@@ -13,8 +13,8 @@ class Http4sTransport[F[_]: Concurrent](client: Client[F], serverUri: Uri):
   private val dsl = Http4sClientDsl[F]
   import dsl.*
 
-  protected def request(u: Uri, data: Array[Byte], contentType: `Content-Type`): Request[F] =
-    PUT(u).withBodyStream(Stream.emits(data)).withContentType(contentType)
+  protected def request(u: Uri, method: Method, data: Array[Byte], contentType: `Content-Type`): Request[F] =
+    method(u).withBodyStream(Stream.emits(data)).withContentType(contentType)
 
   protected def baseUrlOf(coordinates: Coordinates4) =
     serverUri / coordinates.className / coordinates.method / coordinates.version / coordinates.serializer.toString
@@ -28,6 +28,22 @@ class Http4sTransport[F[_]: Concurrent](client: Client[F], serverUri: Uri):
     case Serializer.Json => `Content-Type`(MediaType.application.json)
     case Serializer.Avro => `Content-Type`(MediaType.application.`octet-stream`)
 
+  protected def method(coords: Coordinates4): Method = coords.properties
+    .get("HTTP-METHOD")
+    .map:
+      case "GET"     => GET
+      case "PUT"     => PUT
+      case "POST"    => POST
+      case "HEAD"    => HEAD
+      case "DELETE"  => DELETE
+      case "CONNECT" => CONNECT
+      case "OPTIONS" => OPTIONS
+      case "TRACE"   => TRACE
+      case "PATCH"   => PATCH
+    .getOrElse(PUT)
+
   def transportFunction(in: TransportInput): F[Array[Byte]] =
-    val u = fullUri(in)
-    client.expect[Array[Byte]](request(u, in.data, contentType(in.coordinates4.serializer)))
+    val coords = in.coordinates4
+    val u      = fullUri(in)
+    val m      = method(coords)
+    client.expect[Array[Byte]](request(u, m, in.data, contentType(coords.serializer)))

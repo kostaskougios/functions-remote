@@ -25,22 +25,22 @@ object RoutesGenerator:
           .map: p =>
             toHttp4sRouteType(p)
           .mkString(" / "),
-        httpMethod(method)
+        httpMethod(method).getOrElse("PUT")
       )
   )
 
-  private def httpMethod(method: EMethod) =
+  def httpMethod(method: EMethod): Option[String] =
     method.scalaDocs match
-      case Some(d) if d.contains("//> HTTP-GET")     => "GET"
-      case Some(d) if d.contains("//> HTTP-POST")    => "POST"
-      case Some(d) if d.contains("//> HTTP-PUT")     => "PUT"
-      case Some(d) if d.contains("//> HTTP-HEAD")    => "HEAD"
-      case Some(d) if d.contains("//> HTTP-DELETE")  => "DELETE"
-      case Some(d) if d.contains("//> HTTP-CONNECT") => "CONNECT"
-      case Some(d) if d.contains("//> HTTP-OPTIONS") => "OPTIONS"
-      case Some(d) if d.contains("//> HTTP-TRACE")   => "TRACE"
-      case Some(d) if d.contains("//> HTTP-PATCH")   => "PATCH"
-      case _                                         => "PUT"
+      case Some(d) if d.contains("//> HTTP-GET")     => Some("GET")
+      case Some(d) if d.contains("//> HTTP-POST")    => Some("POST")
+      case Some(d) if d.contains("//> HTTP-PUT")     => Some("PUT")
+      case Some(d) if d.contains("//> HTTP-HEAD")    => Some("HEAD")
+      case Some(d) if d.contains("//> HTTP-DELETE")  => Some("DELETE")
+      case Some(d) if d.contains("//> HTTP-CONNECT") => Some("CONNECT")
+      case Some(d) if d.contains("//> HTTP-OPTIONS") => Some("OPTIONS")
+      case Some(d) if d.contains("//> HTTP-TRACE")   => Some("TRACE")
+      case Some(d) if d.contains("//> HTTP-PATCH")   => Some("PATCH")
+      case _                                         => None
 
   private def toHttp4sRouteType(p: Param) = p.`type` match
     case "Int"    => s"IntVar(${p.name})"
