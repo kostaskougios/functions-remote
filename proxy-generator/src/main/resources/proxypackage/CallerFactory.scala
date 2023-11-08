@@ -9,28 +9,9 @@ import {{.}}
 object {{className}}:
   {{! ------------------------------------ Generic --------------------------------------------- }}
   // generic factories
-  {{#generatorFactories.serializers}}
-  def new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(transport : TransportInput => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}) : {{exportedTypeFull}} =
-    {{exportedType.name}}Caller{{serializer}}SerializedFactory.createCaller(transport)
-  {{/generatorFactories.serializers}}
-
+{{{Generic}}}
   {{! ------------------------------------ Classloader transports ---------------------------------------------- }}
-  {{#generatorFactories.isClassloader}}
-
-  import functions.environment.RuntimeConfig
-  import functions.transports.IsolatedClassLoaderTransport
-
-  def newIsolatedClassloaderBuilder(runtimeConfig: RuntimeConfig): IsolatedClassloaderBuilder = new IsolatedClassloaderBuilder(runtimeConfig)
-  class IsolatedClassloaderBuilder(runtimeConfig: RuntimeConfig):
-    val classLoader = new IsolatedClassLoaderTransport(runtimeConfig)
-    // we need to reuse this classloader transport so that we class-load this function only once
-    val transport = classLoader.createTransport(BuildInfo.organization, BuildInfo.exportedArtifact, BuildInfo.version)
-    {{#generatorFactories.serializers}}
-    def new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}: {{exportedTypeFull}} =
-      {{className}}.new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(transport)
-    {{/generatorFactories.serializers}}
-
-  {{/generatorFactories.isClassloader}}
+{{{IsolatedClassLoader}}}
   {{! ------------------------------------ Http4s transports      ---------------------------------------------- }}
   {{#generatorFactories.http4sClientTransport}}
   // Http4s factories
