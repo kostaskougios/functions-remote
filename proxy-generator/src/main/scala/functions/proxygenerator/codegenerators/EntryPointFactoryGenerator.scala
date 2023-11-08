@@ -35,5 +35,12 @@ object EntryPointFactoryGenerator:
   ) = new GenericTypeGenerator(
     "ReceiverEntryPointFactory",
     namingConventions,
-    MustacheTemplate(ResourceTemplatesSourceLocation, "proxypackage.ReceiverFactory")
+    MustacheTemplate(
+      ResourceTemplatesSourceLocation,
+      "proxypackage.ReceiverFactory",
+      Seq(
+        Template("Generic", ResourceTemplatesSourceLocation, "proxypackage.receiverfactory.Generic"),
+        Template("Http4s", ResourceTemplatesSourceLocation, "proxypackage.receiverfactory.Http4s")
+      )
+    )
   )
