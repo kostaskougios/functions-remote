@@ -10,12 +10,12 @@ def generateCaller(
     classloaderTransport: Boolean = false,
     http4sClientTransport: Boolean = false
 ): Generator =
-  val (avroGen, avroSer) = if avroSerialization then (List(AvroSerializerGenerator(), AvroFactories.caller()), List(Serializer.Avro)) else (Nil, Nil)
+  val (avroGen, avroSer) = if avroSerialization then (List(FunctionsAvroSerializerGenerator(), AvroFactories.caller()), List(Serializer.Avro)) else (Nil, Nil)
   val (jsonGen, jsonSer) =
     if jsonSerialization then (List(CirceJsonSerializerGenerator(), JsonCirceFactories.caller()), List(Serializer.Json)) else (Nil, Nil)
 
   val generators = Seq(
-    CallerGenerator(),
+    FunctionsCallerGenerator(),
     FunctionsMethodsGenerator(),
     EntryPointFactoryGenerator.caller()
   )

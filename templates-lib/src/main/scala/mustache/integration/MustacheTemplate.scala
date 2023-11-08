@@ -18,5 +18,5 @@ object MustacheTemplate:
   def apply(code: String, name: String): MustacheTemplate =
     new MustacheTemplate(name, mf.compile(new StringReader(code), name))
 
-  def apply(templatesSourceLocation: TemplatesSourceLocation, className: String): MustacheTemplate =
-    apply(templatesSourceLocation.load(className), className)
+  def apply(templatesSourceLocation: TemplatesSourceLocation, resourceName: String): MustacheTemplate =
+    apply(templatesSourceLocation.load(resourceName), resourceName)

@@ -7,7 +7,7 @@ import mustache.integration.model.ResourceTemplatesSourceLocation
 
 import scala.language.implicitConversions
 
-object CallerGenerator:
+object FunctionsCallerGenerator:
   object DefaultNamingConventions extends GenericTypeGenerator.NamingConventions:
     def className(`type`: EType) = s"${`type`.name}Caller"
 

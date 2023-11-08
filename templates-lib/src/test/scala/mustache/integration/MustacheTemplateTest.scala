@@ -2,12 +2,13 @@ package mustache.integration
 
 import com.github.mustachejava.TemplateFunction
 import com.github.mustachejava.util.DecoratedCollection
-import mustache.integration.model.Many
+import mustache.integration.model.{Many, Template}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers.*
 
 import scala.jdk.CollectionConverters.*
 import mustache.integration.model.CollectionConverters.given
+
 import scala.language.implicitConversions
 
 class MustacheTemplateTest extends AnyFunSuiteLike:
@@ -43,8 +44,16 @@ class MustacheTemplateTest extends AnyFunSuiteLike:
       Vals(Seq(Item("n1"), Item("n2")))
     ) should be("n1,n2")
   }
+
   test("functions") {
     case class Vals(name: String, f: TemplateFunction)
     val f: TemplateFunction = s => s"value of s = [$s]"
     MustacheTemplate("{{#f}}hello{{/f}}", "test-template").apply(Vals("a-name", f)) should be("value of s = [hello]")
+  }
+
+  test("template") {
+    case class Vals(name: String, t: Template)
+    val v = Vals("test", Template("name={{name}}"))
+    MustacheTemplate("{{{t}}}.", "test-template").apply(v) should be("name=test.")
+
   }

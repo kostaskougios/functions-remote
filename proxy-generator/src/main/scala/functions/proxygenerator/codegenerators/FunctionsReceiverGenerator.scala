@@ -5,7 +5,7 @@ import functions.tastyextractor.model.EType
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.ResourceTemplatesSourceLocation
 
-object ReceiverGenerator:
+object FunctionsReceiverGenerator:
   object DefaultNamingConventions extends GenericTypeGenerator.NamingConventions:
     def className(`type`: EType) = s"${`type`.name}Receiver"
 

@@ -10,14 +10,14 @@ def generateReceiver(
     jsonSerialization: Boolean = false,
     http4sRoutes: Boolean = false
 ): Generator =
-  val (avroGen, avroSer) = if avroSerialization then (List(AvroSerializerGenerator(), AvroFactories.receiver()), List(Serializer.Avro)) else (Nil, Nil)
+  val (avroGen, avroSer) = if avroSerialization then (List(FunctionsAvroSerializerGenerator(), AvroFactories.receiver()), List(Serializer.Avro)) else (Nil, Nil)
   val (jsonGen, jsonSer) =
     if jsonSerialization then (List(CirceJsonSerializerGenerator(), JsonCirceFactories.receiver()), List(Serializer.Json)) else (Nil, Nil)
 
   val http4sRoutesGen = if http4sRoutes then List(RoutesGenerator()) else Nil
 
   val generators = Seq(
-    ReceiverGenerator(),
+    FunctionsReceiverGenerator(),
     FunctionsMethodsGenerator(),
     EntryPointFactoryGenerator.receiver()
   )
