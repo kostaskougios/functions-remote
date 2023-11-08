@@ -16,11 +16,24 @@ class EndToEndHttp4sRoutesSpec extends AbstractHttp4sSpec:
         (Serializer.Json, TestsCatsFunctionsCallerFactory.newHttp4sJsonTestsCatsFunctions[IO](_, serverUri))
       )
     do
+      s"$serializer: catsNoArgs" in {
+        (server[IO], client[IO]).tupled.use: (_, client) =>
+          val f = functions(client)
+          for r <- f.catsNoArgs() yield r should be(5)
+      }
+
+      s"$serializer: catsNoArgsUnitReturnType" in {
+        (server[IO], client[IO]).tupled.use: (_, client) =>
+          val f = functions(client)
+          for r <- f.catsNoArgsUnitReturnType() yield r should be(())
+      }
+
       s"$serializer: catsUnitResult" in {
         (server[IO], client[IO]).tupled.use: (_, client) =>
           val f = functions(client)
           for r <- f.catsUnitResult(1, 2) yield r should be(())
       }
+
       s"$serializer: catsAdd" in {
         (server[IO], client[IO]).tupled.use: (_, client) =>
           val f = functions(client)
@@ -32,21 +45,25 @@ class EndToEndHttp4sRoutesSpec extends AbstractHttp4sSpec:
           val f = functions(client)
           for r <- f.catsAddR(1, 2) yield r should be(Return1(3))
       }
+
       s"$serializer: catsAddLR" in {
         (server[IO], client[IO]).tupled.use: (_, client) =>
           val f = functions(client)
           for r <- f.catsAddLR(1, 2) yield r should be(List(Return1(3)))
       }
+
       s"$serializer: catsDivide" in {
         (server[IO], client[IO]).tupled.use: (_, client) =>
           val f = functions(client)
           for r <- f.catsDivide(4, 2) yield r should be(Left(2))
       }
+
       s"$serializer: catsDivide error" in {
         (server[IO], client[IO]).tupled.use: (_, client) =>
           val f = functions(client)
           for r <- f.catsDivide(4, 0) yield r should be(Right("Div by zero"))
       }
+
       s"$serializer: alwaysFails" in {
         (server[IO], client[IO]).tupled.use: (_, client) =>
           val f = functions(client)
@@ -55,6 +72,7 @@ class EndToEndHttp4sRoutesSpec extends AbstractHttp4sSpec:
             .handleError: t =>
               t shouldBe a[UnexpectedStatus]
       }
+
       s"$serializer: alwaysFailsBeforeCreatingF" in {
         (server[IO], client[IO]).tupled.use: (_, client) =>
           val f = functions(client)

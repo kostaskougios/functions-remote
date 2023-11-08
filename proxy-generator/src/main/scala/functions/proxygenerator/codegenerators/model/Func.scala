@@ -61,7 +61,7 @@ object Func:
     val (firstParams, secondParams) = m.paramss match
       case List(ps)     => (Nil, ps)
       case List(p1, p2) => (p1, p2)
-      case _            => throw new IllegalArgumentException(s"Method ${m.name} has more than 2 sets of params which is not supported")
+      case _            => throw new IllegalArgumentException(s"Method ${m.name} has ${m.paramss.size} sets of params which is not supported")
     val fpLast                      = firstParams.lastOption
     val fps                         = Params(firstParams.map(ep => Param(ep.name, ep.`type`.simplifiedCode, fpLast.isEmpty || ep.eq(fpLast.get))))
 
