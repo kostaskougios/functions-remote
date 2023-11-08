@@ -34,7 +34,7 @@ private class StructureExtractorInspector extends Inspector:
 
         val r = tree match
           case d: DefDef if !d.name.contains("$") && d.name != "<init>" =>
-            val m = EMethod(d.name, d.paramss.map(pc => pc.params.map(paramsCode)), eTypeOf(d.returnTpt.tpe))
+            val m = EMethod(d.name, d.paramss.map(pc => pc.params.map(paramsCode)), eTypeOf(d.returnTpt.tpe), d.symbol.docstring)
             List(m)
           case _                                                        =>
             Nil

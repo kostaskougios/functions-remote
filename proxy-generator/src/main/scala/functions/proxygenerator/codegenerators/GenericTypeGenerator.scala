@@ -6,6 +6,7 @@ import functions.tastyextractor.model.{EMethod, EPackage, EType}
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.{GeneratorFactories, Many}
 
+import java.time.LocalDateTime
 import scala.language.implicitConversions
 
 class GenericTypeGenerator(
@@ -38,7 +39,7 @@ class GenericTypeGenerator(
       functions,
       generatorFactories
     )
-    val code = s"// Generated via ${template.template}\n" + template(vals)
+    val code = s"// Generated via ${template.template} at ${LocalDateTime.now}\n" + template(vals)
     Code(
       s"${`package`.toPath}/$className.scala",
       code

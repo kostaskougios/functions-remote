@@ -16,5 +16,10 @@ trait TestsCatsFunctions[F[_]: Async]:
   def alwaysFails(a: Int): F[String]
   def alwaysFailsBeforeCreatingF(a: Int): F[String]
 
+  /** Use GET method for this: //> HTTP-GET
+    */
   def catsAddParamsEmptySecond(a: Int, l: Long, s: String)(): F[Int]
+
+  /** Use POST method for this: //> HTTP-POST
+    */
   def catsAddParams(a: Int, l: Long, s: String)(b: Int): F[Int]

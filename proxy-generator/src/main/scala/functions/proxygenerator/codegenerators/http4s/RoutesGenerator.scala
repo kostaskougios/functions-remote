@@ -3,7 +3,7 @@ package functions.proxygenerator.codegenerators.http4s
 import functions.proxygenerator.codegenerators.GenericTypeGenerator
 import functions.proxygenerator.codegenerators.GenericTypeGenerator.NamingConventions
 import functions.proxygenerator.codegenerators.model.Func
-import functions.tastyextractor.model.EType
+import functions.tastyextractor.model.{EMethod, EType}
 import mustache.integration.MustacheTemplate
 import mustache.integration.model.{Param, ResourceTemplatesSourceLocation}
 
@@ -24,9 +24,24 @@ object RoutesGenerator:
         httpArgs.params
           .map: p =>
             toHttp4sRouteType(p)
-          .mkString(" / ")
+          .mkString(" / "),
+        httpMethod(method)
       )
   )
+
+  private def httpMethod(method: EMethod) =
+    method.scalaDocs match
+      case Some(d) if d.contains("//> HTTP-GET")     => "GET"
+      case Some(d) if d.contains("//> HTTP-POST")    => "POST"
+      case Some(d) if d.contains("//> HTTP-PUT")     => "PUT"
+      case Some(d) if d.contains("//> HTTP-HEAD")    => "HEAD"
+      case Some(d) if d.contains("//> HTTP-DELETE")  => "DELETE"
+      case Some(d) if d.contains("//> HTTP-CONNECT") => "CONNECT"
+      case Some(d) if d.contains("//> HTTP-OPTIONS") => "OPTIONS"
+      case Some(d) if d.contains("//> HTTP-TRACE")   => "TRACE"
+      case Some(d) if d.contains("//> HTTP-PATCH")   => "PATCH"
+      case _                                         => "PUT"
+
   private def toHttp4sRouteType(p: Param) = p.`type` match
     case "Int"    => s"IntVar(${p.name})"
     case "Long"   => s"LongVar(${p.name})"
@@ -35,5 +50,6 @@ object RoutesGenerator:
 
 case class RoutesExtras(
     hasHttpArgs: Boolean,
-    urlArgs: String
+    urlArgs: String,
+    httpMethod: String
 )

@@ -37,7 +37,7 @@ class {{className}}{{frameworkTypeArgFull}}(
   {{#functions}}
   private val {{functionN}}Path = pathFor({{methodParams}}.Methods.{{caseClassName}})
   def {{functionN}}: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] =
-    case req @ PUT -> `{{functionN}}Path` {{#extras.hasHttpArgs}} / {{extras.urlArgs}} {{/extras.hasHttpArgs}} => routeFor(req, receiver.{{functionN}}{{firstParamsCallAndParens}})
+    case req @ {{extras.httpMethod}} -> `{{functionN}}Path` {{#extras.hasHttpArgs}} / {{extras.urlArgs}} {{/extras.hasHttpArgs}} => routeFor(req, receiver.{{functionN}}{{firstParamsCallAndParens}})
 
 
   {{/functions}}
