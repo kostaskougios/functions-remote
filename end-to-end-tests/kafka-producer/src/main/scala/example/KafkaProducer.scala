@@ -1,5 +1,6 @@
 package example
 
+import endtoend.tests.kafka.model.Person
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.header.internals.RecordHeader
 import org.apache.kafka.common.serialization.StringSerializer

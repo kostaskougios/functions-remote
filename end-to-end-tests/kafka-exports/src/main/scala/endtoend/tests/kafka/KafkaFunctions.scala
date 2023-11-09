@@ -1,6 +1,8 @@
 package endtoend.tests.kafka
 
+import endtoend.tests.kafka.model.Person
+
 /** Mark it as exported: //> exported
   */
 trait KafkaFunctions:
-  def add(key: String)(a: Int, b: Int): Unit
+  def addPerson(key: String)(ttl: Long, p: Person): Unit

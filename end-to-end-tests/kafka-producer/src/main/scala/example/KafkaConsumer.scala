@@ -1,5 +1,6 @@
 package example
 
+import endtoend.tests.kafka.model.Person
 import org.apache.kafka.clients.consumer.{ConsumerRecord, KafkaConsumer}
 import org.apache.kafka.common.serialization.StringDeserializer
 

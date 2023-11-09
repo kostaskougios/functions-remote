@@ -1,6 +1,7 @@
 package example
 
 import com.sksamuel.avro4s.{AvroInputStream, AvroSchema}
+import endtoend.tests.kafka.model.Person
 import org.apache.kafka.common.serialization.Deserializer
 
 class PersonDeserializer extends Deserializer[Person]:

@@ -1,6 +1,7 @@
 package example
 
 import com.sksamuel.avro4s.{AvroOutputStream, AvroOutputStreamBuilder}
+import endtoend.tests.kafka.model.Person
 import org.apache.kafka.common.serialization.Serializer
 
 import java.io.ByteArrayOutputStream
