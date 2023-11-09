@@ -1,6 +1,6 @@
 package {{proxypackage}}
 
-import functions.model.{Coordinates3, Serializer}
+import functions.model.{Coordinates3, Serializer, ReceiverInput}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
 import org.http4s.{MediaType, Request, Response}
@@ -27,10 +27,10 @@ class {{className}}{{frameworkTypeArgFull}}(
 
   val allRoutes: PartialFunction[Request{{exportedTypeTypeArgs}}, {{frameworkTypeArg}}[Response{{exportedTypeTypeArgs}}]] = {{#functions}}{{functionN}} {{^last}}orElse{{/last}} {{/functions}}
 
-  private def routeFor(req: Request[{{frameworkTypeArg}}], f: Array[Byte] => {{frameworkTypeArg}}[Array[Byte]]) =
+  private def routeFor(req: Request[{{frameworkTypeArg}}], f: ReceiverInput => {{frameworkTypeArg}}[Array[Byte]]) =
     val r = for
       inData <- req.body.compile.to(Array)
-      res <- f(inData)
+      res <- f(ReceiverInput(inData))
     yield res
     Ok(r).map(_.withContentType(contentType))
 
