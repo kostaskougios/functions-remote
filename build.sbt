@@ -147,7 +147,7 @@ lazy val `tests-http4s-client-impl` = project
     callerAvroSerialization     := true,
     callerJsonSerialization     := true,
     callerHttp4sClientTransport := true,
-    libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe ++ Http4sClient ++ Http4sCirce
+    libraryDependencies ++= Seq(Avro4s, ScalaTest, CatsEffectsTesting) ++ Circe ++ Http4sClient ++ Http4sCirce
   )
   .dependsOn(`tests-cats-exports`, `functions-receiver`, `http4s-client`)
   .enablePlugins(FunctionsRemotePlugin)

@@ -19,7 +19,8 @@ class {{className}}{{frameworkTypeArgFull}}(
   {{/functions}}
   // this should transport the data to the remote function and get the response from that function
   transport: TransportInput => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}},
-  serializer: Serializer
+  serializer: Serializer,
+  serializeArgs: Boolean
 ) extends {{exportedTypeFull}}:
 
   {{#functions}}

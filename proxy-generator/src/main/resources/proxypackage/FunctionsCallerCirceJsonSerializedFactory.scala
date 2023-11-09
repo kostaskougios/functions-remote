@@ -7,7 +7,10 @@ import {{.}}
 
 object {{className}}:
   val JsonSerializer = new {{exportedType.name}}CirceJsonSerializer
-  def createCaller{{frameworkTypeArgFull}}(transport: TransportInput => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}}):  {{exportedTypeFull}}  =
+  def createCaller{{frameworkTypeArgFull}}(
+    transport: TransportInput => {{frameworkTypeArgOpen}}Array[Byte]{{frameworkTypeArgClose}},
+    serializeArgs: Boolean
+  ):  {{exportedTypeFull}}  =
     new {{exportedType.name}}Caller(
       {{#functions}}
       JsonSerializer.{{functionN}}Serializer,
@@ -19,5 +22,6 @@ object {{className}}:
       {{/isUnitReturnType}}
       {{/functions}}
       transport,
-      Serializer.Json
+      Serializer.Json,
+      serializeArgs
     )

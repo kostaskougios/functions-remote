@@ -7,7 +7,7 @@
 
   def newHttp4s{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(client: Client[{{frameworkTypeArg}}], serverUri: Uri) : {{exportedTypeFull}} =
     val transport = new Http4sTransport[{{frameworkTypeArg}}](client, serverUri)
-    {{exportedType.name}}Caller{{serializer}}SerializedFactory.createCaller(transport.transportFunction)
+    {{exportedType.name}}Caller{{serializer}}SerializedFactory.createCaller(transport.transportFunction, false)
 
   {{/generatorFactories.serializers}}
   {{/generatorFactories.http4sClientTransport}}
