@@ -18,3 +18,5 @@ class KafkaPoller(consumer: KafkaConsumer[Array[Byte], Array[Byte]], invokeMap: 
     val coordinates    = Coordinates4(coordinatesRaw)
     val f              = invokeMap(coordinates)
     f(ReceiverInput(cr.value(), cr.key()))
+
+  def close(): Unit = consumer.close()
