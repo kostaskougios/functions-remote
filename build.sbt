@@ -211,5 +211,5 @@ lazy val `tests-kafka-producer` = project
     callerAvroSerialization := true,
     callerJsonSerialization := true
   )
-  .dependsOn(`tests-kafka-exports`, `functions-caller`)
+  .dependsOn(`tests-kafka-exports`, `kafka-producer`)
   .enablePlugins(FunctionsRemotePlugin)
