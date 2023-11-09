@@ -6,3 +6,4 @@ package tryit
 def generateAllCallersAndReceivers(): Unit =
   generateReceiverAndCallerApp()
   generateCatsExporterAndImporter()
+  generateKafkaReceiverAndCallerApp()
