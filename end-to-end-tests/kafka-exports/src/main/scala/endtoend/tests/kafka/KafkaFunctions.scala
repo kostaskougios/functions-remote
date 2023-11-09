@@ -6,3 +6,4 @@ import endtoend.tests.kafka.model.Person
   */
 trait KafkaFunctions:
   def addPerson(key: String)(ttl: Long, p: Person): Unit
+  def removePerson(key: String)(p: Person): Unit

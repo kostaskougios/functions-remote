@@ -9,7 +9,8 @@
       {{#firstParamsRaw.isEmpty}}Array.emptyByteArray{{/firstParamsRaw.isEmpty}}
       {{^firstParamsRaw.isEmpty}}
       if serializeArgs then {{functionN}}ArgsToByteArray({{caseClass}}Args({{firstParamsCall}}))
-      else Array.emptyByteArray{{/firstParamsRaw.isEmpty}}
+      else Array.emptyByteArray
+      {{/firstParamsRaw.isEmpty}}
     )
 
     val binOut = transport(trIn)
