@@ -106,6 +106,14 @@ lazy val `kafka-producer` = project
     libraryDependencies ++= Seq(KafkaClient)
   )
   .dependsOn(`functions-caller`)
+
+lazy val `kafka-consumer` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(KafkaClient)
+  )
+  .dependsOn(`functions-receiver`)
+
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
   organization := "functions.end-to-end-tests",
@@ -223,5 +231,5 @@ lazy val `tests-kafka-consumer` = project
     receiverAvroSerialization := true,
     receiverJsonSerialization := true
   )
-  .dependsOn(`tests-kafka-exports`, `functions-receiver`)
+  .dependsOn(`tests-kafka-exports`, `kafka-consumer`)
   .enablePlugins(FunctionsRemotePlugin)
