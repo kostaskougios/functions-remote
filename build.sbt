@@ -202,7 +202,8 @@ lazy val `kafka-producer` = project
     endToEndTestsSettings,
     libraryDependencies ++= Seq(ScalaTest, KafkaClient, Avro4s) ++ Circe,
     callerExports           := Seq(s"functions.end-to-end-tests:kafka-exports_3:${version.value}"),
-    callerAvroSerialization := true
+    callerAvroSerialization := true,
+    callerJsonSerialization := true
   )
   .dependsOn(`kafka-exports`, `functions-caller`)
   .enablePlugins(FunctionsRemotePlugin)

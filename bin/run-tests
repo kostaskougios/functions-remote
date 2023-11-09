@@ -1,6 +1,7 @@
 sbt clean \
     tests-exports/publishLocal \
     tests-cats-exports/publishLocal \
+    kafka-exports/publishLocal \
     compile \
     tests-receiver/publishLocal \
     tests-caller/functionsRemoteResolveCallerClassloaderDependencies \
