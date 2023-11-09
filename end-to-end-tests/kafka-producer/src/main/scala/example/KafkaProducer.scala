@@ -1,15 +1,17 @@
 package example
 
-import endtoend.tests.kafka.{KafkaFunctionsCallerFactory, KafkaFunctionsMethods}
 import endtoend.tests.kafka.model.Person
+import endtoend.tests.kafka.{KafkaFunctionsCallerFactory, KafkaFunctionsMethods}
 import functions.model.Serializer
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.header.internals.RecordHeader
-import org.apache.kafka.common.serialization.{ByteArraySerializer, StringSerializer}
+import org.apache.kafka.common.serialization.ByteArraySerializer
 
-/** bin/kafka-topics.sh --create --topic people --bootstrap-server localhost:9092
+/** Not required to create the topic but the commands are:
   *
-  * bin/kafka-topics.sh --describe --topic people --bootstrap-server localhost:9092
+  * bin/kafka-topics.sh --create --topic add-person --bootstrap-server localhost:9092
+  *
+  * bin/kafka-topics.sh --describe --topic add-person --bootstrap-server localhost:9092
   */
 @main
 def kafkaProducer() =
