@@ -1,1 +1,7 @@
-sbt clean tests-exports/publishLocal tests-cats-exports/publishLocal compile tests-impl/publishLocal test
+sbt clean \
+    tests-exports/publishLocal \
+    tests-cats-exports/publishLocal \
+    compile \
+    tests-receiver/publishLocal \
+    tests-caller/functionsRemoteResolveCallerClassloaderDependencies \
+    test

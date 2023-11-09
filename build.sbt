@@ -126,18 +126,6 @@ lazy val `tests-cats-exports` = project
   )
   .enablePlugins(BuildInfoPlugin, FunctionsRemotePlugin)
 
-lazy val `tests-impl` = project
-  .in(file("end-to-end-tests/tests-impl"))
-  .settings(
-    endToEndTestsSettings,
-    receiverExports           := Seq(s"functions.end-to-end-tests:tests-exports_3:${version.value}"),
-    receiverJsonSerialization := true,
-    receiverAvroSerialization := true,
-    libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
-  )
-  .dependsOn(`tests-exports`, `functions-receiver`)
-  .enablePlugins(FunctionsRemotePlugin)
-
 lazy val `tests-http4s-server-impl` = project
   .in(file("end-to-end-tests/tests-http4s-server-impl"))
   .settings(
@@ -164,22 +152,34 @@ lazy val `tests-http4s-client-impl` = project
   .dependsOn(`tests-cats-exports`, `functions-receiver`, `http4s-client`)
   .enablePlugins(FunctionsRemotePlugin)
 
-lazy val `using-tests` = project
-  .in(file("end-to-end-tests/using-tests"))
+lazy val `tests-receiver` = project
+  .in(file("end-to-end-tests/tests-receiver"))
+  .settings(
+    endToEndTestsSettings,
+    receiverExports           := Seq(s"functions.end-to-end-tests:tests-exports_3:${version.value}"),
+    receiverJsonSerialization := true,
+    receiverAvroSerialization := true,
+    libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
+  )
+  .dependsOn(`tests-exports`, `functions-receiver`)
+  .enablePlugins(FunctionsRemotePlugin)
+
+lazy val `tests-caller` = project
+  .in(file("end-to-end-tests/tests-caller"))
   .settings(
     endToEndTestsSettings,
     callerExports                 := Seq(s"functions.end-to-end-tests:tests-exports_3:${version.value}"),
     callerAvroSerialization       := true,
     callerJsonSerialization       := true,
     callerClassloaderTransport    := true,
-    callerClassloaderDependencies := Seq(s"functions.end-to-end-tests:tests-impl_3:${version.value}"),
+    callerClassloaderDependencies := Seq(s"functions.end-to-end-tests:tests-receiver_3:${version.value}"),
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
   .dependsOn(`tests-exports`, `functions-caller`)
   .enablePlugins(FunctionsRemotePlugin)
 
-lazy val `using-tests-cats` = project
-  .in(file("end-to-end-tests/using-tests-cats"))
+lazy val `tests-cats-end-to-end-tests` = project
+  .in(file("end-to-end-tests/tests-cats-end-to-end-tests"))
   .settings(
     endToEndTestsSettings,
     libraryDependencies ++= Seq(ScalaTest, CatsEffectsTesting)
