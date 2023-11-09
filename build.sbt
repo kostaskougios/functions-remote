@@ -100,6 +100,12 @@ lazy val `http4s-client` = project
   )
   .dependsOn(`functions-caller`)
 
+lazy val `kafka-producer` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(KafkaClient)
+  )
+  .dependsOn(`functions-caller`)
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
   organization := "functions.end-to-end-tests",
@@ -186,24 +192,24 @@ lazy val `tests-cats-end-to-end-tests` = project
   )
   .dependsOn(`tests-http4s-client-impl`, `tests-http4s-server-impl`)
 
-lazy val `kafka-exports` = project
-  .in(file("end-to-end-tests/kafka-exports"))
+lazy val `tests-kafka-exports` = project
+  .in(file("end-to-end-tests/tests-kafka-exports"))
   .settings(
     endToEndTestsSettings,
     libraryDependencies ++= Seq(ScalaTest, KafkaClient, Avro4s),
-    buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "kafka-consumer_3"),
+    buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "tests-kafka-consumer_3"),
     buildInfoPackage := "endtoend.tests.kafka"
   )
   .enablePlugins(BuildInfoPlugin)
 
-lazy val `kafka-producer` = project
-  .in(file("end-to-end-tests/kafka-producer"))
+lazy val `tests-kafka-producer` = project
+  .in(file("end-to-end-tests/tests-kafka-producer"))
   .settings(
     endToEndTestsSettings,
     libraryDependencies ++= Seq(ScalaTest, KafkaClient, Avro4s) ++ Circe,
-    callerExports           := Seq(s"functions.end-to-end-tests:kafka-exports_3:${version.value}"),
+    callerExports           := Seq(s"functions.end-to-end-tests:tests-kafka-exports_3:${version.value}"),
     callerAvroSerialization := true,
     callerJsonSerialization := true
   )
-  .dependsOn(`kafka-exports`, `functions-caller`)
+  .dependsOn(`tests-kafka-exports`, `functions-caller`)
   .enablePlugins(FunctionsRemotePlugin)
