@@ -1,13 +1,14 @@
   {{^mapResults}}
-  def {{functionN}}(data: Array[Byte]): Array[Byte] =
-    {{#paramsRaw.isEmpty}}if data.length>0 then throw new IllegalStateException(s"Expected empty array of bytes but got ${data.length}"){{/paramsRaw.isEmpty}}
-    {{^paramsRaw.isEmpty}}val params = {{functionN}}Deserializer(data) {{/paramsRaw.isEmpty}}
+  def {{functionN}}(in: ReceiverInput): Array[Byte] =
+    {{#paramsRaw.isEmpty}}if in.data.length>0 then throw new IllegalStateException(s"Expected empty array of bytes but got ${in.data.length}"){{/paramsRaw.isEmpty}}
+    {{^paramsRaw.isEmpty}}val params = {{functionN}}Deserializer(in.data) {{/paramsRaw.isEmpty}}
+    {{^firstParamsRaw.isEmpty}}val paramsArgs = {{functionN}}ArgsDeserializer(in.argsData) {{/firstParamsRaw.isEmpty}}
     {{^isUnitReturnType}}
-    val r      = f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
+    val r = f.{{functionN}}{{^firstParamsRaw.isEmpty}}({{#firstParamsRaw}}paramsArgs.{{name}}{{^last}}, {{/last}}{{/firstParamsRaw}}){{/firstParamsRaw.isEmpty}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
     {{functionN}}ReturnTypeSerializer(r)
     {{/isUnitReturnType}}
     {{#isUnitReturnType}}
-    f.{{functionN}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
+    f.{{functionN}}{{^firstParamsRaw.isEmpty}}({{#firstParamsRaw}}paramsArgs.{{name}}{{^last}}, {{/last}}{{/firstParamsRaw}}){{/firstParamsRaw.isEmpty}}({{#paramsRaw}}params.{{name}}{{^last}}, {{/last}}{{/paramsRaw}})
     Array.emptyByteArray
     {{/isUnitReturnType}}
   {{/mapResults}}

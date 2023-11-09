@@ -1,6 +1,7 @@
 package {{proxypackage}}
 
 import functions.model.Serializer
+import functions.model.ReceiverInput
 
 {{#frameworkImports}}
 import {{.}}

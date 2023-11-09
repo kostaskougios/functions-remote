@@ -6,13 +6,13 @@
 
   {{^exportedType.hasFramework}}
   import functions.model.Coordinates4
-  def invokerMap(impl: {{exportedTypeFull}}): Map[Coordinates4, Array[Byte] => Array[Byte]] =
+  def invokerMap(impl: {{exportedTypeFull}}): Map[Coordinates4, ReceiverInput => Array[Byte]] =
     {{#generatorFactories.serializers}}
     invoker{{serializer}}Map(impl) {{^last}} ++ {{/last}}
     {{/generatorFactories.serializers}}
 
   {{#generatorFactories.serializers}}
-  def invoker{{serializer}}Map(impl: {{exportedTypeFull}}): Map[Coordinates4, Array[Byte] => Array[Byte]] =
+  def invoker{{serializer}}Map(impl: {{exportedTypeFull}}): Map[Coordinates4, ReceiverInput => Array[Byte]] =
     val i = new{{serializer}}{{exportedType.name}}{{frameworkTypeArgFull}}(impl)
     val s = Serializer.valueOf("{{serializer}}")
     Map(

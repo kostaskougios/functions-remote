@@ -1,7 +1,7 @@
 package exported
 
 import endtoend.tests.{NestedTypeParamsFunctionsImpl, NestedTypeParamsFunctionsReceiverFactory, SimpleFunctionsImpl, SimpleFunctionsReceiverFactory}
-import functions.model.Coordinates4
+import functions.model.{Coordinates4, ReceiverInput}
 
 import java.util.function.BiFunction
 
@@ -13,4 +13,4 @@ object Exported extends BiFunction[String, Array[Byte], Array[Byte]]:
   override def apply(method: String, data: Array[Byte]): Array[Byte] =
     val coordinates = Coordinates4(method)
     val function    = receiver(coordinates)
-    function(data)
+    function(ReceiverInput(data))
