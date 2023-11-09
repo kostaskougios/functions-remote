@@ -21,5 +21,5 @@ def kafkaConsumer() =
        |topic   = ${cr.topic()}
        |key     = ${cr.key()}
        |value   = ${cr.value()}
-       |headers = ${cr.headers().lastHeader("coordinates")}
+       |headers = ${new String(cr.headers().lastHeader("coordinates").value())}
        |""".stripMargin
