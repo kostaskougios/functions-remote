@@ -1,6 +1,9 @@
 package {{proxypackage}}
 
 import com.sksamuel.avro4s.AvroSchema
+import com.sksamuel.avro4s.SchemaFor
+import com.sksamuel.avro4s.Encoder
+import com.sksamuel.avro4s.Decoder
 import com.sksamuel.avro4s.AvroOutputStream
 import com.sksamuel.avro4s.AvroInputStream
 import com.sksamuel.avro4s.AvroOutputStreamBuilder
@@ -14,28 +17,39 @@ import {{.}}
 {{/imports}}
 
 class {{className}}:
-  private def avroSerialize[A](b: AvroOutputStreamBuilder[A], value: A): Array[Byte] =
+  protected def avroSerialize[A](b: AvroOutputStreamBuilder[A], value: A): Array[Byte] =
     val bos = new ByteArrayOutputStream(4096)
     Using.resource(b.to(bos).build()): os =>
       os.write(value)
     bos.toByteArray
 
-  private def avroDeserialize[A](schema: Schema, b: AvroInputStreamBuilder[A], data: Array[Byte]): A =
+  protected def avroDeserialize[A](schema: Schema, b: AvroInputStreamBuilder[A], data: Array[Byte]): A =
     Using.resource(b.from(data).build(schema)): in =>
       in.iterator.next()
 
+  protected def inputStream[A](using decoder: Decoder[A]): AvroInputStreamBuilder[A] =
+    AvroInputStream.binary[A]
+
+  protected def outputStream[A](schemaFor: SchemaFor[A], encoder: Encoder[A]): AvroOutputStreamBuilder[A] =
+    AvroOutputStream.binary[A](using schemaFor, encoder)
   {{#functions}}
   // ----------------------------------------------
   // Serializers for {{functionN}} function
   // ----------------------------------------------
-  private val {{functionN}}AvroSchema = AvroSchema[{{caseClass}}]
-  private val {{functionN}}AvroOutputStream = AvroOutputStream.binary[{{caseClass}}]
-  private val {{functionN}}AvroInputStream = AvroInputStream.binary[{{caseClass}}]
+  val {{functionN}}AvroSchemaFor = SchemaFor[{{caseClass}}]
+  val {{functionN}}AvroEncoder = Encoder[{{caseClass}}]
+  val {{functionN}}AvroDecoder = Decoder[{{caseClass}}]
+  val {{functionN}}AvroSchema = {{functionN}}AvroSchemaFor.schema
+  val {{functionN}}AvroOutputStream = outputStream[{{caseClass}}]({{functionN}}AvroSchemaFor, {{functionN}}AvroEncoder)
+  val {{functionN}}AvroInputStream = inputStream[{{caseClass}}](using {{functionN}}AvroDecoder)
 
   {{^isUnitReturnType}}
-  private val {{functionN}}ReturnTypeAvroSchema = AvroSchema[{{resultNNoFramework}}]
-  private val {{functionN}}ReturnTypeAvroOutputStream = AvroOutputStream.binary[{{resultNNoFramework}}]
-  private val {{functionN}}ReturnTypeAvroInputStream = AvroInputStream.binary[{{resultNNoFramework}}]
+  val {{functionN}}ReturnTypeAvroSchemaFor = SchemaFor[{{resultNNoFramework}}]
+  val {{functionN}}ReturnTypeAvroEncoder = Encoder[{{resultNNoFramework}}]
+  val {{functionN}}ReturnTypeAvroDecoder = Decoder[{{resultNNoFramework}}]
+  val {{functionN}}ReturnTypeAvroSchema = {{functionN}}ReturnTypeAvroSchemaFor.schema
+  val {{functionN}}ReturnTypeAvroOutputStream = outputStream[{{resultNNoFramework}}]({{functionN}}ReturnTypeAvroSchemaFor, {{functionN}}ReturnTypeAvroEncoder)
+  val {{functionN}}ReturnTypeAvroInputStream = inputStream[{{resultNNoFramework}}](using {{functionN}}ReturnTypeAvroDecoder)
   {{/isUnitReturnType}}
 
   def {{functionN}}Serializer(value: {{caseClass}}): Array[Byte] = avroSerialize({{functionN}}AvroOutputStream, value)
