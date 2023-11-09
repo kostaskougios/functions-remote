@@ -13,12 +13,12 @@ import org.apache.kafka.common.serialization.{ByteArraySerializer, StringSeriali
   */
 @main
 def kafkaProducer() =
-  val producer = new KafkaProducer(KafkaConf.props, new StringSerializer, new ByteArraySerializer)
+  val producer = new KafkaProducer(KafkaConf.props, new ByteArraySerializer, new ByteArraySerializer)
 
   val f = KafkaFunctionsCallerFactory.newAvroKafkaFunctions: trIn =>
     val coordinates = KafkaFunctionsMethods.Methods.AddPerson.withSerializer(Serializer.Avro)
 
-    val pr = new ProducerRecord("add-person", "kostas", trIn.data)
+    val pr = new ProducerRecord("add-person", trIn.argsData, trIn.data)
     pr.headers()
       .add(new RecordHeader("coordinates", coordinates.toRawCoordinates.getBytes("UTF-8")))
     producer.send(pr)
