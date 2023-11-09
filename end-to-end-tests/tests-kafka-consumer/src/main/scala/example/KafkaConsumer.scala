@@ -19,7 +19,6 @@ def kafkaConsumer() =
 
   def consume(): Unit =
     val r     = consumer.poll(Duration.ofMinutes(10))
-    println("Received msg")
     val items = r.iterator().asScala.toList
     items.foreach(execute)
     consume()
