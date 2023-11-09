@@ -1,6 +1,8 @@
 package example
 
+import endtoend.tests.kafka.KafkaFunctionsMethods
 import endtoend.tests.kafka.model.Person
+import functions.model.Serializer
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.header.internals.RecordHeader
 import org.apache.kafka.common.serialization.StringSerializer
@@ -11,10 +13,12 @@ import org.apache.kafka.common.serialization.StringSerializer
   */
 @main
 def kafkaProducer() =
-  val producer = new KafkaProducer[String, Person](KafkaConf.props, new StringSerializer, new PersonSerializer)
+  val producer = new KafkaProducer[String, KafkaFunctionsMethods.AddPerson](KafkaConf.props, new StringSerializer, new AddPersonSerializer)
   try
-    val pr = new ProducerRecord("people", "kostas", Person(1, "Kostas"))
-    pr.headers().add(new RecordHeader("coordinates", "LsFunctions.ls/1.0".getBytes("UTF-8")))
+    val pr          = new ProducerRecord("add-person", "kostas", KafkaFunctionsMethods.AddPerson(1000, Person(1, "Kostas")))
+    val coordinates = KafkaFunctionsMethods.Methods.AddPerson.withSerializer(Serializer.Avro)
+    pr.headers()
+      .add(new RecordHeader("coordinates", coordinates.toRawCoordinates.getBytes("UTF-8")))
     producer.send(pr)
     println("OK")
   finally producer.close()
