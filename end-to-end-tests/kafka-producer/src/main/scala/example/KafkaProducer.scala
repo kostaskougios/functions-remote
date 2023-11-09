@@ -17,7 +17,8 @@ def kafkaProducer() =
 
   val f = KafkaFunctionsCallerFactory.newAvroKafkaFunctions: trIn =>
     val coordinates = KafkaFunctionsMethods.Methods.AddPerson.withSerializer(Serializer.Avro)
-    val pr          = new ProducerRecord("add-person", "kostas", trIn.data)
+
+    val pr = new ProducerRecord("add-person", "kostas", trIn.data)
     pr.headers()
       .add(new RecordHeader("coordinates", coordinates.toRawCoordinates.getBytes("UTF-8")))
     producer.send(pr)

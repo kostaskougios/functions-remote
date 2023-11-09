@@ -12,6 +12,9 @@ trait {{className}}
 object {{className}} extends FunctionsMethods:
 
   {{#functions}}
+  {{^firstParamsRaw.isEmpty}}
+  case class {{caseClassName}}Args({{firstParams}}) extends {{className}}
+  {{/firstParamsRaw.isEmpty}}
   case class {{caseClassName}}({{params}}) extends {{className}}
   {{/functions}}
 

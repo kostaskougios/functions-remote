@@ -26,7 +26,7 @@ class GenericTypeGenerator(
     val frameworkImports = `type`.framework.toSeq.flatMap(_.imports).toSet
     val className        = namingConventions.className(`type`)
     val mpt              = namingConventions.methodParamsTraitName(`type`)
-    val functions        = model.Func(`type`, namingConventions, extrasCreator)
+    val functions        = Func(`type`, namingConventions, extrasCreator)
 
     val vals = Vals(
       `type`,

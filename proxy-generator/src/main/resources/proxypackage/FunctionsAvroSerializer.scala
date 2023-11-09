@@ -43,6 +43,15 @@ class {{className}}:
   val {{functionN}}AvroOutputStream = outputStream[{{caseClass}}]({{functionN}}AvroSchemaFor, {{functionN}}AvroEncoder)
   val {{functionN}}AvroInputStream = inputStream[{{caseClass}}](using {{functionN}}AvroDecoder)
 
+  {{^firstParamsRaw.isEmpty}}
+  val {{functionN}}ArgsAvroSchemaFor = SchemaFor[{{caseClass}}Args]
+  val {{functionN}}ArgsAvroEncoder = Encoder[{{caseClass}}Args]
+  val {{functionN}}ArgsAvroDecoder = Decoder[{{caseClass}}Args]
+  val {{functionN}}ArgsAvroSchema = {{functionN}}ArgsAvroSchemaFor.schema
+  val {{functionN}}ArgsAvroOutputStream = outputStream[{{caseClass}}Args]({{functionN}}ArgsAvroSchemaFor, {{functionN}}ArgsAvroEncoder)
+  val {{functionN}}ArgsAvroInputStream = inputStream[{{caseClass}}Args](using {{functionN}}ArgsAvroDecoder)
+  {{/firstParamsRaw.isEmpty}}
+
   {{^isUnitReturnType}}
   val {{functionN}}ReturnTypeAvroSchemaFor = SchemaFor[{{resultNNoFramework}}]
   val {{functionN}}ReturnTypeAvroEncoder = Encoder[{{resultNNoFramework}}]
