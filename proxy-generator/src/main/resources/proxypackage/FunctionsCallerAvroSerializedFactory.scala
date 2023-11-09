@@ -11,6 +11,9 @@ object {{className}}:
     new {{exportedType.name}}Caller(
       {{#functions}}
       AvroSerializer.{{functionN}}Serializer,
+      {{^firstParamsRaw.isEmpty}}
+      AvroSerializer.{{functionN}}ArgsSerializer,
+      {{/firstParamsRaw.isEmpty}}
       {{^isUnitReturnType}}
       AvroSerializer.{{functionN}}ReturnTypeDeserializer,
       {{/isUnitReturnType}}

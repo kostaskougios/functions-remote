@@ -10,6 +10,9 @@ class {{className}}{{frameworkTypeArgFull}}(
   {{#functions}}
   // {{functionN}} serialization
   {{functionN}}ToByteArray: {{methodParams}}.{{caseClassName}} => Array[Byte],
+  {{^firstParamsRaw.isEmpty}}
+  {{functionN}}ArgsToByteArray: {{methodParams}}.{{caseClassName}}Args => Array[Byte],
+  {{/firstParamsRaw.isEmpty}}
   {{^isUnitReturnType}}
   {{functionN}}ReturnTypeFromByteArray: Array[Byte] => {{resultNNoFramework}},
   {{/isUnitReturnType}}

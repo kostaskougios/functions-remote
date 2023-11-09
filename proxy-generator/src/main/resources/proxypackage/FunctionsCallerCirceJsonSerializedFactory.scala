@@ -11,6 +11,9 @@ object {{className}}:
     new {{exportedType.name}}Caller(
       {{#functions}}
       JsonSerializer.{{functionN}}Serializer,
+      {{^firstParamsRaw.isEmpty}}
+      JsonSerializer.{{functionN}}ArgsSerializer,
+      {{/firstParamsRaw.isEmpty}}
       {{^isUnitReturnType}}
       JsonSerializer.{{functionN}}ReturnTypeDeserializer,
       {{/isUnitReturnType}}

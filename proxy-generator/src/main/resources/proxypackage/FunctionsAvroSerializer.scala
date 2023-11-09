@@ -62,6 +62,9 @@ class {{className}}:
   {{/isUnitReturnType}}
 
   def {{functionN}}Serializer(value: {{caseClass}}): Array[Byte] = avroSerialize({{functionN}}AvroOutputStream, value)
+  {{^firstParamsRaw.isEmpty}}
+  def {{functionN}}ArgsSerializer(value: {{caseClass}}Args): Array[Byte] = avroSerialize({{functionN}}ArgsAvroOutputStream, value)
+  {{/firstParamsRaw.isEmpty}}
   def {{functionN}}Deserializer(data: Array[Byte]): {{caseClass}} = avroDeserialize({{functionN}}AvroSchema, {{functionN}}AvroInputStream, data)
 
   {{^isUnitReturnType}}

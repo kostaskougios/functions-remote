@@ -200,7 +200,7 @@ lazy val `kafka-producer` = project
   .in(file("end-to-end-tests/kafka-producer"))
   .settings(
     endToEndTestsSettings,
-    libraryDependencies ++= Seq(ScalaTest, KafkaClient, Avro4s),
+    libraryDependencies ++= Seq(ScalaTest, KafkaClient, Avro4s) ++ Circe,
     callerExports           := Seq(s"functions.end-to-end-tests:kafka-exports_3:${version.value}"),
     callerAvroSerialization := true
   )

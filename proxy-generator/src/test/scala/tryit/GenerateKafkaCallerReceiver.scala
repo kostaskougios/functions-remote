@@ -23,12 +23,12 @@ object KafkaExporter:
     println(s"---- Exporting $exportDep")
     deleteScalaFiles(targetRoot)
 
-    generateReceiver(generatorConfig, avroSerialization = true)
+    generateReceiver(generatorConfig, avroSerialization = true, jsonSerialization = true)
       .generate(targetRoot, exportDep)
 
   def callerFor(targetRoot: String, exportDep: String) =
     println(s"---- Importing $exportDep")
     deleteScalaFiles(targetRoot)
 
-    generateCaller(generatorConfig, avroSerialization = true)
+    generateCaller(generatorConfig, avroSerialization = true, jsonSerialization = true)
       .generate(targetRoot, exportDep)

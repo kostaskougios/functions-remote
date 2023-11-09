@@ -8,9 +8,9 @@ import {{.}}
 {{/imports}}
 
 class {{className}}:
-  private def toJson[A](a: A, encoder: Encoder[A]): Array[Byte] = encoder(a).noSpaces.getBytes("UTF-8")
+  protected def toJson[A](a: A, encoder: Encoder[A]): Array[Byte] = encoder(a).noSpaces.getBytes("UTF-8")
 
-  private def parseJson[A](data: Array[Byte], decoder: Decoder[A]): A =
+  protected def parseJson[A](data: Array[Byte], decoder: Decoder[A]): A =
     val j = new String(data,"UTF-8")
     parse(j).flatMap(decoder.decodeJson)
       .getOrElse(throw new IllegalArgumentException(s"Invalid json: $j"))
@@ -18,15 +18,21 @@ class {{className}}:
   // ----------------------------------------------
   // Serializers for {{functionN}} function
   // ----------------------------------------------
-  private val {{functionN}}Encoder = Encoder[{{caseClass}}]
-  private val {{functionN}}Decoder = Decoder[{{caseClass}}]
+  val {{functionN}}Encoder = Encoder[{{caseClass}}]
+  {{^firstParamsRaw.isEmpty}}
+  val {{functionN}}ArgsEncoder = Encoder[{{caseClass}}Args]
+  {{/firstParamsRaw.isEmpty}}
+  val {{functionN}}Decoder = Decoder[{{caseClass}}]
 
   {{^isUnitReturnType}}
-  private val {{functionN}}ReturnTypeEncoder = Encoder[{{resultNNoFramework}}]
-  private val {{functionN}}ReturnTypeDecoder = Decoder[{{resultNNoFramework}}]
+  val {{functionN}}ReturnTypeEncoder = Encoder[{{resultNNoFramework}}]
+  val {{functionN}}ReturnTypeDecoder = Decoder[{{resultNNoFramework}}]
   {{/isUnitReturnType}}
 
   def {{functionN}}Serializer(value: {{caseClass}}): Array[Byte] = toJson(value, {{functionN}}Encoder)
+  {{^firstParamsRaw.isEmpty}}
+  def {{functionN}}ArgsSerializer(value: {{caseClass}}Args): Array[Byte] = toJson(value, {{functionN}}ArgsEncoder)
+  {{/firstParamsRaw.isEmpty}}
   def {{functionN}}Deserializer(data: Array[Byte]): {{caseClass}} = parseJson(data, {{functionN}}Decoder)
 
   {{^isUnitReturnType}}
