@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.{ConsumerRecord, KafkaConsumer}
 
 import scala.jdk.CollectionConverters.*
 import java.time.Duration
+import scala.util.Using.Releasable
 
 class KafkaPoller(consumer: KafkaConsumer[Array[Byte], Array[Byte]], invokeMap: Map[Coordinates4, ReceiverInput => Array[Byte]]):
   def poll(duration: Duration): Unit =
@@ -22,3 +23,6 @@ class KafkaPoller(consumer: KafkaConsumer[Array[Byte], Array[Byte]], invokeMap: 
   /** Closes the KafkaConsumer
     */
   def close(): Unit = consumer.close()
+
+object KafkaPoller:
+  given Releasable[KafkaPoller] = resource => resource.close()

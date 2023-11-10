@@ -6,6 +6,7 @@ import org.apache.kafka.common.header.internals.RecordHeader
 import org.apache.kafka.common.serialization.ByteArraySerializer
 
 import java.util.Properties
+import scala.util.Using.Releasable
 
 class KafkaTransport(topic: String, producer: KafkaProducer[Array[Byte], Array[Byte]]):
   def transportFunction(trIn: TransportInput): Array[Byte] =
@@ -21,3 +22,5 @@ class KafkaTransport(topic: String, producer: KafkaProducer[Array[Byte], Array[B
 object KafkaTransport:
   def apply(topic: String, properties: Properties): KafkaTransport =
     new KafkaTransport(topic, new KafkaProducer(properties, new ByteArraySerializer, new ByteArraySerializer))
+
+  given Releasable[KafkaTransport] = resource => resource.close()
