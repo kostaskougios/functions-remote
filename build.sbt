@@ -15,7 +15,6 @@ ThisBuild / scalacOptions ++= Seq("-unchecked", "-feature", "-deprecation", "-Xm
 val Scala3Compiler = "org.scala-lang" %% "scala3-compiler"        % scala3Version
 val Scala3Tasty    = "org.scala-lang" %% "scala3-tasty-inspector" % scala3Version
 val ScalaTest      = "org.scalatest"  %% "scalatest"              % "3.2.15" % Test
-val ScalaMock      = ("org.scalamock" %% "scalamock"              % "5.1.0").cross(CrossVersion.for3Use2_13)
 
 val Diffx              = Seq(
   "com.softwaremill.diffx" %% "diffx-core",
@@ -241,6 +240,6 @@ lazy val `tests-kafka-end-to-end` = project
   .in(file("end-to-end-tests/tests-kafka-end-to-end"))
   .settings(
     endToEndTestsSettings,
-    libraryDependencies ++= Seq(ScalaTest, EmbeddedKafka, ScalaMock)
+    libraryDependencies ++= Seq(ScalaTest, EmbeddedKafka)
   )
   .dependsOn(`tests-kafka-consumer`, `tests-kafka-producer`)
