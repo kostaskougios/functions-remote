@@ -30,7 +30,7 @@ class KafkaEndToEndSuite extends AnyFunSuite with EmbeddedKafka with BeforeAndAf
     val config = EmbeddedKafkaConfig(kafkaPort = 7101, zooKeeperPort = 7102)
     EmbeddedKafka.start()(config)
 
-  test("kafka") {
+  test("kafka publish/subscribe") {
     val p1 = Person(1, "p1")
     val p2 = Person(2, "p2")
     Using.resource(KafkaTransport("person", props)): transport =>
