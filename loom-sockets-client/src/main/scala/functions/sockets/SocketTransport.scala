@@ -14,6 +14,7 @@ class SocketTransport(host: String, port: Int, bufferSize: Int = 16384):
       val coordData = trIn.coordinates4.toRawCoordinates.getBytes("UTF-8")
       out.write(coordData.length)
       out.write(coordData)
+      out.write(trIn.data.length)
       out.write(trIn.data)
       out.flush()
       inputStreamToByteArray(in)

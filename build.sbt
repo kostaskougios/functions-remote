@@ -121,6 +121,7 @@ lazy val `loom-sockets-server` = project
     commonSettings,
     libraryDependencies ++= Seq(ScalaTest)
   )
+  .dependsOn(`functions-common`)
 
 lazy val `loom-sockets-client` = project
   .settings(
