@@ -116,6 +116,19 @@ lazy val `kafka-consumer` = project
   )
   .dependsOn(`functions-receiver`)
 
+lazy val `loom-sockets-server` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest)
+  )
+
+lazy val `loom-sockets-client` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest)
+  )
+  .dependsOn(`functions-common`)
+
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
   organization := "functions.end-to-end-tests",
@@ -243,3 +256,18 @@ lazy val `tests-kafka-end-to-end` = project
     libraryDependencies ++= Seq(ScalaTest, EmbeddedKafka)
   )
   .dependsOn(`tests-kafka-consumer`, `tests-kafka-producer`)
+
+lazy val `tests-loom-sockets` = project
+  .in(file("end-to-end-tests/tests-loom-sockets"))
+  .settings(
+    endToEndTestsSettings,
+    callerExports             := Seq(s"functions.end-to-end-tests:tests-exports_3:${version.value}"),
+    callerJsonSerialization   := true,
+    callerAvroSerialization   := true,
+    receiverExports           := Seq(s"functions.end-to-end-tests:tests-exports_3:${version.value}"),
+    receiverJsonSerialization := true,
+    receiverAvroSerialization := true,
+    libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
+  )
+  .dependsOn(`loom-sockets-server`, `loom-sockets-client`, `tests-exports`, `tests-receiver`, `functions-receiver`)
+  .enablePlugins(FunctionsRemotePlugin)
