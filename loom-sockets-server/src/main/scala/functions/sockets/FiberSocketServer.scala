@@ -2,15 +2,15 @@ package functions.sockets
 
 import functions.model.{Coordinates4, ReceiverInput}
 
-import java.io.{ByteArrayOutputStream, InputStream}
+import java.io.InputStream
 import java.net.{ServerSocket, Socket}
 import java.util
 import java.util.concurrent.{Executors, Future}
 import scala.jdk.CollectionConverters.*
 
-type RequestProcessor = Array[Byte] => Array[Byte]
-
 // https://wiki.openjdk.org/display/loom/Getting+started
+// https://openjdk.org/jeps/444
+
 class FiberSocketServer(listenPort: Int):
   private val server   = new ServerSocket(listenPort)
   private val executor = Executors.newVirtualThreadPerTaskExecutor
