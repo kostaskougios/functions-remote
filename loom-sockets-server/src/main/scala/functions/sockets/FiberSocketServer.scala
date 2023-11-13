@@ -78,10 +78,10 @@ object FiberSocketServer:
     val s        = new FiberSocketServer(server, executor)
     try
       s.start(invokerMap)
-      var i = 0
-      while (!s.isAccepting && i < 8192)
-        i = i + 1
+      var i = 8192
+      while (!s.isAccepting && i > 0)
+        i = i - 1
         Thread.`yield`()
-      if i == 8192 then throw new IllegalStateException("Could not start accepting requests.")
+      if i == 0 then throw new IllegalStateException("Could not start accepting requests.")
       f(s)
     finally s.shutdown()
