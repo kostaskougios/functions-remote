@@ -11,7 +11,7 @@ import scala.concurrent.{Await, Future}
 import concurrent.ExecutionContext.Implicits.global
 
 class LoomSocketsSuite extends AnyFunSuite with BeforeAndAfterAll:
-  val socketPool   = SocketPool("localhost", 7200, poolSz = 4)
+  val socketPool   = SocketPool("localhost", 7200)
   val transport    = new SocketTransport(socketPool)
   val invokerMap   = SimpleFunctionsReceiverFactory.invokerMap(new SimpleFunctionsImpl)
   def createServer = FiberSocketServer.withServer[Unit](7200, invokerMap) _
@@ -27,7 +27,7 @@ class LoomSocketsSuite extends AnyFunSuite with BeforeAndAfterAll:
 
   test("concurrent requests") {
     createServer: server =>
-      val all = for i <- 1 to 1000 yield Future:
+      val all = for i <- 1 to 10000 yield Future:
         caller.add(i, 1) should be(i + 1)
         0 should be(1000)
 
