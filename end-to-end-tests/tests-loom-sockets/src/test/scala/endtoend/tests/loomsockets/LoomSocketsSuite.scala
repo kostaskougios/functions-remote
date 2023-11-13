@@ -17,7 +17,9 @@ class LoomSocketsSuite extends AnyFunSuite:
       caller.add(5, 6) should be(11)
   }
 
-  test("server can be shut down") {
+  test("client/server multiple requests") {
     createServer: server =>
-      Thread.sleep(200)
+      caller.add(5, 6) should be(11)
+      caller.add(1, 2) should be(3)
+      caller.add(2, 3) should be(5)
   }
