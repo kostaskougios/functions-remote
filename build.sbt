@@ -121,14 +121,20 @@ lazy val `loom-sockets-server` = project
     commonSettings,
     libraryDependencies ++= Seq(ScalaTest)
   )
-  .dependsOn(`functions-common`)
+  .dependsOn(`functions-common`, fibers)
 
 lazy val `loom-sockets-client` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(ScalaTest)
   )
-  .dependsOn(`functions-common`)
+  .dependsOn(`functions-common`, fibers)
+
+lazy val fibers = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest)
+  )
 
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
