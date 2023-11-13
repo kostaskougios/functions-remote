@@ -5,7 +5,7 @@ import functions.model.TransportInput
 import java.io.*
 import java.net.*
 
-class SocketTransport(host: String, port: Int, bufferSize: Int = 16384):
+class SocketTransport(host: String, port: Int):
   private val inetAddress = InetAddress.getByName(host)
 
   def transportFunction(trIn: TransportInput): Array[Byte] =
@@ -24,16 +24,7 @@ class SocketTransport(host: String, port: Int, bufferSize: Int = 16384):
     finally s.close()
 
   private def inputStreamToByteArray(inputStream: InputStream): Array[Byte] =
-    val buffer = new ByteArrayOutputStream(bufferSize)
-    var nRead  = 0
-    val data   = new Array[Byte](bufferSize)
-
-    def next() =
-      nRead = inputStream.read(data, 0, data.length)
-      nRead
-
-    while (next() != -1)
-      buffer.write(data, 0, nRead);
-
-    buffer.flush();
-    buffer.toByteArray
+    val sz   = inputStream.read()
+    val data = new Array[Byte](sz)
+    inputStream.read(data)
+    data

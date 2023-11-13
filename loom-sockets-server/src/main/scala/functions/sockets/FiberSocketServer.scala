@@ -31,7 +31,7 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
     Thread.`yield`()
     if serverThread != null then serverThread.interrupt()
 
-  private def acceptOne(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
+  private def acceptOneSocketConnection(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
     serverThread = Thread.currentThread()
     if !stopServer.get() then
       try
@@ -44,7 +44,7 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
     def listen: Runnable =
       () =>
         while (!stopServer.get())
-          try acceptOne(invokerMap)
+          try acceptOneSocketConnection(invokerMap)
           catch case t: Throwable => logError(t)
     executor.submit(listen)
 
@@ -63,6 +63,7 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
         val coordinates = Coordinates4(coordsRaw)
         val inData      = inputStreamToByteArray(in)
         val outData     = invokerMap(coordinates)(ReceiverInput(inData))
+        out.write(outData.length)
         out.write(outData)
         out.flush()
       catch case t: Throwable => logError(t)
