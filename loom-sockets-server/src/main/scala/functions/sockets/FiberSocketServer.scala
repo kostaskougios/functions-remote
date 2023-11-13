@@ -23,9 +23,11 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
   private val accepting                      = new AtomicBoolean(false)
   private val totalRequestCounter            = new AtomicLong(0)
   private val servingCounter                 = new AtomicInteger(0)
+  private val activeConnectionsCounter       = new AtomicInteger(0)
   def isAccepting: Boolean                   = accepting.get()
   def totalRequestCount: Long                = totalRequestCounter.get()
   def servingCount: Long                     = servingCounter.get()
+  def activeConnectionsCount: Long           = activeConnectionsCounter.get()
 
   private def interruptServerThread(): Unit =
     stopServer.set(true)
@@ -54,13 +56,21 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
 
   private def processRequest(s: Socket, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
     try
-      val in  = s.getInputStream
-      val out = s.getOutputStream
+      activeConnectionsCounter.incrementAndGet()
+      val in          = s.getInputStream
+      val out         = s.getOutputStream
+      var idleInCount = 0
 
       def serveOne(): Unit =
         in.read() match
-          case -1       => Thread.`yield`()
+          case -1 =>
+            idleInCount += 1
+            if idleInCount < 10 then Thread.`yield`()
+            else if idleInCount < 100 then Thread.sleep(1)
+            else Thread.sleep(10)
+
           case coordsSz =>
+            idleInCount = 0
             try
               totalRequestCounter.incrementAndGet()
               servingCounter.incrementAndGet()
@@ -78,7 +88,9 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
       while (s.isConnected)
         serveOne()
     catch case t: Throwable => logError(t)
-    finally s.close()
+    finally
+      activeConnectionsCounter.decrementAndGet()
+      s.close()
 
   private def inputStreamToByteArray(inputStream: InputStream): Array[Byte] =
     val dataSz = inputStream.read()
