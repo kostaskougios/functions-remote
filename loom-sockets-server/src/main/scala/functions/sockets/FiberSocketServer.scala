@@ -20,10 +20,10 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
   @volatile private var serverThread: Thread = null
   private val stopServer                     = new AtomicBoolean(false)
   private val accepting                      = new AtomicBoolean(false)
-  private val requestCounter                 = new AtomicLong(0)
+  private val totalRequestCounter            = new AtomicLong(0)
   private val servingCounter                 = new AtomicInteger(0)
   def isAccepting: Boolean                   = accepting.get()
-  def requestCount: Long                     = requestCounter.get()
+  def totalRequestCount: Long                = totalRequestCounter.get()
   def servingCount: Long                     = servingCounter.get()
 
   private def interruptServerThread(): Unit =
@@ -53,22 +53,26 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
 
   private def runnable(clientSocket: Socket, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Runnable =
     () =>
-      requestCounter.incrementAndGet()
       val in  = clientSocket.getInputStream
       val out = clientSocket.getOutputStream
-      try
-        servingCounter.incrementAndGet()
-        val coordsSz    = in.read()
-        val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
-        val coordinates = Coordinates4(coordsRaw)
-        val inData      = inputStreamToByteArray(in)
-        val outData     = invokerMap(coordinates)(ReceiverInput(inData))
-        out.write(outData.length)
-        out.write(outData)
-        out.flush()
+
+      def serveOne(): Unit =
+        try
+          val coordsSz    = in.read()
+          totalRequestCounter.incrementAndGet()
+          servingCounter.incrementAndGet()
+          val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
+          val coordinates = Coordinates4(coordsRaw)
+          val inData      = inputStreamToByteArray(in)
+          val outData     = invokerMap(coordinates)(ReceiverInput(inData))
+          out.write(outData.length)
+          out.write(outData)
+          out.flush()
+        finally servingCounter.decrementAndGet()
+
+      try while (clientSocket.isConnected) serveOne()
       catch case t: Throwable => logError(t)
       finally
-        servingCounter.decrementAndGet()
         in.close()
         out.close()
         clientSocket.close()
