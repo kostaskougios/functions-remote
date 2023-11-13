@@ -15,10 +15,19 @@ class FiberSocketServer(listenPort: Int):
   private val server   = new ServerSocket(listenPort)
   private val executor = Executors.newVirtualThreadPerTaskExecutor
 
-  def shutdown(): Unit             = executor.shutdown()
-  def shutdownNow(): Seq[Runnable] = executor.shutdownNow().asScala.toList
+  def shutdown(): Unit             =
+    interruptServerThread()
+    executor.shutdown()
+  def shutdownNow(): Seq[Runnable] =
+    interruptServerThread()
+    executor.shutdownNow().asScala.toList
+
+  @volatile private var serverThread: Thread = null
+  private def interruptServerThread()        =
+    serverThread.interrupt()
 
   def acceptOne(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Future[_] =
+    serverThread = Thread.currentThread()
     val clientSocket = server.accept()
     executor.submit(runnable(clientSocket, invokerMap))
 
