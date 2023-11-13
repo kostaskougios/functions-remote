@@ -4,7 +4,7 @@ import endtoend.tests.SimpleFunctionsCallerFactory
 import functions.sockets.SocketTransport
 
 @main def stressTestClient(): Unit =
-  val transport = new SocketTransport("localhost", 7201)
+  val transport = SocketTransport("localhost", 7201, poolSz = 64)
   val caller    = SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport.transportFunction)
   for i <- 1 to 1_000_000 do
     val r = caller.add(i, i + 1)
