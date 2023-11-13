@@ -51,31 +51,33 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
   protected def logError(throwable: Throwable): Unit =
     if !stopServer.get() then throwable.printStackTrace()
 
-  private def runnable(clientSocket: Socket, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Runnable =
+  private def runnable(s: Socket, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Runnable =
     () =>
-      val in  = clientSocket.getInputStream
-      val out = clientSocket.getOutputStream
+      val in  = s.getInputStream
+      val out = s.getOutputStream
 
       def serveOne(): Unit =
-        try
-          val coordsSz    = in.read()
-          totalRequestCounter.incrementAndGet()
-          servingCounter.incrementAndGet()
-          val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
-          val coordinates = Coordinates4(coordsRaw)
-          val inData      = inputStreamToByteArray(in)
-          val outData     = invokerMap(coordinates)(ReceiverInput(inData))
-          out.write(outData.length)
-          out.write(outData)
-          out.flush()
-        finally servingCounter.decrementAndGet()
+        in.read() match
+          case -1       => Thread.`yield`()
+          case coordsSz =>
+            try
+              totalRequestCounter.incrementAndGet()
+              servingCounter.incrementAndGet()
+              val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
+              val coordinates = Coordinates4(coordsRaw)
+              val inData      = inputStreamToByteArray(in)
+              val outData     = invokerMap(coordinates)(ReceiverInput(inData))
+              out.write(outData.length)
+              out.write(outData)
+              out.flush()
+            finally servingCounter.decrementAndGet()
 
-      try while (clientSocket.isConnected) serveOne()
+      try while (s.isConnected) serveOne()
       catch case t: Throwable => logError(t)
       finally
         in.close()
         out.close()
-        clientSocket.close()
+        s.close()
 
   private def inputStreamToByteArray(inputStream: InputStream): Array[Byte] =
     val dataSz = inputStream.read()
