@@ -9,8 +9,9 @@ class FiberExecutor private (executorService: ExecutorService):
 
   def shutdown(): Unit = executorService.shutdown()
 
-case class Fiber[A](future: Future[A]):
-  def result: A = future.get()
+case class Fiber[A](javaFuture: Future[A]):
+  def result: A        = javaFuture.get()
+  def isReady: Boolean = javaFuture.isDone
 
 object FiberExecutor:
   def withFiberExecutor[R](f: FiberExecutor => R): R =

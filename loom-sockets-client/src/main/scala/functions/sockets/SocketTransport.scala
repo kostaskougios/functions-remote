@@ -4,7 +4,7 @@ import functions.model.TransportInput
 
 import java.io.*
 
-class SocketTransport(pool: SocketPool):
+class SocketTransport(val pool: SocketPool):
 
   def transportFunction(trIn: TransportInput): Array[Byte] =
     pool.withSocket: s =>
