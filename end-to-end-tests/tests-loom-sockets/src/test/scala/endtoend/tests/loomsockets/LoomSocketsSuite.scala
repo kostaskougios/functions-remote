@@ -29,8 +29,9 @@ class LoomSocketsSuite extends AnyFunSuite with BeforeAndAfterAll:
     createServer: server =>
       val all = for i <- 1 to 1000 yield Future:
         caller.add(i, 1) should be(i + 1)
+        0 should be(1000)
 
-      Await.result(Future.sequence(all), 4.seconds)
+      for f <- all do Await.ready(f, 4.seconds)
   }
 
   test("client/server multiple requests") {

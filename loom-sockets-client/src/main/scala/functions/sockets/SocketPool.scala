@@ -1,6 +1,6 @@
 package functions.sockets
 
-import java.net.{InetAddress, Socket}
+import java.net.{InetAddress, Socket, SocketException}
 
 class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int):
   private val available                = scala.collection.mutable.Stack.empty[Socket]
@@ -8,12 +8,21 @@ class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int):
     val socketO = available.synchronized:
       if available.isEmpty then None else Some(available.pop())
 
+    def callAndKeep(s: Socket): R =
+      try
+        val r = f(s)
+        available.synchronized(available.push(s))
+        r
+      catch
+        case t: Throwable =>
+          s.close()
+          withSocket(f)
+
     socketO match
-      case Some(s) => f(s)
+      case Some(s) => callAndKeep(s)
       case None    =>
         val s = new Socket(inetAddress, port)
-        try f(s)
-        finally available.synchronized(available.push(s))
+        callAndKeep(s)
 
   def close(): Unit =
     available.synchronized:

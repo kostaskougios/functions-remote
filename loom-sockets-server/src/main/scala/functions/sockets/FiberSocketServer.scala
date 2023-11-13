@@ -11,11 +11,13 @@ import java.util.concurrent.{ExecutorService, Executors, Future}
 // https://wiki.openjdk.org/display/loom/Getting+started
 // https://openjdk.org/jeps/444
 
-class FiberSocketServer private (server: ServerSocket, executor: ExecutorService):
+class FiberSocketServer private (serverSocket: ServerSocket, executor: ExecutorService):
   def shutdown(): Unit =
     interruptServerThread()
-    executor.shutdown()
-    server.close()
+    try executor.shutdown()
+    catch case t: Throwable => t.printStackTrace()
+    try serverSocket.close()
+    catch case t: Throwable => t.printStackTrace()
 
   @volatile private var serverThread: Thread = null
   private val stopServer                     = new AtomicBoolean(false)
@@ -30,13 +32,14 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
     stopServer.set(true)
     Thread.`yield`()
     if serverThread != null then serverThread.interrupt()
+    serverThread = null
 
   private def acceptOneSocketConnection(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
     serverThread = Thread.currentThread()
     if !stopServer.get() then
       try
         accepting.set(true)
-        val clientSocket = server.accept()
+        val clientSocket = serverSocket.accept()
         executor.submit(runnable(clientSocket, invokerMap))
       finally accepting.set(false)
 
@@ -53,37 +56,40 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
 
   private def runnable(s: Socket, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Runnable =
     () =>
-      val in  = s.getInputStream
-      val out = s.getOutputStream
+      try
+        val in  = s.getInputStream
+        val out = s.getOutputStream
 
-      def serveOne(): Unit =
-        in.read() match
-          case -1       => Thread.`yield`()
-          case coordsSz =>
-            try
-              totalRequestCounter.incrementAndGet()
-              servingCounter.incrementAndGet()
-              val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
-              val coordinates = Coordinates4(coordsRaw)
-              val inData      = inputStreamToByteArray(in)
-              val outData     = invokerMap(coordinates)(ReceiverInput(inData))
-              out.write(outData.length)
-              out.write(outData)
-              out.flush()
-            finally servingCounter.decrementAndGet()
+        def serveOne(): Unit =
+          in.read() match
+            case -1       => Thread.`yield`()
+            case coordsSz =>
+              try
+                totalRequestCounter.incrementAndGet()
+                servingCounter.incrementAndGet()
+                val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
+                val coordinates = Coordinates4(coordsRaw)
+                checkStopped()
+                val inData      = inputStreamToByteArray(in)
+                checkStopped()
+                val outData     = invokerMap(coordinates)(ReceiverInput(inData))
+                out.write(outData.length)
+                out.write(outData)
+                out.flush()
+              finally servingCounter.decrementAndGet()
 
-      try while (s.isConnected) serveOne()
+        while (s.isConnected)
+          serveOne()
       catch case t: Throwable => logError(t)
-      finally
-        in.close()
-        out.close()
-        s.close()
+      finally s.close()
 
   private def inputStreamToByteArray(inputStream: InputStream): Array[Byte] =
     val dataSz = inputStream.read()
     val data   = new Array[Byte](dataSz)
     inputStream.read(data)
     data
+
+  private def checkStopped(): Unit = if stopServer.get() then throw new InterruptedException("Server is stopped")
 
 object FiberSocketServer:
   def withServer[R](listenPort: Int, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]])(f: FiberSocketServer => R) =
