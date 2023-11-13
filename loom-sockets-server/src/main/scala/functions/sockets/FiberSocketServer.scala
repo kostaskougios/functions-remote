@@ -7,18 +7,15 @@ import java.net.{ServerSocket, Socket}
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.{ExecutorService, Executors, Future}
-import scala.jdk.CollectionConverters.*
 
 // https://wiki.openjdk.org/display/loom/Getting+started
 // https://openjdk.org/jeps/444
 
-class FiberSocketServer(server: ServerSocket, executor: ExecutorService):
-  def shutdown(): Unit             =
+class FiberSocketServer private (server: ServerSocket, executor: ExecutorService):
+  def shutdown(): Unit =
     interruptServerThread()
     executor.shutdown()
-  def shutdownNow(): Seq[Runnable] =
-    interruptServerThread()
-    executor.shutdownNow().asScala.toList
+    server.close()
 
   @volatile private var serverThread: Thread = null
   private val stopServer                     = new AtomicBoolean(false)
@@ -47,7 +44,8 @@ class FiberSocketServer(server: ServerSocket, executor: ExecutorService):
           catch case t: Throwable => logError(t)
     executor.submit(listen)
 
-  protected def logError(throwable: Throwable): Unit = throwable.printStackTrace()
+  protected def logError(throwable: Throwable): Unit =
+    if !stopServer.get() then throwable.printStackTrace()
 
   private def runnable(clientSocket: Socket, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Runnable =
     () =>
@@ -78,13 +76,12 @@ object FiberSocketServer:
     val server   = new ServerSocket(listenPort)
     val executor = Executors.newVirtualThreadPerTaskExecutor
     val s        = new FiberSocketServer(server, executor)
-    s.start(invokerMap)
-    var i        = 0
-    while (!s.isAccepting && i < 1024)
-      i = i + 1
-      Thread.`yield`()
-
     try
-      if i == 1024 then throw new IllegalStateException("Could not start accepting requests.")
+      s.start(invokerMap)
+      var i = 0
+      while (!s.isAccepting && i < 8192)
+        i = i + 1
+        Thread.`yield`()
+      if i == 8192 then throw new IllegalStateException("Could not start accepting requests.")
       f(s)
     finally s.shutdown()
