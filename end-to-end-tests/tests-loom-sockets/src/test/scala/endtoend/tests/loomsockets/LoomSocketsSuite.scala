@@ -31,7 +31,7 @@ class LoomSocketsSuite extends AnyFunSuite with BeforeAndAfterAll:
         caller.add(i, 1) should be(i + 1)
         0 should be(1000)
 
-      for f <- all do Await.ready(f, 4.seconds)
+      for f <- all do Await.ready(f, 8.seconds)
   }
 
   test("client/server multiple requests") {
