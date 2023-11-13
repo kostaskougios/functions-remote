@@ -6,11 +6,14 @@ import java.io.*
 import java.net.*
 
 class SocketTransport(host: String, port: Int, bufferSize: Int = 16384):
+  private val inetAddress = InetAddress.getByName(host)
+
   def transportFunction(trIn: TransportInput): Array[Byte] =
-    val s   = new Socket(InetAddress.getByName(host), port)
-    val out = s.getOutputStream
-    val in  = s.getInputStream
+    val s = new Socket(inetAddress, port)
     try
+      val out = s.getOutputStream
+      val in  = s.getInputStream
+
       val coordData = trIn.coordinates4.toRawCoordinates.getBytes("UTF-8")
       out.write(coordData.length)
       out.write(coordData)
@@ -18,10 +21,7 @@ class SocketTransport(host: String, port: Int, bufferSize: Int = 16384):
       out.write(trIn.data)
       out.flush()
       inputStreamToByteArray(in)
-    finally
-      out.close()
-      in.close()
-      s.close()
+    finally s.close()
 
   private def inputStreamToByteArray(inputStream: InputStream): Array[Byte] =
     val buffer = new ByteArrayOutputStream(bufferSize)

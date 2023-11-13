@@ -5,7 +5,7 @@ import functions.model.{Coordinates4, ReceiverInput}
 import java.io.InputStream
 import java.net.{ServerSocket, Socket}
 import java.util
-import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
+import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
 import java.util.concurrent.{ExecutorService, Executors, Future}
 
 // https://wiki.openjdk.org/display/loom/Getting+started
@@ -21,8 +21,10 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
   private val stopServer                     = new AtomicBoolean(false)
   private val accepting                      = new AtomicBoolean(false)
   private val requestCounter                 = new AtomicLong(0)
+  private val servingCounter                 = new AtomicInteger(0)
   def isAccepting: Boolean                   = accepting.get()
   def requestCount: Long                     = requestCounter.get()
+  def servingCount: Long                     = servingCounter.get()
 
   private def interruptServerThread(): Unit =
     stopServer.set(true)
@@ -55,6 +57,7 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
       val in  = clientSocket.getInputStream
       val out = clientSocket.getOutputStream
       try
+        servingCounter.incrementAndGet()
         val coordsSz    = in.read()
         val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
         val coordinates = Coordinates4(coordsRaw)
@@ -64,6 +67,7 @@ class FiberSocketServer private (server: ServerSocket, executor: ExecutorService
         out.flush()
       catch case t: Throwable => logError(t)
       finally
+        servingCounter.decrementAndGet()
         in.close()
         out.close()
         clientSocket.close()
