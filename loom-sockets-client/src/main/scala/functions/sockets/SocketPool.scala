@@ -1,15 +1,15 @@
 package functions.sockets
 
 import java.net.{InetAddress, Socket, SocketException}
-import java.util.concurrent.{ArrayBlockingQueue, BlockingQueue}
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.ArrayBlockingQueue
+import scala.annotation.tailrec
 import scala.jdk.CollectionConverters.*
 
-class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesToOpenSocketBeforeGivingUp: Int):
+class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesBeforeGivingUp: Int):
   private class Sock(@volatile var socket: Option[Socket] = None):
     def allocateSocket: Socket =
       if socket.isEmpty then
-        val s = createSocket(retriesToOpenSocketBeforeGivingUp)
+        val s = createSocket(retriesBeforeGivingUp)
         socket = Some(s)
         s
       else socket.get
@@ -18,11 +18,11 @@ class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesToOpen
       for s <- socket do doAndPrintError(s.close())
       socket = None
 
-    private def createSocket(retries: Int): Socket =
+    @tailrec private def createSocket(retries: Int): Socket =
       if retries > 0 then
         try new Socket(inetAddress, port)
         catch
-          case t: SocketException =>
+          case _: SocketException =>
             Thread.`yield`()
             createSocket(retries - 1)
       else throw new IllegalStateException(s"Can't create socket to $inetAddress:$port")
@@ -35,12 +35,16 @@ class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesToOpen
 
   def withSocket[R](f: Socket => R): R =
     val s = available.take()
-    try f(s.allocateSocket)
-    catch
-      case _: SocketException =>
-        s.invalidateSocket()
-        available.put(s)
-        withSocket(f)
+
+    def exec(retries: Int): R =
+      if retries < 1 then throw new IllegalStateException(s"Aborting after $retriesBeforeGivingUp retries")
+      try f(s.allocateSocket)
+      catch
+        case _: SocketException =>
+          s.invalidateSocket()
+          exec(retries - 1)
+
+    try exec(retriesBeforeGivingUp)
     finally available.put(s)
 
   def close(): Unit =

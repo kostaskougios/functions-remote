@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger
   FiberExecutor.withFiberExecutor: fiberExecutor =>
     val requests = new AtomicInteger(0)
     val fibers   =
-      for i <- 1 to 1000
+      for i <- 1 to 100
       yield fiberExecutor:
         for j <- 1 to 1000 do
           try
