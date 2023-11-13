@@ -10,49 +10,39 @@ class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesToOpen
   def idleSockets: Seq[Socket] = available.synchronized(available.toList)
   def activeSockets: Int       = used.get()
 
-  def withSocket[R](f: Socket => R): R =
-    val socketO = available.synchronized:
-      if available.isEmpty then None else Some(available.pop())
-
-    def callAndKeep(s: Socket): R =
-      used.incrementAndGet()
-      try
-        val r = f(s)
-        available.synchronized(available.push(s))
-        used.decrementAndGet()
-        r
+  private def createSocket(retries: Int): Socket =
+    if retries > 0 then
+      try new Socket(inetAddress, port)
       catch
-        case t: Throwable =>
-          try s.close()
-          catch case ex: Throwable => ex.printStackTrace()
-          used.decrementAndGet()
-          withSocket(f)
+        case t: SocketException =>
+          Thread.`yield`()
+          createSocket(retries - 1)
+    else throw new IllegalStateException(s"Can't create socket to $inetAddress:$port")
 
-    def createSocket(retries: Int): Socket =
-      if retries > 0 then
-        waitIfPoolIsFull()
-        try new Socket(inetAddress, port)
-        catch
-          case t: SocketException =>
-            Thread.`yield`()
-            createSocket(retries - 1)
-      else throw new IllegalStateException(s"Can't create socket to $inetAddress:$port")
+  def withSocket[R](f: Socket => R): R =
+    val s = available.synchronized:
+      if available.isEmpty then createSocket(retriesToOpenSocketBeforeGivingUp)
+      else available.pop()
 
-    socketO match
-      case Some(s) => callAndKeep(s)
-      case None    =>
-        val s = createSocket(retriesToOpenSocketBeforeGivingUp)
-        callAndKeep(s)
-
-  private def waitIfPoolIsFull(): Unit = while used.get() >= poolSz do Thread.`yield`()
+    used.incrementAndGet()
+    try
+      val r = f(s)
+      available.synchronized(available.push(s))
+      used.decrementAndGet()
+      r
+    catch
+      case t: Throwable =>
+        doAndPrintError(s.close())
+        used.decrementAndGet()
+        withSocket(f)
 
   def close(): Unit =
     available.synchronized:
-      for s <- available
-      do
-        try s.close()
-        catch case t: Throwable => t.printStackTrace()
+      for s <- available do doAndPrintError(s.close())
 
+  private def doAndPrintError[R](f: => Unit): Unit =
+    try f
+    catch case t: Throwable => t.printStackTrace()
 object SocketPool:
   def apply(host: String, port: Int, poolSz: Int = 32, retriesToOpenSocketBeforeGivingUp: Int = 128): SocketPool =
     val inetAddress = InetAddress.getByName(host)
