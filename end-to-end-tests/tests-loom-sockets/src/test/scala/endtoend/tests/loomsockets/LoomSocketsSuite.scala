@@ -23,3 +23,11 @@ class LoomSocketsSuite extends AnyFunSuite:
       caller.add(1, 2) should be(3)
       caller.add(2, 3) should be(5)
   }
+
+  test("request counter") {
+    createServer: server =>
+      caller.add(5, 6)
+      server.requestCount should be(1)
+      caller.add(1, 2)
+      server.requestCount should be(2)
+  }
