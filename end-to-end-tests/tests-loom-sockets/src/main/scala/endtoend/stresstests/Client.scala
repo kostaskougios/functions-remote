@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger
     val requests = new AtomicInteger(0)
     val fibers   =
       for i <- 1 to 1000
-      yield fiberExecutor.run:
+      yield fiberExecutor.submit:
         for j <- 1 to 1000 do
           try
             val r   = caller.add(j, i + 1)
