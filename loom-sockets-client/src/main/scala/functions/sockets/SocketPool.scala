@@ -16,7 +16,9 @@ class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesBefore
       else socket.get
 
     def invalidateSocket(): Unit =
-      for s <- socket do doAndPrintError(s.close())
+      for s <- socket do
+        invalidatedSocketsCounter.incrementAndGet()
+        doAndPrintError(s.close())
       socket = None
 
     @tailrec private def createSocket(retries: Int): Socket =
@@ -31,13 +33,15 @@ class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesBefore
             createSocket(retries - 1)
       else throw new IllegalStateException(s"Can't create socket to $inetAddress:$port")
 
-  private val createdSocketsCounter = new AtomicLong(0)
-  private val available             = new ArrayBlockingQueue[Sock](poolSz)
+  private val createdSocketsCounter     = new AtomicLong(0)
+  private val invalidatedSocketsCounter = new AtomicLong(0)
+  private val available                 = new ArrayBlockingQueue[Sock](poolSz)
   for _ <- 1 to poolSz do available.add(Sock())
 
-  def idleSockets: Seq[Socket]  = available.asScala.flatMap(_.socket).toList
-  def activeSockets: Int        = poolSz - idleSockets.size
-  def createdSocketsCount: Long = createdSocketsCounter.incrementAndGet()
+  def idleSockets: Seq[Socket]      = available.asScala.flatMap(_.socket).toList
+  def activeSockets: Int            = poolSz - idleSockets.size
+  def createdSocketsCount: Long     = createdSocketsCounter.incrementAndGet()
+  def invalidatedSocketsCount: Long = invalidatedSocketsCounter.incrementAndGet()
 
   def withSocket[R](f: Socket => R): R =
     val s = available.take()
