@@ -38,14 +38,14 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
     try
       accepting.set(true)
       val clientSocket = serverSocket.accept()
-      executor(processRequest(clientSocket, invokerMap))
+      executor.run(processRequest(clientSocket, invokerMap))
     finally accepting.set(false)
 
   private def start(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Fiber[Unit] =
     def listen(): Unit =
       while (!stopServer.get())
         runAndLogIgnoreError(acceptOneSocketConnection(invokerMap))
-    executor(listen())
+    executor.run(listen())
 
   private def runAndLogIgnoreError(f: => Unit) = try f
   catch case t: Throwable => logError(t)

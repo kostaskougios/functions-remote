@@ -3,7 +3,7 @@ package functions.fibers
 import java.util.concurrent.{Callable, ExecutorService, Executors, Future}
 
 class FiberExecutor private (executorService: ExecutorService):
-  def apply[R](f: => R): Fiber[R] =
+  def run[R](f: => R): Fiber[R] =
     val c: Callable[R] = () => f
     Fiber(executorService.submit(c))
 
