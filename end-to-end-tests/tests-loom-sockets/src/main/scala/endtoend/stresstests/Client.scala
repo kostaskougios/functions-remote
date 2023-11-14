@@ -7,12 +7,12 @@ import functions.sockets.SocketTransport
 import java.util.concurrent.atomic.AtomicInteger
 
 @main def stressTestClient(): Unit =
-  val transport = SocketTransport("localhost", 7201, poolSz = 64)
+  val transport = SocketTransport("localhost", 7201, poolSz = 128)
   val caller    = SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport.transportFunction)
   FiberExecutor.withFiberExecutor: fiberExecutor =>
     val requests = new AtomicInteger(0)
     val fibers   =
-      for i <- 1 to 100
+      for i <- 1 to 1000
       yield fiberExecutor:
         for j <- 1 to 1000 do
           try
@@ -23,8 +23,12 @@ import java.util.concurrent.atomic.AtomicInteger
 
     // wait for them
     while !fibers.forall(_.isReady) do
+      val startingRequestsCount = requests.get()
       Thread.sleep(1000)
-      val pool = transport.pool
+      val pool                  = transport.pool
+      val requestsCount         = requests.get()
+      val dRequests             = requestsCount - startingRequestsCount
       println(
-        s"At the ${requests.get()}th request, activeThreads: ${ThreadCounter.countThreads()}, open sockets: ${pool.activeSockets}, idle sockets: ${pool.idleSockets.size}"
+        s"At the ${requestsCount}th request, $dRequests per second, activeThreads: ${ThreadCounter
+            .countThreads()}, open sockets: ${pool.activeSockets}, idle sockets: ${pool.idleSockets.size}"
       )

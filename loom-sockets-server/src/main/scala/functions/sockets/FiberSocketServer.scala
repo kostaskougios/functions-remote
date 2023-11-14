@@ -35,12 +35,11 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
 
   private def acceptOneSocketConnection(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
     serverThread = Thread.currentThread()
-    if !stopServer.get() then
-      try
-        accepting.set(true)
-        val clientSocket = serverSocket.accept()
-        executor(processRequest(clientSocket, invokerMap))
-      finally accepting.set(false)
+    try
+      accepting.set(true)
+      val clientSocket = serverSocket.accept()
+      executor(processRequest(clientSocket, invokerMap))
+    finally accepting.set(false)
 
   private def start(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Fiber[Unit] =
     def listen(): Unit =
@@ -69,9 +68,7 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
               servingCounter.incrementAndGet()
               val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
               val coordinates = Coordinates4(coordsRaw)
-              checkStopped()
               val inData      = inputStreamToByteArray(in)
-              checkStopped()
               val outData     = invokerMap(coordinates)(ReceiverInput(inData))
               out.write(outData.length)
               out.write(outData)
@@ -92,11 +89,9 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
     inputStream.read(data)
     data
 
-  private def checkStopped(): Unit = if stopServer.get() then throw new InterruptedException("Server is stopped")
-
 object FiberSocketServer:
-  def withServer[R](listenPort: Int, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]])(f: FiberSocketServer => R) =
-    val server = new ServerSocket(listenPort)
+  def withServer[R](listenPort: Int, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]], backlog: Int = 64)(f: FiberSocketServer => R) =
+    val server = new ServerSocket(listenPort, backlog)
     FiberExecutor.withFiberExecutor: executor =>
       val s = new FiberSocketServer(server, executor)
       try
