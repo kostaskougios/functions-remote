@@ -2,6 +2,7 @@ package functions.sockets
 
 import java.net.{InetAddress, Socket, SocketException}
 import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.atomic.AtomicLong
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters.*
 
@@ -20,18 +21,23 @@ class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesBefore
 
     @tailrec private def createSocket(retries: Int): Socket =
       if retries > 0 then
-        try new Socket(inetAddress, port)
+        try
+          val s = new Socket(inetAddress, port)
+          createdSocketsCounter.incrementAndGet()
+          s
         catch
           case _: SocketException =>
             Thread.`yield`()
             createSocket(retries - 1)
       else throw new IllegalStateException(s"Can't create socket to $inetAddress:$port")
 
-  private val available = new ArrayBlockingQueue[Sock](poolSz)
+  private val createdSocketsCounter = new AtomicLong(0)
+  private val available             = new ArrayBlockingQueue[Sock](poolSz)
   for _ <- 1 to poolSz do available.add(Sock())
 
-  def idleSockets: Seq[Socket] = available.asScala.flatMap(_.socket).toList
-  def activeSockets: Int       = poolSz - idleSockets.size
+  def idleSockets: Seq[Socket]  = available.asScala.flatMap(_.socket).toList
+  def activeSockets: Int        = poolSz - idleSockets.size
+  def createdSocketsCount: Long = createdSocketsCounter.incrementAndGet()
 
   def withSocket[R](f: Socket => R): R =
     val s = available.take()
