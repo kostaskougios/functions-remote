@@ -1,10 +1,12 @@
 package endtoend.stresstests
 
-import endtoend.tests.{SimpleFunctionsImpl, SimpleFunctionsReceiverFactory}
+import endtoend.tests.{NestedTypeParamsFunctionsImpl, NestedTypeParamsFunctionsReceiverFactory, SimpleFunctionsImpl, SimpleFunctionsReceiverFactory}
 import functions.sockets.FiberSocketServer
 
 @main def stressTestServer(): Unit =
-  val invokerMap = SimpleFunctionsReceiverFactory.invokerMap(new SimpleFunctionsImpl)
+  val invokerMap = SimpleFunctionsReceiverFactory.invokerMap(new SimpleFunctionsImpl) ++
+    NestedTypeParamsFunctionsReceiverFactory.invokerMap(new NestedTypeParamsFunctionsImpl)
+
   FiberSocketServer.withServer[Unit](7201, invokerMap): server =>
     while (true)
       val prevCount = server.totalRequestCount
