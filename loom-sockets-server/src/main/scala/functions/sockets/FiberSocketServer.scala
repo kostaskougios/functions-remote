@@ -7,7 +7,6 @@ import java.io.InputStream
 import java.net.{ServerSocket, Socket}
 import java.util
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
-import java.util.concurrent.{ExecutorService, Executors, Future}
 
 // https://wiki.openjdk.org/display/loom/Getting+started
 // https://openjdk.org/jeps/444
@@ -15,8 +14,7 @@ import java.util.concurrent.{ExecutorService, Executors, Future}
 class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExecutor):
   def shutdown(): Unit =
     interruptServerThread()
-    try serverSocket.close()
-    catch case t: Throwable => t.printStackTrace()
+    runAndLogIgnoreError(serverSocket.close())
 
   @volatile private var serverThread: Thread = null
   private val stopServer                     = new AtomicBoolean(false)
@@ -47,9 +45,11 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
   private def start(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Fiber[Unit] =
     def listen(): Unit =
       while (!stopServer.get())
-        try acceptOneSocketConnection(invokerMap)
-        catch case t: Throwable => logError(t)
+        runAndLogIgnoreError(acceptOneSocketConnection(invokerMap))
     executor(listen())
+
+  private def runAndLogIgnoreError(f: => Unit) = try f
+  catch case t: Throwable => logError(t)
 
   protected def logError(throwable: Throwable): Unit =
     if !stopServer.get() then throwable.printStackTrace()
@@ -57,20 +57,13 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
   private def processRequest(s: Socket, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
     try
       activeConnectionsCounter.incrementAndGet()
-      val in          = s.getInputStream
-      val out         = s.getOutputStream
-      var idleInCount = 0
+      val in  = s.getInputStream
+      val out = s.getOutputStream
 
-      def serveOne(): Unit =
+      def serveOne(): Boolean =
         in.read() match
-          case -1 =>
-            idleInCount += 1
-            if idleInCount < 10 then Thread.`yield`()
-            else if idleInCount < 100 then Thread.sleep(1)
-            else Thread.sleep(10)
-
+          case -1       => false
           case coordsSz =>
-            idleInCount = 0
             try
               totalRequestCounter.incrementAndGet()
               servingCounter.incrementAndGet()
@@ -83,10 +76,11 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
               out.write(outData.length)
               out.write(outData)
               out.flush()
+              true
             finally servingCounter.decrementAndGet()
 
-      while (s.isConnected)
-        serveOne()
+      while (s.isConnected && serveOne()) {}
+
     catch case t: Throwable => logError(t)
     finally
       activeConnectionsCounter.decrementAndGet()

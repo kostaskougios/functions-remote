@@ -2,21 +2,21 @@ package endtoend.tests.loomsockets
 
 import endtoend.tests.{SimpleFunctions, SimpleFunctionsCallerFactory, SimpleFunctionsImpl, SimpleFunctionsReceiverFactory}
 import functions.sockets.{FiberSocketServer, SocketPool, SocketTransport}
-import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers.*
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}
-import concurrent.ExecutionContext.Implicits.global
 
 class LoomSocketsSuite extends AnyFunSuite:
 
   def withCallerDo(f: SimpleFunctions => Unit): Unit =
     val socketPool = SocketPool("localhost", 7200)
-    val transport  = new SocketTransport(socketPool)
-    val caller     = SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport.transportFunction)
-    try f(caller)
+    try
+      val transport = new SocketTransport(socketPool)
+      val caller    = SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport.transportFunction)
+      f(caller)
     finally socketPool.close()
 
   val invokerMap   = SimpleFunctionsReceiverFactory.invokerMap(new SimpleFunctionsImpl)
