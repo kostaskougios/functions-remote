@@ -4,7 +4,7 @@ import functions.sockets.internal.errors.RequestFailedException
 
 import java.util.concurrent.CountDownLatch
 
-case class Sender(correlationId: Int, data: Array[Byte]):
+class Sender(val data: Array[Byte]):
   @volatile private var responseData  = Array.emptyByteArray
   @volatile private var responseError = Option.empty[Throwable]
   private val latch                   = new CountDownLatch(1)

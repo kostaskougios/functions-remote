@@ -19,9 +19,8 @@ class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesBefore
   def createdSocketsCount: Long     = createdSocketsCounter.incrementAndGet()
   def invalidatedSocketsCount: Long = invalidatedSocketsCounter.incrementAndGet()
 
-  private val correlationId                = new AtomicInteger(0)
   def send(data: Array[Byte]): Array[Byte] =
-    val sender = Sender(correlationId.incrementAndGet(), data)
+    val sender = new Sender(data)
     queue.put(sender)
     sender.response()
 

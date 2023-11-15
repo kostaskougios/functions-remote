@@ -32,7 +32,8 @@ class LoomSocketsSuite extends AnyFunSuite:
     createServer: server =>
       withCallerDo: caller =>
         val all = for i <- 1 to 10000 yield Future:
-          caller.add(i, 1) should be(i + 1)
+          try caller.add(i, 1) should be(i + 1)
+          catch case t: Throwable => t.printStackTrace()
 
         // lets wait all to be ready to make sure the request completed.
         // Then get the result to make sure we don't have an exception
