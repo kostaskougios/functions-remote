@@ -37,7 +37,7 @@ class LoomSocketsSuite extends AnyFunSuite:
 
         // lets wait all to be ready to make sure the request completed.
         // Then get the result to make sure we don't have an exception
-        for f <- all do Await.ready(f, 8.seconds)
+        for f <- all do Await.ready(f, 4.seconds)
         for f <- all do Await.result(f, 1.seconds)
   }
 

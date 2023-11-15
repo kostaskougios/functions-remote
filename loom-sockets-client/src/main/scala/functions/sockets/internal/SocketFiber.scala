@@ -28,17 +28,15 @@ class SocketFiber(
         socket match {
           case None         => Thread.sleep(1)
           case Some(socket) =>
+            createdSocketsCounter.incrementAndGet()
             val inOut = new SocketIO(socket, queue, executor)
-            inOut.waitTillDone()
-            println("Socket invalidated")
-            invalidatedSocketsCounter.incrementAndGet()
+            try inOut.waitTillDone()
+            finally invalidatedSocketsCounter.incrementAndGet()
         }
 
   private def createSocket: Option[Socket] =
     Retries.retry(retriesBeforeGivingUp):
-      val s = new Socket(inetAddress, port)
-      createdSocketsCounter.incrementAndGet()
-      s
+      new Socket(inetAddress, port)
 
   def shutdown(): Unit =
     running.set(false)
