@@ -1,0 +1,3 @@
+package functions.sockets.internal.errors
+
+class NoMoreDataFromServerException extends RuntimeException

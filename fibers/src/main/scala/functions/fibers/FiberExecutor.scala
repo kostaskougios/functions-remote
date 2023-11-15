@@ -10,10 +10,16 @@ class FiberExecutor private (executorService: ExecutorService):
   def shutdown(): Unit = executorService.shutdown()
 
 case class Fiber[A](javaFuture: Future[A]):
-  def result: A        = javaFuture.get()
-  def isReady: Boolean = javaFuture.isDone
+  def result: A         = javaFuture.get()
+  def isReady: Boolean  = javaFuture.isDone
+  def interrupt(): Unit = javaFuture.cancel(true)
+  def get(): A          = javaFuture.get()
 
 object FiberExecutor:
+  def apply(): FiberExecutor =
+    val executor = Executors.newVirtualThreadPerTaskExecutor
+    new FiberExecutor(executor)
+
   def withFiberExecutor[R](f: FiberExecutor => R): R =
     val executor = Executors.newVirtualThreadPerTaskExecutor
     try

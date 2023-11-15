@@ -61,15 +61,17 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
 
       def serveOne(): Boolean =
         in.read() match
-          case -1       => false
-          case coordsSz =>
+          case -1            => false
+          case correlationId =>
             try
               totalRequestCounter.incrementAndGet()
               servingCounter.incrementAndGet()
+              val coordsSz    = in.read()
               val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
               val coordinates = Coordinates4(coordsRaw)
               val inData      = inputStreamToByteArray(in)
               val outData     = invokerMap(coordinates)(ReceiverInput(inData))
+              out.write(correlationId)
               out.write(outData.length)
               out.write(outData)
               out.flush()

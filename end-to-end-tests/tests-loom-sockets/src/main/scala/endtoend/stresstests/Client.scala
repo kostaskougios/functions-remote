@@ -35,5 +35,5 @@ import java.util.concurrent.atomic.AtomicInteger
       val dRequests             = requestsCount - startingRequestsCount
       println(
         s"At the ${requestsCount}th request, $dRequests per second, activeThreads: ${ThreadCounter
-            .countThreads()}, open sockets: ${pool.activeSockets}, idle sockets: ${pool.idleSockets.size}, created sockets: ${pool.createdSocketsCount}, closed sockets: ${pool.invalidatedSocketsCount}"
+            .countThreads()}, created sockets: ${pool.createdSocketsCount}, closed sockets: ${pool.invalidatedSocketsCount}"
       )
