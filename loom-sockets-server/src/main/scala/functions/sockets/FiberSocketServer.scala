@@ -3,7 +3,7 @@ package functions.sockets
 import functions.fibers.{Fiber, FiberExecutor}
 import functions.model.{Coordinates4, ReceiverInput}
 
-import java.io.InputStream
+import java.io.{DataInputStream, DataOutputStream, EOFException, InputStream}
 import java.net.{ServerSocket, Socket}
 import java.util
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
@@ -56,40 +56,41 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
   private def processRequest(s: Socket, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
     try
       activeConnectionsCounter.incrementAndGet()
-      val in  = s.getInputStream
-      val out = s.getOutputStream
+      val in  = new DataInputStream(s.getInputStream)
+      val out = new DataOutputStream(s.getOutputStream)
 
       def serveOne(): Boolean =
-        in.read() match
-          case -1            => false
-          case 0             => throw new IllegalStateException("Incorrect data on the socket (maybe from the client)")
+        in.readInt() match
+          case 0             =>
+            throw new IllegalStateException("Incorrect data on the socket (maybe from the client)")
           case correlationId =>
             try
               totalRequestCounter.incrementAndGet()
               servingCounter.incrementAndGet()
-              val coordsSz    = in.read()
+              val coordsSz    = in.readInt()
               val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
               val coordinates = Coordinates4(coordsRaw)
               val inData      = inputStreamToByteArray(in)
               val outData     = invokerMap(coordinates)(ReceiverInput(inData))
-              out.write(correlationId)
-              out.write(outData.length)
+              out.writeInt(correlationId)
+              out.writeInt(outData.length)
               out.write(outData)
               out.flush()
               true
             finally servingCounter.decrementAndGet()
 
       while (s.isConnected && serveOne()) {}
-
-    catch case t: Throwable => logError(t)
+    catch
+      case _: EOFException => // ignore
+      case t: Throwable    => logError(t)
     finally
       activeConnectionsCounter.decrementAndGet()
       s.close()
 
-  private def inputStreamToByteArray(inputStream: InputStream): Array[Byte] =
-    val dataSz = inputStream.read()
+  private def inputStreamToByteArray(in: DataInputStream): Array[Byte] =
+    val dataSz = in.readInt()
     val data   = new Array[Byte](dataSz)
-    inputStream.read(data)
+    in.read(data)
     data
 
 object FiberSocketServer:

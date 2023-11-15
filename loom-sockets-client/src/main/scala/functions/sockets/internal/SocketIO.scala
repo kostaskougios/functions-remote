@@ -4,6 +4,7 @@ import functions.fibers.FiberExecutor
 import functions.sockets.doAndPrintError
 import functions.sockets.internal.errors.NoMoreDataFromServerException
 
+import java.io.{DataInputStream, DataOutputStream}
 import java.net.Socket
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.atomic.AtomicInteger
@@ -26,21 +27,21 @@ class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExec
 
   private def writer(): Unit =
     try
-      val out = socket.getOutputStream
+      val out = new DataOutputStream(socket.getOutputStream)
       while true do
         val sender        = queue.take()
         val correlationId = corrId.incrementAndGet()
         correlationMap += correlationId -> sender
-        out.write(correlationId)
+        out.writeInt(correlationId)
         out.write(sender.data)
         out.flush()
     catch case t: Throwable => invalidate(t)
 
   private def reader(): Unit =
     try
-      val in = socket.getInputStream
+      val in = new DataInputStream(socket.getInputStream)
       while true do
-        in.read() match
+        in.readInt() match
           case -1            =>
             invalidate(new NoMoreDataFromServerException)
           case 0             =>
@@ -49,7 +50,7 @@ class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExec
             val sender = correlationMap.get(correlationId) match
               case Some(id) => id
               case None => throw new NoSuchElementException(s"Correlation id $correlationId not found in ${correlationMap.keys.toList.sorted.mkString(", ")}")
-            val sz     = in.read()
+            val sz     = in.readInt()
             val data   = new Array[Byte](sz)
             in.read(data)
             sender.reply(data)

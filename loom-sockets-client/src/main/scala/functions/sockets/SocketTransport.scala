@@ -8,19 +8,14 @@ class SocketTransport(val pool: SocketPool):
 
   def transportFunction(trIn: TransportInput): Array[Byte] =
     val out       = new ByteArrayOutputStream(8192)
+    val dos       = new DataOutputStream(out)
     val coordData = trIn.coordinates4.toRawCoordinates.getBytes("UTF-8")
-    out.write(coordData.length)
-    out.write(coordData)
-    out.write(trIn.data.length)
-    out.write(trIn.data)
-    out.flush()
+    dos.writeInt(coordData.length)
+    dos.write(coordData)
+    dos.writeInt(trIn.data.length)
+    dos.write(trIn.data)
+    dos.flush()
     pool.send(out.toByteArray)
-
-  private def inputStreamToByteArray(inputStream: InputStream): Array[Byte] =
-    val sz   = inputStream.read()
-    val data = new Array[Byte](sz)
-    inputStream.read(data)
-    data
 
 object SocketTransport:
   def apply(host: String, port: Int, poolSz: Int = 32): SocketTransport =

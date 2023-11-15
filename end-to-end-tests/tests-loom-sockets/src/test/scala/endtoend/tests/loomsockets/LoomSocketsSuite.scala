@@ -44,7 +44,8 @@ class LoomSocketsSuite extends AnyFunSuite:
   test("client/server multiple requests") {
     createServer: server =>
       withCallerDo: caller =>
-        for i <- 1 to 10000 do caller.add(5 + i, 6) should be(11 + i)
+        for i <- 1 to 10000 do
+          caller.add(5 + i, 6) should be(11 + i)
   }
 
   test("request counter") {
