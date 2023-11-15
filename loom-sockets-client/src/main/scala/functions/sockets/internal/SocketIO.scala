@@ -8,7 +8,7 @@ import java.net.Socket
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.atomic.AtomicInteger
 
-class SocketInOut(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExecutor):
+class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExecutor):
   private val writerFiber    = executor.submit(writer())
   private val readerFiber    = executor.submit(reader())
   private val correlationMap = collection.concurrent.TrieMap.empty[Int, Sender]
@@ -33,6 +33,7 @@ class SocketInOut(socket: Socket, queue: BlockingQueue[Sender], executor: FiberE
         correlationMap += correlationId -> sender
         out.write(correlationId)
         out.write(sender.data)
+        out.flush()
     catch case t: Throwable => invalidate(t)
 
   private def reader(): Unit =

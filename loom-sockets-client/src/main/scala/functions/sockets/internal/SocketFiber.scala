@@ -28,7 +28,7 @@ class SocketFiber(
         socket match {
           case None         => Thread.sleep(1)
           case Some(socket) =>
-            val inOut = new SocketInOut(socket, queue, executor)
+            val inOut = new SocketIO(socket, queue, executor)
             inOut.waitTillDone()
             println("Socket invalidated")
             invalidatedSocketsCounter.incrementAndGet()
