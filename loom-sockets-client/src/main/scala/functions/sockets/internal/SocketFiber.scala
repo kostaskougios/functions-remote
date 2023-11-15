@@ -1,6 +1,6 @@
 package functions.sockets.internal
 
-import functions.fibers.FiberExecutor
+import functions.fibers.{Fiber, FiberExecutor}
 import functions.sockets.{Retries, doAndPrintError}
 
 import java.net.{InetAddress, Socket}
@@ -19,9 +19,9 @@ class SocketFiber(
   private val running          = new AtomicBoolean(true)
   @volatile private var socket = Option.empty[Socket]
 
-  processRequests()
+  private val processFiber = processRequests()
 
-  def processRequests(): Unit =
+  private def processRequests(): Fiber[Unit] =
     executor.submit:
       while running.get() do
         socket = createSocket
@@ -31,7 +31,9 @@ class SocketFiber(
             createdSocketsCounter.incrementAndGet()
             val inOut = new SocketIO(socket, queue, executor)
             try inOut.waitTillDone()
-            finally invalidatedSocketsCounter.incrementAndGet()
+            finally
+              invalidatedSocketsCounter.incrementAndGet()
+              inOut.shutdown()
         }
 
   private def createSocket: Option[Socket] =
@@ -40,4 +42,5 @@ class SocketFiber(
 
   def shutdown(): Unit =
     running.set(false)
+    processFiber.interrupt()
     doAndPrintError(socket.foreach(_.close()))

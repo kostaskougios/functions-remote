@@ -6,7 +6,7 @@ import functions.sockets.FiberSocketServer
 @main def stressTestServer(): Unit =
   val impl       = new SimpleFunctionsImpl:
     override def add(a: Int, b: Int) =
-      Thread.sleep(200)
+      //      Thread.sleep(200)
       super.add(a, b)
   val invokerMap = SimpleFunctionsReceiverFactory.invokerMap(impl) ++
     NestedTypeParamsFunctionsReceiverFactory.invokerMap(new NestedTypeParamsFunctionsImpl)
