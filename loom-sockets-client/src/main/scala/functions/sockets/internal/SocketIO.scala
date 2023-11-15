@@ -43,6 +43,8 @@ class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExec
         in.read() match
           case -1            =>
             invalidate(new NoMoreDataFromServerException)
+          case 0             =>
+            throw new IllegalStateException("Incorrect data on the socket (maybe from the server)")
           case correlationId =>
             val sender = correlationMap.get(correlationId) match
               case Some(id) => id

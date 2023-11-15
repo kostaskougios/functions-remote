@@ -3,11 +3,9 @@ package functions.sockets
 import functions.fibers.FiberExecutor
 import functions.sockets.internal.{Sender, SocketFiber}
 
-import java.net.{InetAddress, Socket, SocketException}
-import java.util.concurrent.{ArrayBlockingQueue, LinkedBlockingQueue}
-import java.util.concurrent.atomic.{AtomicInteger, AtomicLong}
-import scala.annotation.tailrec
-import scala.jdk.CollectionConverters.*
+import java.net.InetAddress
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.atomic.AtomicLong
 
 class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesBeforeGivingUp: Int, executor: FiberExecutor):
   private val createdSocketsCounter     = new AtomicLong(0)

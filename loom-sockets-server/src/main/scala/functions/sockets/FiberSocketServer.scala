@@ -62,7 +62,7 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
       def serveOne(): Boolean =
         in.read() match
           case -1            => false
-          case 0             => throw new IllegalStateException("Invalid data found")
+          case 0             => throw new IllegalStateException("Incorrect data on the socket (maybe from the client)")
           case correlationId =>
             try
               totalRequestCounter.incrementAndGet()
