@@ -4,7 +4,11 @@ import endtoend.tests.{NestedTypeParamsFunctionsImpl, NestedTypeParamsFunctionsR
 import functions.sockets.FiberSocketServer
 
 @main def stressTestServer(): Unit =
-  val invokerMap = SimpleFunctionsReceiverFactory.invokerMap(new SimpleFunctionsImpl) ++
+  val impl       = new SimpleFunctionsImpl:
+    override def add(a: Int, b: Int) =
+      Thread.sleep(200)
+      super.add(a, b)
+  val invokerMap = SimpleFunctionsReceiverFactory.invokerMap(impl) ++
     NestedTypeParamsFunctionsReceiverFactory.invokerMap(new NestedTypeParamsFunctionsImpl)
 
   FiberSocketServer.withServer[Unit](7201, invokerMap): server =>
