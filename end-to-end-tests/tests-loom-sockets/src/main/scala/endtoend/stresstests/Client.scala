@@ -8,7 +8,7 @@ import functions.sockets.SocketTransport
 import java.util.concurrent.atomic.AtomicInteger
 
 @main def stressTestClient(): Unit =
-  val transport = SocketTransport("localhost", 7201, poolSz = 512)
+  val transport = SocketTransport("localhost", 7201, poolSz = 64)
   val caller    = SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport.transportFunction)
   val ntCaller  = NestedTypeParamsFunctionsCallerFactory.newAvroNestedTypeParamsFunctions(transport.transportFunction)
   FiberExecutor.withFiberExecutor: fiberExecutor =>
