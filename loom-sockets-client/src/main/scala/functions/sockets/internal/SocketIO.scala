@@ -1,8 +1,8 @@
 package functions.sockets.internal
 
 import functions.fibers.FiberExecutor
-import functions.sockets.doAndPrintError
-import functions.sockets.internal.errors.ShutdownException
+import functions.sockets.{CommonCodes, doAndPrintError}
+import functions.sockets.internal.errors.{RemoteMethodThrowedAnException, ShutdownException}
 
 import java.io.{DataInputStream, DataOutputStream}
 import java.net.Socket
@@ -54,9 +54,17 @@ class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExec
             val sender = correlationMap.get(correlationId) match
               case Some(id) => id
               case None => throw new NoSuchElementException(s"Correlation id $correlationId not found in ${correlationMap.keys.toList.sorted.mkString(", ")}")
-            val sz     = in.readInt()
-            val data   = new Array[Byte](sz)
-            in.read(data)
-            sender.reply(data)
+            in.read() match
+              case CommonCodes.ResponseSuccess =>
+                val sz   = in.readInt()
+                val data = new Array[Byte](sz)
+                in.read(data)
+                sender.reply(data)
+              case CommonCodes.ResponseError   =>
+                val sz              = in.readInt()
+                val data            = new Array[Byte](sz)
+                in.read(data)
+                val remoteException = new String(data, "UTF-8")
+                sender.fail(new RemoteMethodThrowedAnException(s"The remote method throwed this exception:\n$remoteException"))
             correlationMap -= correlationId
     catch case t: Throwable => invalidate(t)

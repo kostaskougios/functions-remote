@@ -3,8 +3,9 @@ package functions.sockets.internal
 import functions.fibers.{Fiber, FiberExecutor}
 import functions.lib.logging.Logger
 import functions.model.{Coordinates4, ReceiverInput}
+import functions.sockets.CommonCodes
 
-import java.io.{DataInputStream, DataOutputStream, EOFException}
+import java.io.{ByteArrayOutputStream, DataInputStream, DataOutputStream, EOFException, PrintWriter}
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.atomic.{AtomicInteger, AtomicLong}
 
@@ -18,7 +19,7 @@ class RequestProcessor(
     logger: Logger,
     queueSz: Int = 512
 ):
-  private val queue                              = new LinkedBlockingQueue[Req](queueSz)
+  private val queue                              = new LinkedBlockingQueue[InvocationOutcome](queueSz)
   @volatile private var readerFiber: Fiber[Unit] = null
   @volatile private var writerFiber: Fiber[Unit] = null
 
@@ -39,8 +40,16 @@ class RequestProcessor(
       try
         servingCounter.incrementAndGet()
         out.writeInt(req.correlationId)
-        out.writeInt(req.outData.length)
-        out.write(req.outData)
+        req match
+          case InvocationSuccess(_, outData) =>
+            out.write(CommonCodes.ResponseSuccess)
+            out.writeInt(outData.length)
+            out.write(outData)
+          case f: InvocationFailure          =>
+            out.write(CommonCodes.ResponseError)
+            val errorData = f.exceptionToByteArray
+            out.writeInt(errorData.length)
+            out.write(errorData)
         out.flush()
       catch
         case t: Throwable =>
@@ -61,8 +70,12 @@ class RequestProcessor(
             val coordinates = Coordinates4(coordsRaw)
             val inData      = inputStreamToByteArray(in)
             executor.submit:
-              val outData = invokerMap(coordinates)(ReceiverInput(inData))
-              queue.put(Req(correlationId, outData))
+              try
+                val outData = invokerMap(coordinates)(ReceiverInput(inData))
+                queue.put(InvocationSuccess(correlationId, outData))
+              catch
+                case t: Throwable =>
+                  queue.put(InvocationFailure(correlationId, t))
     catch
       case _: EOFException => shutdown()
       case t: Throwable    =>
@@ -75,4 +88,13 @@ class RequestProcessor(
     in.read(data)
     data
 
-private case class Req(correlationId: Int, outData: Array[Byte])
+private sealed trait InvocationOutcome:
+  def correlationId: Int
+private case class InvocationSuccess(correlationId: Int, outData: Array[Byte]) extends InvocationOutcome
+private case class InvocationFailure(correlationId: Int, error: Throwable)     extends InvocationOutcome:
+  def exceptionToByteArray: Array[Byte] =
+    val bos = new ByteArrayOutputStream(8192)
+    val pw  = new PrintWriter(bos)
+    error.printStackTrace(pw)
+    pw.flush()
+    bos.toByteArray

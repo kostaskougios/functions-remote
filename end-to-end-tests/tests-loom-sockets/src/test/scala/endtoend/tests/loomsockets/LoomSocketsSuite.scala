@@ -2,6 +2,7 @@ package endtoend.tests.loomsockets
 
 import endtoend.tests.{SimpleFunctions, SimpleFunctionsCallerFactory, SimpleFunctionsImpl, SimpleFunctionsReceiverFactory}
 import functions.fibers.FiberExecutor
+import functions.sockets.internal.errors.{RemoteMethodThrowedAnException, RequestFailedException}
 import functions.sockets.{FiberSocketServer, SocketPool, SocketTransport}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers.*
@@ -22,7 +23,7 @@ class LoomSocketsSuite extends AnyFunSuite:
           val transport = new SocketTransport(pool)
           val caller    = SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport.transportFunction)
           f(server, caller)
-    Thread.sleep(200)
+    Thread.sleep(200) // wait for OS sockets to actually close
 
   test("client/server") {
     withClientServer: (_, caller) =>
@@ -51,4 +52,14 @@ class LoomSocketsSuite extends AnyFunSuite:
       for i <- 1 to 10 do
         caller.add(i, 1) should be(i + 1)
         server.totalRequestCount should be(i)
+  }
+
+  test("failure") {
+    withClientServer: (server, caller) =>
+      try caller.failure(5)
+      catch
+        case rf: RequestFailedException =>
+          rf.getCause match
+            case e: RemoteMethodThrowedAnException =>
+              e.getMessage should include("java.lang.IllegalArgumentException: 5 is invalid")
   }
