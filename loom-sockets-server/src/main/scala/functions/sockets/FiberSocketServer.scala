@@ -3,10 +3,11 @@ package functions.sockets
 import functions.fibers.{Fiber, FiberExecutor}
 import functions.model.{Coordinates4, ReceiverInput}
 
-import java.io.{DataInputStream, DataOutputStream, EOFException, InputStream}
+import java.io.{DataInputStream, DataOutputStream, EOFException}
 import java.net.{ServerSocket, Socket}
 import java.util
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
+import scala.util.Using.Releasable
 
 // https://wiki.openjdk.org/display/loom/Getting+started
 // https://openjdk.org/jeps/444
@@ -90,16 +91,15 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
     data
 
 object FiberSocketServer:
-  def withServer[R](listenPort: Int, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]], backlog: Int = 64)(f: FiberSocketServer => R) =
-    val server = new ServerSocket(listenPort, backlog)
-    FiberExecutor.withFiberExecutor: executor =>
-      val s = new FiberSocketServer(server, executor)
-      try
-        val serverFiber = s.start(invokerMap)
-        var i           = 8192
-        while (!serverFiber.isRunning && i > 0)
-          i = i - 1
-          Thread.`yield`()
-        if i == 0 then throw new IllegalStateException("Could not start accepting requests.")
-        f(s)
-      finally s.shutdown()
+  def startServer(listenPort: Int, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]], executor: FiberExecutor, backlog: Int = 64): FiberSocketServer =
+    val server      = new ServerSocket(listenPort, backlog)
+    val s           = new FiberSocketServer(server, executor)
+    val serverFiber = s.start(invokerMap)
+    var i           = 8192
+    while (!serverFiber.isRunning && i > 0)
+      i = i - 1
+      Thread.`yield`()
+    if i == 0 then throw new IllegalStateException("Could not start accepting requests.")
+    s
+
+  given Releasable[FiberSocketServer] = server => server.shutdown()

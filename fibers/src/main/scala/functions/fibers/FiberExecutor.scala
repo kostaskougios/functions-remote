@@ -1,6 +1,7 @@
 package functions.fibers
 
 import java.util.concurrent.{Callable, ExecutorService, Executors, Future}
+import scala.util.Using.Releasable
 
 class FiberExecutor private (executorService: ExecutorService):
   def submit[R](f: => R): Fiber[R] =
@@ -24,6 +25,8 @@ object FiberExecutor:
   def apply(): FiberExecutor =
     val executor = Executors.newVirtualThreadPerTaskExecutor
     new FiberExecutor(executor)
+
+  given Releasable[FiberExecutor] = resource => resource.shutdown()
 
   def withFiberExecutor[R](f: FiberExecutor => R): R =
     val executor = Executors.newVirtualThreadPerTaskExecutor

@@ -4,7 +4,7 @@ import functions.model.TransportInput
 
 import java.io.*
 
-class SocketTransport(val pool: SocketPool):
+class SocketTransport(pool: SocketPool):
 
   def transportFunction(trIn: TransportInput): Array[Byte] =
     val out       = new ByteArrayOutputStream(8192)
@@ -16,8 +16,3 @@ class SocketTransport(val pool: SocketPool):
     dos.write(trIn.data)
     dos.flush()
     pool.send(out.toByteArray)
-
-object SocketTransport:
-  def apply(host: String, port: Int, poolSz: Int = 32): SocketTransport =
-    val pool = SocketPool(host, port, poolSz)
-    new SocketTransport(pool)
