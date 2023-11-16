@@ -16,7 +16,7 @@ import scala.util.Using
       val ntCaller  = NestedTypeParamsFunctionsCallerFactory.newAvroNestedTypeParamsFunctions(transport.transportFunction)
       val requests  = new AtomicInteger(0)
       val fibers    =
-        for i <- 1 to 1000
+        for i <- 1 to 10000
         yield executor.submit:
           for j <- 1 to 1000 do
             try
