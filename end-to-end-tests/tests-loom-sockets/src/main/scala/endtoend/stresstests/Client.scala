@@ -10,7 +10,7 @@ import scala.util.Using
 
 @main def stressTestClient(): Unit =
   Using.resource(FiberExecutor()): executor =>
-    Using.resource(SocketPool("localhost", 7201, executor, poolSz = 64)): pool =>
+    Using.resource(SocketPool("localhost", 7201, executor, poolSz = 16)): pool =>
       val transport = SocketTransport(pool)
       val caller    = SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport.transportFunction)
       val ntCaller  = NestedTypeParamsFunctionsCallerFactory.newAvroNestedTypeParamsFunctions(transport.transportFunction)

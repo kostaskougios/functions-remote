@@ -15,9 +15,10 @@ class RequestProcessor(
     invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]],
     totalRequestCounter: AtomicLong,
     servingCounter: AtomicInteger,
-    logger: Logger
+    logger: Logger,
+    queueSz: Int = 128
 ):
-  private val queue                              = new LinkedBlockingQueue[Req](1024)
+  private val queue                              = new LinkedBlockingQueue[Req](queueSz)
   @volatile private var readerFiber: Fiber[Unit] = null
   @volatile private var writerFiber: Fiber[Unit] = null
 
@@ -33,6 +34,7 @@ class RequestProcessor(
 
   private def writer(): Unit =
     while true do
+      if queue.size() > queueSz - 10 then logger.warn(s"queue almost full, size = ${queue.size()} out of $queueSz")
       val req = queue.take()
       try
         servingCounter.incrementAndGet()
