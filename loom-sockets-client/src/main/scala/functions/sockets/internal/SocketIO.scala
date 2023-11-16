@@ -26,6 +26,8 @@ class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExec
     writerFiber.interrupt()
     readerFiber.interrupt()
     doAndPrintError(socket.close())
+    writerFiber.await()
+    readerFiber.await()
     for s <- correlationMap.values do s.fail(t)
 
   private def writer(): Unit =

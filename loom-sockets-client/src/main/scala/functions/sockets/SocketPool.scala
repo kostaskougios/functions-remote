@@ -1,11 +1,14 @@
 package functions.sockets
 
 import functions.fibers.FiberExecutor
+import functions.sockets.internal.errors.ShutdownException
 import functions.sockets.internal.{Sender, SocketFiber}
 
 import java.net.InetAddress
+import java.util
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.atomic.AtomicLong
+import scala.jdk.CollectionConverters.*
 import scala.util.Using.Releasable
 
 class SocketPool(host: String, port: Int, executor: FiberExecutor, poolSz: Int = 32, retriesBeforeGivingUp: Int = 128):
@@ -26,7 +29,9 @@ class SocketPool(host: String, port: Int, executor: FiberExecutor, poolSz: Int =
 
   def shutdown(): Unit =
     for s <- sockets do s.shutdown()
-    queue.clear()
+    val l = new util.ArrayList[Sender]
+    queue.drainTo(l)
+    l.asScala.foreach(_.fail(new ShutdownException))
 
 object SocketPool:
   given Releasable[SocketPool] = pool => pool.shutdown()

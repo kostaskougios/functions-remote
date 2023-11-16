@@ -9,9 +9,6 @@ import java.util
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
 import scala.util.Using.Releasable
 
-// https://wiki.openjdk.org/display/loom/Getting+started
-// https://openjdk.org/jeps/444
-
 class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExecutor):
   def shutdown(): Unit =
     interruptServerThread()
