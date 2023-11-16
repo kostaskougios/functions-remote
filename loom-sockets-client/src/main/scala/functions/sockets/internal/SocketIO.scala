@@ -9,9 +9,9 @@ import java.net.Socket
 import java.util.concurrent.BlockingQueue
 
 class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExecutor):
+  private val correlationMap = collection.concurrent.TrieMap.empty[Int, Sender]
   private val writerFiber    = executor.submit(writer())
   private val readerFiber    = executor.submit(reader())
-  private val correlationMap = collection.concurrent.TrieMap.empty[Int, Sender]
 
   def shutdown(): Unit =
     invalidate(new ShutdownException)
@@ -35,8 +35,6 @@ class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExec
       while true do
         sender = queue.take()
         val correlationId = corrId
-        // weird issue: when interrupted, correlationMap is null
-        if correlationMap == null then throw ShutdownException()
         correlationMap += correlationId -> sender
         out.writeInt(correlationId)
         out.write(sender.data)
