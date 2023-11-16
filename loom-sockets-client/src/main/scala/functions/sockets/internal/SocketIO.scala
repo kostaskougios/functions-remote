@@ -28,12 +28,11 @@ class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExec
     for s <- correlationMap.values do s.fail(t)
 
   private def writer(): Unit =
-    var sender: Sender = null
     try
       val out    = new DataOutputStream(socket.getOutputStream)
       var corrId = 1
       while true do
-        sender = queue.take()
+        val sender        = queue.take()
         val correlationId = corrId
         correlationMap += correlationId -> sender
         out.writeInt(correlationId)
@@ -42,7 +41,6 @@ class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExec
         corrId += 1
     catch
       case t: Throwable =>
-        if sender != null then sender.fail(t)
         invalidate(t)
 
   private def reader(): Unit =
