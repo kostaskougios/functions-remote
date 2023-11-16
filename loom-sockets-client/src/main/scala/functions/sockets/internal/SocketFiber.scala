@@ -43,3 +43,4 @@ class SocketFiber(
     running.set(false)
     processFiber.interrupt()
     doAndPrintError(socket.foreach(_.close()))
+    processFiber.await()
