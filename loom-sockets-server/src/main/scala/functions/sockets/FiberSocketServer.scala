@@ -66,8 +66,8 @@ object FiberSocketServer:
       logger: Logger = Logger.Console
   ): FiberSocketServer =
     val server      = new ServerSocket()
-    server.bind(new InetSocketAddress(null.asInstanceOf[InetAddress], listenPort), backlog)
     server.setReceiveBufferSize(32768)
+    server.bind(new InetSocketAddress(null.asInstanceOf[InetAddress], listenPort), backlog)
     val s           = new FiberSocketServer(server, executor, logger)
     val serverFiber = s.start(invokerMap)
     var i           = 8192
