@@ -12,6 +12,7 @@ import scala.util.Using.Releasable
 class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExecutor):
   def shutdown(): Unit =
     interruptServerThread()
+    serverFiber.await()
     runAndLogIgnoreError(serverSocket.close())
 
   private val stopServer               = new AtomicBoolean(false)
@@ -24,9 +25,7 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
 
   private def interruptServerThread(): Unit =
     stopServer.set(true)
-    Thread.`yield`()
     if serverFiber != null then serverFiber.interrupt()
-    serverFiber = null
 
   private def acceptOneSocketConnection(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
     val clientSocket = serverSocket.accept()

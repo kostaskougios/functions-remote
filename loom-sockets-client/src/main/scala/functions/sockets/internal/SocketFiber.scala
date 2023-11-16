@@ -19,25 +19,24 @@ class SocketFiber(
   private val running          = new AtomicBoolean(true)
   @volatile private var socket = Option.empty[Socket]
 
-  private val processFiber = processRequests()
+  private val processFiber = executor.submit(processRequests())
 
-  private def processRequests(): Fiber[Unit] =
-    executor.submit:
-      while running.get() do
-        socket = createSocket
-        socket match {
-          case None         => Thread.sleep(1)
-          case Some(socket) =>
-            createdSocketsCounter.incrementAndGet()
-            val inOut = new SocketIO(socket, queue, executor)
-            try inOut.waitTillDone()
-            finally
-              invalidatedSocketsCounter.incrementAndGet()
-              inOut.shutdown()
-        }
+  private def processRequests(): Unit =
+    while running.get() do
+      socket = createSocket
+      socket match {
+        case None         => Thread.sleep(1)
+        case Some(socket) =>
+          createdSocketsCounter.incrementAndGet()
+          val inOut = new SocketIO(socket, queue, executor)
+          try inOut.waitTillDone()
+          finally
+            invalidatedSocketsCounter.incrementAndGet()
+            inOut.shutdown()
+      }
 
   private def createSocket: Option[Socket] =
-    Retries.retry(retriesBeforeGivingUp):
+    Retries.retry(retriesBeforeGivingUp, !running.get()):
       new Socket(inetAddress, port)
 
   def shutdown(): Unit =

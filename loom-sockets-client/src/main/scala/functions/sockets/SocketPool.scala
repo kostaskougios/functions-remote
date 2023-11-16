@@ -32,6 +32,7 @@ class SocketPool(host: String, port: Int, executor: FiberExecutor, poolSz: Int =
     val l = new util.ArrayList[Sender]
     queue.drainTo(l)
     l.asScala.foreach(_.fail(new ShutdownException))
+    queue.clear()
 
 object SocketPool:
   given Releasable[SocketPool] = pool => pool.shutdown()

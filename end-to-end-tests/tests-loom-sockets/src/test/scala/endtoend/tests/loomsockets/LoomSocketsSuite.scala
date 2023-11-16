@@ -18,7 +18,7 @@ class LoomSocketsSuite extends AnyFunSuite:
   def withClientServer(f: (FiberSocketServer, SimpleFunctions) => Unit): Unit =
     Using.resource(FiberExecutor()): executor =>
       Using.resource(FiberSocketServer.startServer(7200, invokerMap, executor)): server =>
-        Using.resource(SocketPool("localhost", 7200, executor)): pool =>
+        Using.resource(SocketPool("localhost", 7200, executor, poolSz = 4)): pool =>
           val transport = new SocketTransport(pool)
           val caller    = SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport.transportFunction)
           f(server, caller)
