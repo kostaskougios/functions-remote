@@ -23,8 +23,8 @@ class SocketPool(inetAddress: InetAddress, port: Int, poolSz: Int, retriesBefore
     sender.response()
 
   def close(): Unit =
-    executor.shutdown()
     for s <- sockets do s.shutdown()
+    executor.shutdown()
 
 object SocketPool:
   def apply(host: String, port: Int, poolSz: Int = 32, retriesToOpenSocketBeforeGivingUp: Int = 128): SocketPool =

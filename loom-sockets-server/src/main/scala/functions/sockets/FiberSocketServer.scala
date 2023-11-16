@@ -16,36 +16,32 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
     interruptServerThread()
     runAndLogIgnoreError(serverSocket.close())
 
-  @volatile private var serverThread: Thread = null
-  private val stopServer                     = new AtomicBoolean(false)
-  private val accepting                      = new AtomicBoolean(false)
-  private val totalRequestCounter            = new AtomicLong(0)
-  private val servingCounter                 = new AtomicInteger(0)
-  private val activeConnectionsCounter       = new AtomicInteger(0)
-  def isAccepting: Boolean                   = accepting.get()
-  def totalRequestCount: Long                = totalRequestCounter.get()
-  def servingCount: Long                     = servingCounter.get()
-  def activeConnectionsCount: Long           = activeConnectionsCounter.get()
+  private val stopServer               = new AtomicBoolean(false)
+  private val totalRequestCounter      = new AtomicLong(0)
+  private val servingCounter           = new AtomicInteger(0)
+  private val activeConnectionsCounter = new AtomicInteger(0)
+  def totalRequestCount: Long          = totalRequestCounter.get()
+  def servingCount: Long               = servingCounter.get()
+  def activeConnectionsCount: Long     = activeConnectionsCounter.get()
 
   private def interruptServerThread(): Unit =
     stopServer.set(true)
     Thread.`yield`()
-    if serverThread != null then serverThread.interrupt()
-    serverThread = null
+    if serverFiber != null then serverFiber.interrupt()
+    serverFiber = null
 
   private def acceptOneSocketConnection(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
-    serverThread = Thread.currentThread()
-    try
-      accepting.set(true)
-      val clientSocket = serverSocket.accept()
-      executor.submit(processRequest(clientSocket, invokerMap))
-    finally accepting.set(false)
+    val clientSocket = serverSocket.accept()
+    executor.submit(processRequest(clientSocket, invokerMap))
+
+  @volatile private var serverFiber: Fiber[Unit] = null
 
   private def start(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Fiber[Unit] =
     def listen(): Unit =
       while (!stopServer.get())
         runAndLogIgnoreError(acceptOneSocketConnection(invokerMap))
-    executor.submit(listen())
+    serverFiber = executor.submit(listen())
+    serverFiber
 
   private def runAndLogIgnoreError(f: => Unit) = try f
   catch case t: Throwable => logError(t)
@@ -99,9 +95,9 @@ object FiberSocketServer:
     FiberExecutor.withFiberExecutor: executor =>
       val s = new FiberSocketServer(server, executor)
       try
-        s.start(invokerMap)
-        var i = 8192
-        while (!s.isAccepting && i > 0)
+        val serverFiber = s.start(invokerMap)
+        var i           = 8192
+        while (!serverFiber.isRunning && i > 0)
           i = i - 1
           Thread.`yield`()
         if i == 0 then throw new IllegalStateException("Could not start accepting requests.")
