@@ -22,6 +22,7 @@ class LoomSocketsSuite extends AnyFunSuite:
           val transport = new SocketTransport(pool)
           val caller    = SimpleFunctionsCallerFactory.newAvroSimpleFunctions(transport.transportFunction)
           f(server, caller)
+    Thread.sleep(200)
 
   test("client/server") {
     withClientServer: (_, caller) =>
