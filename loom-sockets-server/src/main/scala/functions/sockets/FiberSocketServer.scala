@@ -6,7 +6,7 @@ import functions.model.{Coordinates4, ReceiverInput}
 import functions.sockets.internal.RequestProcessor
 
 import java.io.{DataInputStream, DataOutputStream}
-import java.net.{ServerSocket, Socket}
+import java.net.{InetAddress, InetSocketAddress, ServerSocket, Socket}
 import java.util
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
 import scala.util.Using.Releasable
@@ -65,7 +65,9 @@ object FiberSocketServer:
       backlog: Int = 64,
       logger: Logger = Logger.Console
   ): FiberSocketServer =
-    val server      = new ServerSocket(listenPort, backlog)
+    val server      = new ServerSocket()
+    server.bind(new InetSocketAddress(null.asInstanceOf[InetAddress], listenPort), backlog)
+    server.setReceiveBufferSize(32768)
     val s           = new FiberSocketServer(server, executor, logger)
     val serverFiber = s.start(invokerMap)
     var i           = 8192
