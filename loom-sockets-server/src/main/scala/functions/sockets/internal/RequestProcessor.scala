@@ -16,7 +16,7 @@ class RequestProcessor(
     totalRequestCounter: AtomicLong,
     servingCounter: AtomicInteger,
     logger: Logger,
-    queueSz: Int = 128
+    queueSz: Int = 512
 ):
   private val queue                              = new LinkedBlockingQueue[Req](queueSz)
   @volatile private var readerFiber: Fiber[Unit] = null
