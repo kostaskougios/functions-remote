@@ -1,20 +1,17 @@
 package functions.sockets
 
 import functions.fibers.{Fiber, FiberExecutor}
+import functions.lib.logging.Logger
 import functions.model.{Coordinates4, ReceiverInput}
+import functions.sockets.internal.RequestProcessor
 
-import java.io.{DataInputStream, DataOutputStream, EOFException}
+import java.io.{DataInputStream, DataOutputStream}
 import java.net.{ServerSocket, Socket}
 import java.util
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
 import scala.util.Using.Releasable
 
-class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExecutor):
-  def shutdown(): Unit =
-    interruptServerThread()
-    serverFiber.await()
-    runAndLogIgnoreError(serverSocket.close())
-
+class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExecutor, logger: Logger):
   private val stopServer               = new AtomicBoolean(false)
   private val totalRequestCounter      = new AtomicLong(0)
   private val servingCounter           = new AtomicInteger(0)
@@ -41,55 +38,35 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
     serverFiber
 
   private def runAndLogIgnoreError(f: => Unit) = try f
-  catch case t: Throwable => logError(t)
-
-  protected def logError(throwable: Throwable): Unit =
-    if !stopServer.get() then throwable.printStackTrace()
+  catch case t: Throwable => if !stopServer.get() then logger.error(t)
 
   private def processRequest(s: Socket, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
-    try
-      activeConnectionsCounter.incrementAndGet()
-      val in  = new DataInputStream(s.getInputStream)
-      val out = new DataOutputStream(s.getOutputStream)
+    activeConnectionsCounter.incrementAndGet()
 
-      def serveOne(): Boolean =
-        in.readInt() match
-          case 0             =>
-            throw new IllegalStateException("Incorrect data on the socket (maybe from the client)")
-          case correlationId =>
-            try
-              totalRequestCounter.incrementAndGet()
-              servingCounter.incrementAndGet()
-              val coordsSz    = in.readInt()
-              val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
-              val coordinates = Coordinates4(coordsRaw)
-              val inData      = inputStreamToByteArray(in)
-              val outData     = invokerMap(coordinates)(ReceiverInput(inData))
-              out.writeInt(correlationId)
-              out.writeInt(outData.length)
-              out.write(outData)
-              out.flush()
-              true
-            finally servingCounter.decrementAndGet()
+    val in  = new DataInputStream(s.getInputStream)
+    val out = new DataOutputStream(s.getOutputStream)
+    val rp  = new RequestProcessor(executor, in, out, invokerMap, totalRequestCounter, servingCounter, logger)
 
-      while (s.isConnected && serveOne()) {}
-    catch
-      case _: EOFException => // ignore
-      case t: Throwable    => logError(t)
+    try rp.serve()
     finally
       activeConnectionsCounter.decrementAndGet()
-      s.close()
+      runAndLogIgnoreError(s.close())
 
-  private def inputStreamToByteArray(in: DataInputStream): Array[Byte] =
-    val dataSz = in.readInt()
-    val data   = new Array[Byte](dataSz)
-    in.read(data)
-    data
+  def shutdown(): Unit =
+    interruptServerThread()
+    serverFiber.await()
+    runAndLogIgnoreError(serverSocket.close())
 
 object FiberSocketServer:
-  def startServer(listenPort: Int, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]], executor: FiberExecutor, backlog: Int = 64): FiberSocketServer =
+  def startServer(
+      listenPort: Int,
+      invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]],
+      executor: FiberExecutor,
+      backlog: Int = 64,
+      logger: Logger = Logger.Console
+  ): FiberSocketServer =
     val server      = new ServerSocket(listenPort, backlog)
-    val s           = new FiberSocketServer(server, executor)
+    val s           = new FiberSocketServer(server, executor, logger)
     val serverFiber = s.start(invokerMap)
     var i           = 8192
     while (!serverFiber.isRunning && i > 0)

@@ -116,19 +116,26 @@ lazy val `kafka-consumer` = project
   )
   .dependsOn(`functions-receiver`)
 
-lazy val `loom-sockets-server` = project
+lazy val `loom-sockets-common` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(ScalaTest)
   )
   .dependsOn(`functions-common`, fibers)
 
+lazy val `loom-sockets-server` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest)
+  )
+  .dependsOn(`functions-common`, `loom-sockets-common`)
+
 lazy val `loom-sockets-client` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(ScalaTest)
   )
-  .dependsOn(`functions-common`, fibers)
+  .dependsOn(`functions-common`, `loom-sockets-common`)
 
 lazy val fibers = project
   .settings(
