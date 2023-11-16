@@ -36,10 +36,9 @@ class RequestProcessor(
       val req = queue.take()
       try
         servingCounter.incrementAndGet()
-        val outData = invokerMap(req.coordinates)(ReceiverInput(req.inData))
         out.writeInt(req.correlationId)
-        out.writeInt(outData.length)
-        out.write(outData)
+        out.writeInt(req.outData.length)
+        out.write(req.outData)
         out.flush()
       catch
         case t: Throwable =>
@@ -59,7 +58,9 @@ class RequestProcessor(
             val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
             val coordinates = Coordinates4(coordsRaw)
             val inData      = inputStreamToByteArray(in)
-            queue.put(Req(correlationId, coordinates, inData))
+            executor.submit:
+              val outData = invokerMap(coordinates)(ReceiverInput(inData))
+              queue.put(Req(correlationId, outData))
     catch
       case _: EOFException => shutdown()
       case t: Throwable    =>
@@ -72,4 +73,4 @@ class RequestProcessor(
     in.read(data)
     data
 
-private case class Req(correlationId: Int, coordinates: Coordinates4, inData: Array[Byte])
+private case class Req(correlationId: Int, outData: Array[Byte])
