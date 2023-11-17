@@ -1,6 +1,6 @@
 package functions.fibers
 
-import java.util.concurrent.{Callable, ExecutorService, Executors, Future}
+import java.util.concurrent.{Callable, ExecutorService, Executors}
 import scala.util.Using.Releasable
 
 // https://wiki.openjdk.org/display/loom/Getting+started
