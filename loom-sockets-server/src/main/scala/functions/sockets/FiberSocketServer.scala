@@ -11,7 +11,7 @@ import java.util
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
 import scala.util.Using.Releasable
 
-class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExecutor, logger: Logger):
+class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExecutor, logger: Logger, perStreamQueueSz: Int):
   private val stopServer               = new AtomicBoolean(false)
   private val totalRequestCounter      = new AtomicLong(0)
   private val servingCounter           = new AtomicInteger(0)
@@ -45,7 +45,7 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
 
     val in  = new DataInputStream(s.getInputStream)
     val out = new DataOutputStream(s.getOutputStream)
-    val rp  = new RequestProcessor(executor, in, out, invokerMap, totalRequestCounter, servingCounter, logger)
+    val rp  = new RequestProcessor(executor, in, out, invokerMap, totalRequestCounter, servingCounter, logger, perStreamQueueSz)
 
     try rp.serve()
     finally
@@ -64,12 +64,14 @@ object FiberSocketServer:
       executor: FiberExecutor,
       backlog: Int = 64,
       logger: Logger = Logger.Console,
-      receiveBufferSize: Int = 32768
+      receiveBufferSize: Int = 32768,
+      // increase this if the server code has a lot of blocking calls and the client is sending requests very quickly
+      perStreamQueueSz: Int = 256
   ): FiberSocketServer =
     val server      = new ServerSocket()
     server.setReceiveBufferSize(receiveBufferSize)
     server.bind(new InetSocketAddress(null.asInstanceOf[InetAddress], listenPort), backlog)
-    val s           = new FiberSocketServer(server, executor, logger)
+    val s           = new FiberSocketServer(server, executor, logger, perStreamQueueSz)
     val serverFiber = s.start(invokerMap)
     var i           = 8192
     while (!serverFiber.isRunning && i > 0)

@@ -9,13 +9,13 @@ import scala.util.Using
 @main def stressTestServer(): Unit =
   val impl       = new SimpleFunctionsImpl:
     override def add(a: Int, b: Int) =
-      Thread.sleep(200) // simulate waiting i.e. a jdbc call to see how well the server performs
+      // Thread.sleep(200) // simulate waiting i.e. a jdbc call to see how well the server performs
       super.add(a, b)
   val invokerMap = SimpleFunctionsReceiverFactory.invokerMap(impl) ++
     NestedTypeParamsFunctionsReceiverFactory.invokerMap(new NestedTypeParamsFunctionsImpl)
 
   Using.resource(FiberExecutor()): executor =>
-    Using.resource(FiberSocketServer.startServer(7201, invokerMap, executor, backlog = 256)): server =>
+    Using.resource(FiberSocketServer.startServer(7201, invokerMap, executor, backlog = 256, perStreamQueueSz = 2048)): server =>
       while (true)
         val prevCount = server.totalRequestCount
         Thread.sleep(1000)

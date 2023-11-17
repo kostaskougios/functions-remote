@@ -17,7 +17,7 @@ class RequestProcessor(
     totalRequestCounter: AtomicLong,
     servingCounter: AtomicInteger,
     logger: Logger,
-    queueSz: Int = 512
+    queueSz: Int
 ):
   private val queue                              = new LinkedBlockingQueue[InvocationOutcome](queueSz)
   @volatile private var readerFiber: Fiber[Unit] = null
@@ -35,7 +35,8 @@ class RequestProcessor(
 
   private def writer(): Unit =
     while true do
-      if queue.size() > queueSz - 10 then logger.warn(s"queue almost full, size = ${queue.size()} out of $queueSz")
+      if queue.size() > queueSz - 10 then
+        logger.warn(s"per-stream-queue almost full, size = ${queue.size()} out of $queueSz. Increase perStreamQueueSz or decrease blocking calls per fiber?")
       val req = queue.take()
       try
         servingCounter.incrementAndGet()
