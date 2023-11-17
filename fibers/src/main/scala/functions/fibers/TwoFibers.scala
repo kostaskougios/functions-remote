@@ -8,3 +8,7 @@ case class TwoFibers[A, B](fiber1: Fiber[A], fiber2: Fiber[B]):
     val r1 = fiber1.await()
     val r2 = fiber2.await()
     (r1, r2)
+
+  def interrupt(): Unit =
+    fiber1.interrupt()
+    fiber2.interrupt()

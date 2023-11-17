@@ -1,6 +1,6 @@
 package functions.sockets.internal
 
-import functions.fibers.{Fiber, FiberExecutor}
+import functions.fibers.{Fiber, FiberExecutor, TwoFibers}
 import functions.lib.logging.Logger
 import functions.model.{Coordinates4, ReceiverInput}
 import functions.sockets.CommonCodes
@@ -19,21 +19,12 @@ class RequestProcessor(
     logger: Logger,
     queueSz: Int
 ):
-  private val queue                              = new LinkedBlockingQueue[InvocationOutcome](queueSz)
-  @volatile private var readerFiber: Fiber[Unit] = null
-  @volatile private var writerFiber: Fiber[Unit] = null
-
-  def shutdown(): Unit =
-    readerFiber.interrupt()
-    writerFiber.interrupt()
+  private val queue = new LinkedBlockingQueue[InvocationOutcome](queueSz)
 
   def serve(): Unit =
-    readerFiber = executor.submit(reader())
-    writerFiber = executor.submit(writer())
-    readerFiber.await()
-    writerFiber.await()
+    executor.two(reader, writer).await()
 
-  private def writer(): Unit =
+  private def writer(fibers: TwoFibers[Unit, Unit]): Unit =
     while true do
       if queue.size() > queueSz - 10 then
         logger.warn(s"per-stream-queue almost full, size = ${queue.size()} out of $queueSz. Increase perStreamQueueSz or decrease blocking calls per fiber?")
@@ -55,10 +46,10 @@ class RequestProcessor(
       catch
         case t: Throwable =>
           logger.error(t)
-          shutdown()
+          fibers.interrupt()
       finally servingCounter.decrementAndGet()
 
-  private def reader(): Unit =
+  private def reader(fibers: TwoFibers[Unit, Unit]): Unit =
     try
       while true do
         in.readInt() match
@@ -78,10 +69,10 @@ class RequestProcessor(
                 case t: Throwable =>
                   queue.put(InvocationFailure(correlationId, t))
     catch
-      case _: EOFException => shutdown()
+      case _: EOFException => fibers.interrupt()
       case t: Throwable    =>
         logger.error(t)
-        shutdown()
+        fibers.interrupt()
 
   private def inputStreamToByteArray(in: DataInputStream): Array[Byte] =
     val dataSz = in.readInt()

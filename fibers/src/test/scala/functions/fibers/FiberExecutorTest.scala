@@ -47,3 +47,16 @@ class FiberExecutorTest extends AnyFunSuiteLike:
 
         fibers.get() should be((5, "a"))
   }
+
+  test("TwoFibers interrupt") {
+    FiberExecutor.withFiberExecutor: executor =>
+      val fibers = executor.two(
+        _ => Thread.sleep(1000),
+        _ => Thread.sleep(1000)
+      )
+      val start  = System.currentTimeMillis()
+      Thread.sleep(50)
+      fibers.interrupt()
+      fibers.await()
+      (System.currentTimeMillis() - start) should be < 200L
+  }
