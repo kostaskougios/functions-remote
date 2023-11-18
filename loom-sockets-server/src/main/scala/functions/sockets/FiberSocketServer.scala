@@ -3,7 +3,7 @@ package functions.sockets
 import functions.fibers.{Fiber, FiberExecutor}
 import functions.lib.logging.Logger
 import functions.model.{Coordinates4, ReceiverInput}
-import functions.sockets.internal.RequestProcessor
+import functions.sockets.internal.{RequestProcessor, RequestProtocol}
 
 import java.io.{DataInputStream, DataOutputStream}
 import java.net.{InetAddress, InetSocketAddress, ServerSocket, Socket}
@@ -19,6 +19,7 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
   def totalRequestCount: Long          = totalRequestCounter.get()
   def servingCount: Long               = servingCounter.get()
   def activeConnectionsCount: Long     = activeConnectionsCounter.get()
+  private val protocol                 = new RequestProtocol
 
   private def interruptServerThread(): Unit =
     stopServer.set(true)
@@ -45,7 +46,7 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
 
     val in  = new DataInputStream(s.getInputStream)
     val out = new DataOutputStream(s.getOutputStream)
-    val rp  = new RequestProcessor(executor, in, out, invokerMap, totalRequestCounter, servingCounter, logger, perStreamQueueSz)
+    val rp  = new RequestProcessor(executor, in, out, invokerMap, totalRequestCounter, servingCounter, logger, perStreamQueueSz, protocol)
 
     try rp.serve()
     finally

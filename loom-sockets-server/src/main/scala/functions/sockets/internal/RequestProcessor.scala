@@ -17,7 +17,8 @@ class RequestProcessor(
     totalRequestCounter: AtomicLong,
     servingCounter: AtomicInteger,
     logger: Logger,
-    queueSz: Int
+    queueSz: Int,
+    protocol: RequestProtocol
 ):
   private val queue = new LinkedBlockingQueue[InvocationOutcome](queueSz)
 
@@ -32,16 +33,7 @@ class RequestProcessor(
       try
         servingCounter.incrementAndGet()
         out.writeInt(req.correlationId)
-        req match
-          case InvocationSuccess(_, outData) =>
-            out.write(CommonCodes.ResponseSuccess)
-            out.writeInt(outData.length)
-            out.write(outData)
-          case f: InvocationFailure          =>
-            out.write(CommonCodes.ResponseError)
-            val errorData = f.exceptionToByteArray
-            out.writeInt(errorData.length)
-            out.write(errorData)
+        protocol.writer(req, out)
         out.flush()
       catch
         case t: Throwable =>
@@ -57,10 +49,7 @@ class RequestProcessor(
             throw new IllegalStateException("Incorrect data on the socket (maybe from the client)")
           case correlationId =>
             totalRequestCounter.incrementAndGet()
-            val coordsSz    = in.readInt()
-            val coordsRaw   = new String(in.readNBytes(coordsSz), "UTF-8")
-            val coordinates = Coordinates4(coordsRaw)
-            val inData      = inputStreamToByteArray(in)
+            val (coordinates, inData) = protocol.reader(in)
             executor.submit:
               try
                 val outData = invokerMap(coordinates)(ReceiverInput(inData))
@@ -73,12 +62,6 @@ class RequestProcessor(
       case t: Throwable    =>
         logger.error(t)
         fibers.interrupt()
-
-  private def inputStreamToByteArray(in: DataInputStream): Array[Byte] =
-    val dataSz = in.readInt()
-    val data   = new Array[Byte](dataSz)
-    in.read(data)
-    data
 
 private sealed trait InvocationOutcome:
   def correlationId: Int
