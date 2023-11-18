@@ -63,10 +63,10 @@ class RequestProcessor(
         logger.error(t)
         fibers.interrupt()
 
-private sealed trait InvocationOutcome:
+sealed trait InvocationOutcome:
   def correlationId: Int
-private case class InvocationSuccess(correlationId: Int, outData: Array[Byte]) extends InvocationOutcome
-private case class InvocationFailure(correlationId: Int, error: Throwable)     extends InvocationOutcome:
+case class InvocationSuccess(correlationId: Int, outData: Array[Byte]) extends InvocationOutcome
+case class InvocationFailure(correlationId: Int, error: Throwable)     extends InvocationOutcome:
   def exceptionToByteArray: Array[Byte] =
     val bos = new ByteArrayOutputStream(8192)
     val pw  = new PrintWriter(bos)
