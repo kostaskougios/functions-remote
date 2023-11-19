@@ -65,6 +65,6 @@ class SocketIO(socket: Socket, queue: BlockingQueue[Sender], executor: FiberExec
                 val data            = new Array[Byte](sz)
                 in.read(data)
                 val remoteException = new String(data, "UTF-8")
-                sender.fail(new RemoteMethodThrowedAnException(s"The remote method throwed this exception:\n$remoteException"))
+                sender.fail(new RemoteMethodThrowedAnException(s"The remote method threw this exception:\n$remoteException"))
             correlationMap -= correlationId
     catch case t: Throwable => invalidate(t)
