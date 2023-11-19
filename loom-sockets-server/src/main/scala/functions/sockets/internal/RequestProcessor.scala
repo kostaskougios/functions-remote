@@ -3,6 +3,7 @@ package functions.sockets.internal
 import functions.fibers.{FiberExecutor, TwoFibers}
 import functions.lib.logging.Logger
 import functions.model.{Coordinates4, ReceiverInput}
+import functions.sockets.ServerStats
 
 import java.io.*
 import java.util.concurrent.LinkedBlockingQueue
@@ -13,8 +14,7 @@ class RequestProcessor(
     in: DataInputStream,
     out: DataOutputStream,
     invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]],
-    totalRequestCounter: AtomicLong,
-    servingCounter: AtomicInteger,
+    stats: ServerStats,
     logger: Logger,
     queueSz: Int,
     protocol: RequestProtocol
@@ -30,7 +30,7 @@ class RequestProcessor(
         logger.warn(s"per-stream-queue almost full, size = ${queue.size()} out of $queueSz. Increase perStreamQueueSz or decrease blocking calls per fiber?")
       val req = queue.take()
       try
-        servingCounter.incrementAndGet()
+        stats.servingCounter.incrementAndGet()
         out.writeInt(req.correlationId)
         protocol.writer(req, out)
         out.flush()
@@ -38,7 +38,7 @@ class RequestProcessor(
         case t: Throwable =>
           logger.error(t)
           fibers.interrupt()
-      finally servingCounter.decrementAndGet()
+      finally stats.servingCounter.decrementAndGet()
 
   private def reader(fibers: TwoFibers[Unit, Unit]): Unit =
     try
@@ -47,7 +47,7 @@ class RequestProcessor(
           case 0             =>
             throw new IllegalStateException("Incorrect data on the socket (maybe from the client)")
           case correlationId =>
-            totalRequestCounter.incrementAndGet()
+            stats.totalRequestCounter.incrementAndGet()
             val (coordinates, inData) = protocol.reader(in)
             executor.submit:
               try

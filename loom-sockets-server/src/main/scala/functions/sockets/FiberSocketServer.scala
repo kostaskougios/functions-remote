@@ -1,6 +1,6 @@
 package functions.sockets
 
-import functions.fibers.{Fiber, FiberExecutor}
+import functions.fibers.FiberExecutor
 import functions.lib.logging.Logger
 import functions.model.{Coordinates4, ReceiverInput}
 import functions.sockets.internal.{RequestProcessor, RequestProtocol}
@@ -8,8 +8,7 @@ import functions.sockets.internal.{RequestProcessor, RequestProtocol}
 import java.io.{DataInputStream, DataOutputStream}
 import java.net.{InetAddress, InetSocketAddress, ServerSocket, Socket}
 import java.util
-import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
-import scala.util.Using.Releasable
+import java.util.concurrent.atomic.AtomicBoolean
 
 class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExecutor, logger: Logger, perStreamQueueSz: Int):
   private val stopServer = new AtomicBoolean(false)
@@ -34,7 +33,7 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
 
     val in  = new DataInputStream(s.getInputStream)
     val out = new DataOutputStream(s.getOutputStream)
-    val rp  = new RequestProcessor(executor, in, out, invokerMap, stats.totalRequestCounter, stats.servingCounter, logger, perStreamQueueSz, protocol)
+    val rp  = new RequestProcessor(executor, in, out, invokerMap, stats, logger, perStreamQueueSz, protocol)
 
     try rp.serve()
     finally
