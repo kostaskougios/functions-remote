@@ -7,7 +7,6 @@ import functions.sockets.ServerStats
 
 import java.io.*
 import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.atomic.{AtomicInteger, AtomicLong}
 
 class RequestProcessor(
     executor: FiberExecutor,
