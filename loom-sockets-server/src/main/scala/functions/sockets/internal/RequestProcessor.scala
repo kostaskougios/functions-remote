@@ -1,11 +1,10 @@
 package functions.sockets.internal
 
-import functions.fibers.{Fiber, FiberExecutor, TwoFibers}
+import functions.fibers.{FiberExecutor, TwoFibers}
 import functions.lib.logging.Logger
 import functions.model.{Coordinates4, ReceiverInput}
-import functions.sockets.CommonCodes
 
-import java.io.{ByteArrayOutputStream, DataInputStream, DataOutputStream, EOFException, PrintWriter}
+import java.io.*
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.atomic.{AtomicInteger, AtomicLong}
 

@@ -17,9 +17,9 @@ import scala.util.Using
   Using.resource(FiberExecutor()): executor =>
     Using.resource(FiberSocketServer.startServer(7201, invokerMap, executor, backlog = 256, perStreamQueueSz = 2048)): server =>
       while (true)
-        val prevCount = server.totalRequestCount
+        val prevCount = server.stats.totalRequestCount
         Thread.sleep(1000)
-        val total     = server.totalRequestCount
-        val serving   = server.servingCount
+        val total     = server.stats.totalRequestCount
+        val serving   = server.stats.servingCount
         println(s"Total requests: $total , last second: ${total - prevCount} , serving : $serving, activeThreads: ${ThreadCounter
-            .countThreads()}, activeSocketConnections: ${server.activeConnectionsCount}")
+            .countThreads()}, activeSocketConnections: ${server.stats.activeConnectionsCount}")

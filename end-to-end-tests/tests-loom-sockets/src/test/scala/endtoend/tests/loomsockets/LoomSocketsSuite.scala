@@ -3,7 +3,7 @@ package endtoend.tests.loomsockets
 import endtoend.tests.{SimpleFunctions, SimpleFunctionsCallerFactory, SimpleFunctionsImpl, SimpleFunctionsReceiverFactory}
 import functions.fibers.FiberExecutor
 import functions.sockets.internal.errors.{RemoteMethodThrowedAnException, RequestFailedException}
-import functions.sockets.{FiberSocketServer, SocketPool, SocketTransport}
+import functions.sockets.{FiberSocketServer, SocketPool, SocketTransport, StartedFiberSocketServer}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers.*
 
@@ -16,7 +16,7 @@ class LoomSocketsSuite extends AnyFunSuite:
 
   val invokerMap = SimpleFunctionsReceiverFactory.invokerMap(new SimpleFunctionsImpl)
 
-  def withClientServer(f: (FiberSocketServer, SimpleFunctions) => Unit): Unit =
+  def withClientServer(f: (StartedFiberSocketServer, SimpleFunctions) => Unit): Unit =
     Using.resource(FiberExecutor()): executor =>
       Using.resource(FiberSocketServer.startServer(7200, invokerMap, executor)): server =>
         Using.resource(SocketPool("localhost", 7200, executor, poolSz = 32)): pool =>
@@ -51,7 +51,7 @@ class LoomSocketsSuite extends AnyFunSuite:
     withClientServer: (server, caller) =>
       for i <- 1 to 10 do
         caller.add(i, 1) should be(i + 1)
-        server.totalRequestCount should be(i)
+        server.stats.totalRequestCount should be(i)
   }
 
   test("failure") {
