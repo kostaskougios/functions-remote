@@ -25,7 +25,7 @@ class FiberSocketServer private (serverSocket: ServerSocket, executor: FiberExec
         runAndLogIgnoreError(acceptOneSocketConnection(invokerMap))
     new StartedFiberSocketServer(serverFiber, serverSocket, stopServer, stats)
 
-  private def runAndLogIgnoreError(f: => Unit) = try f
+  private def runAndLogIgnoreError(f: => Unit): Unit = try f
   catch case t: Throwable => if !stopServer.get() then logger.error(t)
 
   private def processRequest(s: Socket, invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]): Unit =
