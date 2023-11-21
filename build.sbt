@@ -88,6 +88,13 @@ lazy val `functions-caller` = project.settings(commonSettings).dependsOn(`functi
 
 lazy val `functions-receiver` = project.settings(commonSettings).dependsOn(`functions-common`)
 
+lazy val `functions-avro` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(Avro4s)
+  )
+  .dependsOn(`runtime-and-generator-common`)
+
 lazy val `http4s-server` = project
   .settings(
     commonSettings,
@@ -179,7 +186,7 @@ lazy val `tests-http4s-server-impl` = project
     receiverHttp4sRoutes      := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe ++ Http4sServer
   )
-  .dependsOn(`tests-cats-exports`, `http4s-server`)
+  .dependsOn(`tests-cats-exports`, `http4s-server`, `functions-avro`)
   .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `tests-http4s-client-impl` = project
@@ -192,7 +199,7 @@ lazy val `tests-http4s-client-impl` = project
     callerHttp4sClientTransport := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest, CatsEffectsTesting) ++ Circe ++ Http4sClient ++ Http4sCirce
   )
-  .dependsOn(`tests-cats-exports`, `functions-receiver`, `http4s-client`)
+  .dependsOn(`tests-cats-exports`, `functions-receiver`, `http4s-client`, `functions-avro`)
   .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `tests-receiver` = project
@@ -204,7 +211,7 @@ lazy val `tests-receiver` = project
     receiverAvroSerialization := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
-  .dependsOn(`tests-exports`, `functions-receiver`)
+  .dependsOn(`tests-exports`, `functions-receiver`, `functions-avro`)
   .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `tests-caller` = project
@@ -218,7 +225,7 @@ lazy val `tests-caller` = project
     callerClassloaderDependencies := Seq(s"functions.end-to-end-tests:tests-receiver_3:${version.value}"),
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
-  .dependsOn(`tests-exports`, `functions-caller`)
+  .dependsOn(`tests-exports`, `functions-caller`, `functions-avro`)
   .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `tests-cats-end-to-end-tests` = project
@@ -248,7 +255,7 @@ lazy val `tests-kafka-producer` = project
     callerAvroSerialization := true,
     callerJsonSerialization := true
   )
-  .dependsOn(`tests-kafka-exports`, `kafka-producer`)
+  .dependsOn(`tests-kafka-exports`, `kafka-producer`, `functions-avro`)
   .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `tests-kafka-consumer` = project
@@ -260,7 +267,7 @@ lazy val `tests-kafka-consumer` = project
     receiverAvroSerialization := true,
     receiverJsonSerialization := true
   )
-  .dependsOn(`tests-kafka-exports`, `kafka-consumer`)
+  .dependsOn(`tests-kafka-exports`, `kafka-consumer`, `functions-avro`)
   .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `tests-kafka-end-to-end` = project
@@ -283,5 +290,5 @@ lazy val `tests-loom-sockets` = project
     receiverAvroSerialization := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest) ++ Circe
   )
-  .dependsOn(`loom-sockets-server`, `loom-sockets-client`, `tests-exports`, `tests-receiver`, `functions-receiver`)
+  .dependsOn(`loom-sockets-server`, `loom-sockets-client`, `tests-exports`, `tests-receiver`, `functions-receiver`, `functions-avro`)
   .enablePlugins(FunctionsRemotePlugin)

@@ -11,6 +11,7 @@ import com.sksamuel.avro4s.AvroInputStreamBuilder
 import java.io.ByteArrayOutputStream
 import scala.util.Using
 import org.apache.avro.Schema
+import functions.avro.*
 
 {{#imports}}
 import {{.}}
@@ -36,12 +37,12 @@ class {{className}}:
   // ----------------------------------------------
   // Serializers for {{functionN}} function
   // ----------------------------------------------
-  val {{functionN}}AvroSchemaFor = SchemaFor[{{caseClass}}]
-  val {{functionN}}AvroEncoder = Encoder[{{caseClass}}]
-  val {{functionN}}AvroDecoder = Decoder[{{caseClass}}]
-  val {{functionN}}AvroSchema = {{functionN}}AvroSchemaFor.schema
-  val {{functionN}}AvroOutputStream = outputStream[{{caseClass}}]({{functionN}}AvroSchemaFor, {{functionN}}AvroEncoder)
-  val {{functionN}}AvroInputStream = inputStream[{{caseClass}}](using {{functionN}}AvroDecoder)
+  val {{functionN}}SerDes = new SerDesDetails(
+    SchemaFor[{{caseClass}}],
+    Encoder[{{caseClass}}],
+    Decoder[{{caseClass}}]
+  )
+  val {{functionN}}AvroSchema = {{functionN}}SerDes.schemaFor.schema
 
   {{^firstParamsRaw.isEmpty}}
   val {{functionN}}ArgsAvroSchemaFor = SchemaFor[{{caseClass}}Args]
@@ -61,8 +62,8 @@ class {{className}}:
   val {{functionN}}ReturnTypeAvroInputStream = inputStream[{{resultNNoFramework}}](using {{functionN}}ReturnTypeAvroDecoder)
   {{/isUnitReturnType}}
 
-  def {{functionN}}Serializer(value: {{caseClass}}): Array[Byte] = avroSerialize({{functionN}}AvroOutputStream, value)
-  def {{functionN}}Deserializer(data: Array[Byte]): {{caseClass}} = avroDeserialize({{functionN}}AvroSchema, {{functionN}}AvroInputStream, data)
+  def {{functionN}}Serializer(value: {{caseClass}}): Array[Byte] = avroSerialize({{functionN}}SerDes.avroOutputStreamBuilder, value)
+  def {{functionN}}Deserializer(data: Array[Byte]): {{caseClass}} = avroDeserialize({{functionN}}AvroSchema, {{functionN}}SerDes.avroInputStreamBuilder, data)
   {{^firstParamsRaw.isEmpty}}
   def {{functionN}}ArgsSerializer(value: {{caseClass}}Args): Array[Byte] = avroSerialize({{functionN}}ArgsAvroOutputStream, value)
   def {{functionN}}ArgsDeserializer(data: Array[Byte]): {{caseClass}}Args = avroDeserialize({{functionN}}ArgsAvroSchema, {{functionN}}ArgsAvroInputStream, data)
