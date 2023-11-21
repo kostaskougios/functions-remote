@@ -1,11 +1,8 @@
 package {{proxypackage}}
 
-import com.sksamuel.avro4s.AvroSchema
 import com.sksamuel.avro4s.SchemaFor
 import com.sksamuel.avro4s.Encoder
 import com.sksamuel.avro4s.Decoder
-import com.sksamuel.avro4s.AvroOutputStream
-import com.sksamuel.avro4s.AvroInputStream
 import com.sksamuel.avro4s.AvroOutputStreamBuilder
 import com.sksamuel.avro4s.AvroInputStreamBuilder
 import java.io.ByteArrayOutputStream
