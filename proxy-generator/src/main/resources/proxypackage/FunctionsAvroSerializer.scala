@@ -28,11 +28,6 @@ class {{className}}:
     Using.resource(b.from(data).build(schema)): in =>
       in.iterator.next()
 
-  protected def inputStream[A](using decoder: Decoder[A]): AvroInputStreamBuilder[A] =
-    AvroInputStream.binary[A]
-
-  protected def outputStream[A](schemaFor: SchemaFor[A], encoder: Encoder[A]): AvroOutputStreamBuilder[A] =
-    AvroOutputStream.binary[A](using schemaFor, encoder)
   {{#functions}}
   // ----------------------------------------------
   // Serializers for {{functionN}} function
@@ -45,33 +40,33 @@ class {{className}}:
   val {{functionN}}AvroSchema = {{functionN}}SerDes.schemaFor.schema
 
   {{^firstParamsRaw.isEmpty}}
-  val {{functionN}}ArgsAvroSchemaFor = SchemaFor[{{caseClass}}Args]
-  val {{functionN}}ArgsAvroEncoder = Encoder[{{caseClass}}Args]
-  val {{functionN}}ArgsAvroDecoder = Decoder[{{caseClass}}Args]
-  val {{functionN}}ArgsAvroSchema = {{functionN}}ArgsAvroSchemaFor.schema
-  val {{functionN}}ArgsAvroOutputStream = outputStream[{{caseClass}}Args]({{functionN}}ArgsAvroSchemaFor, {{functionN}}ArgsAvroEncoder)
-  val {{functionN}}ArgsAvroInputStream = inputStream[{{caseClass}}Args](using {{functionN}}ArgsAvroDecoder)
+  val {{functionN}}ArgsSerDes = new SerDesDetails(
+    SchemaFor[{{caseClass}}Args],
+    Encoder[{{caseClass}}Args],
+    Decoder[{{caseClass}}Args]
+  )
+  val {{functionN}}ArgsAvroSchema = {{functionN}}ArgsSerDes.schemaFor.schema
   {{/firstParamsRaw.isEmpty}}
 
   {{^isUnitReturnType}}
-  val {{functionN}}ReturnTypeAvroSchemaFor = SchemaFor[{{resultNNoFramework}}]
-  val {{functionN}}ReturnTypeAvroEncoder = Encoder[{{resultNNoFramework}}]
-  val {{functionN}}ReturnTypeAvroDecoder = Decoder[{{resultNNoFramework}}]
-  val {{functionN}}ReturnTypeAvroSchema = {{functionN}}ReturnTypeAvroSchemaFor.schema
-  val {{functionN}}ReturnTypeAvroOutputStream = outputStream[{{resultNNoFramework}}]({{functionN}}ReturnTypeAvroSchemaFor, {{functionN}}ReturnTypeAvroEncoder)
-  val {{functionN}}ReturnTypeAvroInputStream = inputStream[{{resultNNoFramework}}](using {{functionN}}ReturnTypeAvroDecoder)
+  val {{functionN}}ReturnTypeSerDes = new SerDesDetails(
+    SchemaFor[{{resultNNoFramework}}],
+    Encoder[{{resultNNoFramework}}],
+    Decoder[{{resultNNoFramework}}]
+  )
+  val {{functionN}}ReturnTypeAvroSchema = {{functionN}}ReturnTypeSerDes.schemaFor.schema
   {{/isUnitReturnType}}
 
   def {{functionN}}Serializer(value: {{caseClass}}): Array[Byte] = avroSerialize({{functionN}}SerDes.avroOutputStreamBuilder, value)
   def {{functionN}}Deserializer(data: Array[Byte]): {{caseClass}} = avroDeserialize({{functionN}}AvroSchema, {{functionN}}SerDes.avroInputStreamBuilder, data)
   {{^firstParamsRaw.isEmpty}}
-  def {{functionN}}ArgsSerializer(value: {{caseClass}}Args): Array[Byte] = avroSerialize({{functionN}}ArgsAvroOutputStream, value)
-  def {{functionN}}ArgsDeserializer(data: Array[Byte]): {{caseClass}}Args = avroDeserialize({{functionN}}ArgsAvroSchema, {{functionN}}ArgsAvroInputStream, data)
+  def {{functionN}}ArgsSerializer(value: {{caseClass}}Args): Array[Byte] = avroSerialize({{functionN}}ArgsSerDes.avroOutputStreamBuilder, value)
+  def {{functionN}}ArgsDeserializer(data: Array[Byte]): {{caseClass}}Args = avroDeserialize({{functionN}}ArgsAvroSchema, {{functionN}}ArgsSerDes.avroInputStreamBuilder, data)
   {{/firstParamsRaw.isEmpty}}
 
   {{^isUnitReturnType}}
-  def {{functionN}}ReturnTypeSerializer(value: {{resultNNoFramework}}): Array[Byte] = avroSerialize({{functionN}}ReturnTypeAvroOutputStream, value)
-  def {{functionN}}ReturnTypeDeserializer(data: Array[Byte]): {{resultNNoFramework}} = avroDeserialize({{functionN}}ReturnTypeAvroSchema, {{functionN}}ReturnTypeAvroInputStream, data)
+  def {{functionN}}ReturnTypeSerializer(value: {{resultNNoFramework}}): Array[Byte] = avroSerialize({{functionN}}ReturnTypeSerDes.avroOutputStreamBuilder, value)
+  def {{functionN}}ReturnTypeDeserializer(data: Array[Byte]): {{resultNNoFramework}} = avroDeserialize({{functionN}}ReturnTypeAvroSchema, {{functionN}}ReturnTypeSerDes.avroInputStreamBuilder, data)
   {{/isUnitReturnType}}
 
   {{/functions}}
