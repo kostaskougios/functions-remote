@@ -16,36 +16,39 @@ val Scala3Compiler = "org.scala-lang" %% "scala3-compiler"        % scala3Versio
 val Scala3Tasty    = "org.scala-lang" %% "scala3-tasty-inspector" % scala3Version
 val ScalaTest      = "org.scalatest"  %% "scalatest"              % "3.2.15" % Test
 
-val Diffx                = Seq(
+val Diffx              = Seq(
   "com.softwaremill.diffx" %% "diffx-core",
   "com.softwaremill.diffx" %% "diffx-scalatest-should"
 ).map(_ % "0.7.1" % Test)
-val Logback              = "ch.qos.logback"                    % "logback-classic"               % "1.4.6"
-val CommonsText          = "org.apache.commons"                % "commons-text"                  % "1.10.0"
-val CommonsIO            = "commons-io"                        % "commons-io"                    % "2.11.0"
-val Avro4s               = "com.sksamuel.avro4s"              %% "avro4s-core"                   % "5.0.5"
-val Mustache             = "com.github.spullara.mustache.java" % "compiler"                      % "0.9.10"
-val CirceVersion         = "0.14.1"
-val Circe                = Seq(
+val Logback            = "ch.qos.logback"                    % "logback-classic"               % "1.4.6"
+val CommonsText        = "org.apache.commons"                % "commons-text"                  % "1.10.0"
+val CommonsIO          = "commons-io"                        % "commons-io"                    % "2.11.0"
+val Avro4s             = "com.sksamuel.avro4s"              %% "avro4s-core"                   % "5.0.5"
+val Mustache           = "com.github.spullara.mustache.java" % "compiler"                      % "0.9.10"
+val CirceVersion       = "0.14.1"
+val Circe              = Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
   "io.circe" %% "circe-parser"
 ).map(_ % CirceVersion)
-val Http4sVersion        = "0.23.23"
-val Http4sServer         = Seq(
+val Http4sVersion      = "0.23.23"
+val Http4sServer       = Seq(
   "org.http4s" %% "http4s-ember-server" % Http4sVersion,
   "org.http4s" %% "http4s-dsl"          % Http4sVersion
 )
-val Http4sClient         = Seq(
+val Http4sClient       = Seq(
   "org.http4s" %% "http4s-ember-client" % Http4sVersion
 )
-val Http4sCirce          = Seq("org.http4s" %% "http4s-circe" % Http4sVersion)
-val CatsEffect           = "org.typelevel"                    %% "cats-effect"                   % "3.5.2"
-val CatsEffectsTesting   = "org.typelevel"                    %% "cats-effect-testing-scalatest" % "1.5.0" % Test
-val KafkaClient          = "org.apache.kafka"                  % "kafka-clients"                 % "3.6.0"
-val EmbeddedKafka        = "io.github.embeddedkafka"          %% "embedded-kafka"                % "3.6.0" % Test
-val HelidonServer        = "io.helidon.webserver"              % "helidon-webserver"             % "4.0.0"
-val HelidonServerLogging = "io.helidon.logging"                % "helidon-logging-jul"           % "4.0.0"
+val Http4sCirce        = Seq("org.http4s" %% "http4s-circe" % Http4sVersion)
+val CatsEffect         = "org.typelevel"                    %% "cats-effect"                   % "3.5.2"
+val CatsEffectsTesting = "org.typelevel"                    %% "cats-effect-testing-scalatest" % "1.5.0" % Test
+val KafkaClient        = "org.apache.kafka"                  % "kafka-clients"                 % "3.6.0"
+val EmbeddedKafka      = "io.github.embeddedkafka"          %% "embedded-kafka"                % "3.6.0" % Test
+
+val HelidonVersion       = "4.0.0"
+val HelidonServer        = "io.helidon.webserver" % "helidon-webserver"       % HelidonVersion
+val HelidonClient        = "io.helidon.webclient" % "helidon-webclient-http2" % HelidonVersion
+val HelidonServerLogging = "io.helidon.logging"   % "helidon-logging-jul"     % HelidonVersion
 
 // ----------------------- modules --------------------------------
 
@@ -300,9 +303,16 @@ lazy val `tests-helidon-server` = project
   .in(file("end-to-end-tests/tests-helidon-server"))
   .settings(
     endToEndTestsSettings,
-    receiverJsonSerialization := true,
-    receiverAvroSerialization := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonServer, HelidonServerLogging % Test) ++ Circe
   )
   .dependsOn(`functions-receiver`, `functions-avro`)
+  .enablePlugins(FunctionsRemotePlugin)
+
+lazy val `tests-helidon-client` = project
+  .in(file("end-to-end-tests/tests-helidon-client"))
+  .settings(
+    endToEndTestsSettings,
+    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonClient) ++ Circe
+  )
+  .dependsOn(`functions-caller`, `functions-avro`)
   .enablePlugins(FunctionsRemotePlugin)
