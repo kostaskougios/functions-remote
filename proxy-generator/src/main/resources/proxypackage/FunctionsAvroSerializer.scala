@@ -8,6 +8,7 @@ import com.sksamuel.avro4s.AvroInputStreamBuilder
 import java.io.ByteArrayOutputStream
 import scala.util.Using
 import org.apache.avro.Schema
+// add library org.functions-remote:functions-avro:version to your build
 import functions.avro.*
 
 {{#imports}}
