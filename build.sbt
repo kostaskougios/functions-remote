@@ -156,6 +156,13 @@ lazy val fibers = project
     libraryDependencies ++= Seq(ScalaTest)
   )
 
+lazy val `helidon-server` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest, HelidonServer)
+  )
+  .dependsOn(`functions-common`)
+
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
   organization := "functions.end-to-end-tests",
@@ -319,7 +326,7 @@ lazy val `tests-helidon-server` = project
     receiverHelidonRoutes     := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonServer, HelidonServerLogging % Test) ++ Circe
   )
-  .dependsOn(`functions-receiver`, `functions-avro`, `tests-helidon-exports`)
+  .dependsOn(`functions-receiver`, `functions-avro`, `tests-helidon-exports`, `helidon-server`)
   .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `tests-helidon-client` = project
