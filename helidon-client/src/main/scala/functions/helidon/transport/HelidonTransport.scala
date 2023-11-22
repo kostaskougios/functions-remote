@@ -27,7 +27,8 @@ class HelidonTransport(client: WebClient):
   def transportFunction(in: TransportInput): Array[Byte] =
     val m = method(in.coordinates4)
     val u = fullUri(in)
-    val r = m.path(u).submit(in.data, arrayOfBytes)
+    val r = m.path(u).submit(in.data)
     try
-      r.entity()
+      val e = r.entity()
+      if e.hasEntity then e.as(arrayOfBytes) else Array.emptyByteArray
     finally r.close()

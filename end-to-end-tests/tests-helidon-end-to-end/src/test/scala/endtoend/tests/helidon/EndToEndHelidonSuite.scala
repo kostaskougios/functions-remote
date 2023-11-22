@@ -3,6 +3,7 @@ package endtoend.tests.helidon
 import endtoend.tests.helidon.model.Return1
 import functions.helidon.transport.HelidonTransport
 import functions.model.Serializer
+import functions.model.Serializer.Avro
 import io.helidon.http.RequestException
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers.*

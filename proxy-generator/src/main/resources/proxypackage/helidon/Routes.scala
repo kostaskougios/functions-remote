@@ -23,7 +23,7 @@ class {{className}}(
     routing.{{extras.httpMethod}}({{functionN}}Path + "{{extras.pathParams}}", {{functionN}}RequestResponse)
 
   def {{functionN}}RequestResponse(req: ServerRequest, res: ServerResponse): Unit =
-    val in = req.content().as(classOf[Array[Byte]])
+    val in = if req.content().hasEntity then req.content().as(classOf[Array[Byte]]) else Array.emptyByteArray
     {{#extras.hasHttpArgs}}
     val httpArgs = new HelidonParams(req.path.pathParameters)
     {{/extras.hasHttpArgs}}
