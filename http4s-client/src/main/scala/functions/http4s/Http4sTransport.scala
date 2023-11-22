@@ -19,6 +19,7 @@ class Http4sTransport[F[_]: Concurrent](client: Client[F], serverUri: Uri):
   protected def baseUrlOf(coordinates: Coordinates4) =
     serverUri / coordinates.className / coordinates.method / coordinates.version / coordinates.serializer.toString
 
+  // override this to change the uri of a request
   protected def fullUri(input: TransportInput): Uri =
     val coordinates = input.coordinates4
     val baseUrl     = baseUrlOf(coordinates)
