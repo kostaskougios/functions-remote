@@ -299,20 +299,38 @@ lazy val `tests-loom-sockets` = project
   .dependsOn(`loom-sockets-server`, `loom-sockets-client`, `tests-exports`, `tests-receiver`, `functions-receiver`, `functions-avro`)
   .enablePlugins(FunctionsRemotePlugin)
 
+lazy val `tests-helidon-exports` = project
+  .in(file("end-to-end-tests/tests-helidon-exports"))
+  .settings(
+    endToEndTestsSettings,
+    libraryDependencies ++= Seq(ScalaTest),
+    buildInfoKeys    := Seq[BuildInfoKey](organization, name, version, scalaVersion, "exportedArtifact" -> "tests-helidon-server_3"),
+    buildInfoPackage := "endtoend.tests.helidon"
+  )
+  .enablePlugins(BuildInfoPlugin)
+
 lazy val `tests-helidon-server` = project
   .in(file("end-to-end-tests/tests-helidon-server"))
   .settings(
     endToEndTestsSettings,
+    receiverExports           := Seq(s"functions.end-to-end-tests:tests-helidon-exports_3:${version.value}"),
+    receiverJsonSerialization := true,
+    receiverAvroSerialization := true,
+    receiverHelidonRoutes     := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonServer, HelidonServerLogging % Test) ++ Circe
   )
-  .dependsOn(`functions-receiver`, `functions-avro`)
+  .dependsOn(`functions-receiver`, `functions-avro`, `tests-helidon-exports`)
   .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `tests-helidon-client` = project
   .in(file("end-to-end-tests/tests-helidon-client"))
   .settings(
     endToEndTestsSettings,
+    callerExports                := Seq(s"functions.end-to-end-tests:tests-helidon-exports_3:${version.value}"),
+    callerJsonSerialization      := true,
+    callerAvroSerialization      := true,
+    callerHelidonClientTransport := true,
     libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonClient) ++ Circe
   )
-  .dependsOn(`functions-caller`, `functions-avro`)
+  .dependsOn(`functions-caller`, `functions-avro`, `tests-helidon-exports`)
   .enablePlugins(FunctionsRemotePlugin)

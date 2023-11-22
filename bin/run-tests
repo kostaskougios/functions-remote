@@ -1,5 +1,6 @@
 sbt clean \
     tests-exports/publishLocal \
+    tests-helidon-exports/publishLocal \
     tests-cats-exports/publishLocal \
     tests-kafka-exports/publishLocal \
     compile \

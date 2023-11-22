@@ -8,7 +8,8 @@ def generateCaller(
     avroSerialization: Boolean = false,
     jsonSerialization: Boolean = false,
     classloaderTransport: Boolean = false,
-    http4sClientTransport: Boolean = false
+    http4sClientTransport: Boolean = false,
+    helidonClient: Boolean = false
 ): Generator =
   val (avroGen, avroSer) = if avroSerialization then (List(FunctionsAvroSerializerGenerator(), AvroFactories.caller()), List(Serializer.Avro)) else (Nil, Nil)
   val (jsonGen, jsonSer) =
@@ -19,4 +20,4 @@ def generateCaller(
     FunctionsMethodsGenerator(),
     EntryPointFactoryGenerator.caller()
   )
-  new Generator(generatorConfig, generators ++ avroGen ++ jsonGen, avroSer ++ jsonSer, classloaderTransport, http4sClientTransport)
+  new Generator(generatorConfig, generators ++ avroGen ++ jsonGen, avroSer ++ jsonSer, classloaderTransport, http4sClientTransport, helidonClient)

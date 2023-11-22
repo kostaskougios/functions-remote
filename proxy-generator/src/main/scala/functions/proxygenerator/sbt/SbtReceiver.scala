@@ -16,7 +16,8 @@ class SbtReceiver extends java.util.function.Function[Array[Byte], String] {
       GeneratorConfig.withDefaults(),
       params.avroSerialization,
       params.jsonSerialization,
-      params.http4sRoutes
+      params.http4sRoutes,
+      params.helidonRoutes
     ).generate(params.targetDir, params.exportDependency)
     "OK"
 }
@@ -25,6 +26,7 @@ case class SbtReceiverParams(
     avroSerialization: Boolean,
     jsonSerialization: Boolean,
     http4sRoutes: Boolean,
+    helidonRoutes: Boolean,
     targetDir: String,
     exportDependency: String
 )

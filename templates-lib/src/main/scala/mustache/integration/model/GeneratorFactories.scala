@@ -3,7 +3,8 @@ package mustache.integration.model
 case class GeneratorFactories(
     serializers: Many[SerializerS],
     isClassloader: Boolean,
-    http4sClientTransport: Boolean
+    http4sClientTransport: Boolean,
+    helidon: Boolean
 )
 
 case class SerializerS(serializer: String, last: Boolean)

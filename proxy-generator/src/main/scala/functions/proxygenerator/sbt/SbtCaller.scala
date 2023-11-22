@@ -17,7 +17,8 @@ class SbtCaller extends java.util.function.Function[Array[Byte], String] {
       params.avroSerialization,
       params.jsonSerialization,
       params.classloaderTransport,
-      params.http4sClientTransport
+      params.http4sClientTransport,
+      params.helidonClientTransport
     ).generate(params.targetDir, params.exportDependency)
     "OK"
 }
@@ -27,6 +28,7 @@ case class SbtCallerParams(
     jsonSerialization: Boolean,
     classloaderTransport: Boolean,
     http4sClientTransport: Boolean,
+    helidonClientTransport: Boolean,
     targetDir: String,
     exportDependency: String
 )
