@@ -25,6 +25,11 @@ class EndToEndHelidonSuite extends AnyFunSuite:
 
       f(testF, impl)
 
+  test(s"addParams") {
+    withServer(Serializer.Avro): (f, _) =>
+      f.addParams(1, 2L, "3")(4) should be(10)
+  }
+
   for serializer <- Seq(Serializer.Json, Serializer.Avro) do
     test(s"$serializer : noArgs") {
       withServer(serializer): (f, i) =>
@@ -107,4 +112,6 @@ class CountingHelidonFunctionsImpl extends TestsHelidonFunctions:
 
   override def alwaysFails(a: Int): String                             = throw new IllegalArgumentException(s"this method always fails. a=$a")
   override def addParamsEmptySecond(a: Int, l: Long, s: String)(): Int = a + l.toInt + s.toInt
-  override def addParams(a: Int, l: Long, s: String)(b: Int): Int      = a + l.toInt + s.toInt + b
+  override def addParams(a: Int, l: Long, s: String)(b: Int): Int      =
+    val r = a + l.toInt + s.toInt + b
+    r

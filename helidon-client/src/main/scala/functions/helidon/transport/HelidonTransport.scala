@@ -1,6 +1,7 @@
 package functions.helidon.transport
 
 import functions.model.{Coordinates4, TransportInput}
+import io.helidon.http.Status
 import io.helidon.webclient.api.{HttpClientRequest, WebClient}
 
 class HelidonTransport(client: WebClient):
@@ -9,6 +10,9 @@ class HelidonTransport(client: WebClient):
   protected def fullUri(input: TransportInput): String =
     val coordinates = input.coordinates4
     s"${coordinates.className}/${coordinates.method}/${coordinates.version}/${coordinates.serializer}"
+
+  protected def args(input: TransportInput): String =
+    if input.args.isEmpty then "" else "/" + input.args.mkString("/")
 
   protected def method(coords: Coordinates4): HttpClientRequest =
     coords.properties.getOrElse("HTTP-METHOD", "PUT") match
@@ -26,9 +30,11 @@ class HelidonTransport(client: WebClient):
 
   def transportFunction(in: TransportInput): Array[Byte] =
     val m = method(in.coordinates4)
-    val u = fullUri(in)
+    val u = fullUri(in) + args(in)
     val r = m.path(u).submit(in.data)
     try
+      if r.status() != Status.OK_200 then
+        throw new IllegalStateException(s"Server responded with ${r.status()} for:\nuri = $u\ncoordinates = ${in.coordinates4}")
       val e = r.entity()
       if e.hasEntity then e.as(arrayOfBytes) else Array.emptyByteArray
     finally r.close()
