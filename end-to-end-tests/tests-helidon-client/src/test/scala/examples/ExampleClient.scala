@@ -10,7 +10,7 @@ import io.helidon.webclient.api.WebClient
     .build()
 
   println(client)
-  val getResponse  = client.get.path("/simple-greet").request(classOf[Array[Byte]])
+  val getResponse  = client.get.path("/simple-greet/Kos").request(classOf[Array[Byte]])
   println(new String(getResponse.entity))
   val postResponse = client.post("/test-post").submit("Kostas".getBytes, classOf[Array[Byte]])
   println(new String(postResponse.entity))
