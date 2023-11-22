@@ -1,6 +1,6 @@
 package examples
 
-import io.helidon.webclient.api.WebClient
+import io.helidon.webclient.api.{ClientResponseTyped, WebClient}
 
 // https://helidon.io/docs/v4/#/se/webclient
 @main def exampleClient(): Unit =
@@ -10,7 +10,13 @@ import io.helidon.webclient.api.WebClient
     .build()
 
   println(client)
-  val getResponse  = client.get.path("/simple-greet/Kos").request(classOf[Array[Byte]])
+
+  def simpleGreetRoute(client: WebClient): ClientResponseTyped[Array[Byte]] = client.get.path("/simple-greet/Kos").request(classOf[Array[Byte]])
+  def testPostRoute(client: WebClient): ClientResponseTyped[Array[Byte]]    = client.post("/test-post").submit("Kostas".getBytes, classOf[Array[Byte]])
+
+  val getResponse  = simpleGreetRoute(client)
   println(new String(getResponse.entity))
-  val postResponse = client.post("/test-post").submit("Kostas".getBytes, classOf[Array[Byte]])
+  getResponse.close()
+  val postResponse = testPostRoute(client)
   println(new String(postResponse.entity))
+  postResponse.close()
