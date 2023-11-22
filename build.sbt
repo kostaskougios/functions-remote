@@ -348,3 +348,11 @@ lazy val `tests-helidon-client` = project
   )
   .dependsOn(`functions-caller`, `functions-avro`, `tests-helidon-exports`, `helidon-client`)
   .enablePlugins(FunctionsRemotePlugin)
+
+lazy val `tests-helidon-end-to-end` = project
+  .in(file("end-to-end-tests/tests-helidon-end-to-end"))
+  .settings(
+    endToEndTestsSettings,
+    libraryDependencies ++= Seq(ScalaTest)
+  )
+  .dependsOn(`tests-helidon-server`, `tests-helidon-client`)

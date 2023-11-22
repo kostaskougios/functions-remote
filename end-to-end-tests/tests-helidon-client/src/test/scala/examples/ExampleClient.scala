@@ -1,15 +1,12 @@
 package examples
 
-import endtoend.tests.helidon.TestsHelidonFunctionsCallerFactory
+import endtoend.tests.helidon.{HelidonClient, TestsHelidonFunctionsCallerFactory}
 import functions.helidon.transport.HelidonTransport
 import io.helidon.webclient.api.WebClient
 
 // https://helidon.io/docs/v4/#/se/webclient
 @main def exampleClient(): Unit =
-  val client = WebClient
-    .builder()
-    .baseUri("http://localhost:8080")
-    .build()
+  val client = HelidonClient.newClient(8080)
 
   val transport = new HelidonTransport(client)
   val fAvro     = TestsHelidonFunctionsCallerFactory.newAvroTestsHelidonFunctions(transport.transportFunction)
