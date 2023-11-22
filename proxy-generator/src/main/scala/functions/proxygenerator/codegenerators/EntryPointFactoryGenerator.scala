@@ -40,7 +40,8 @@ object EntryPointFactoryGenerator:
       "proxypackage.ReceiverFactory",
       Seq(
         Template("Generic", ResourceTemplatesSourceLocation, "proxypackage.receiverfactory.Generic"),
-        Template("Http4s", ResourceTemplatesSourceLocation, "proxypackage.receiverfactory.Http4s")
+        Template("Http4s", ResourceTemplatesSourceLocation, "proxypackage.receiverfactory.Http4s"),
+        Template("Helidon", ResourceTemplatesSourceLocation, "proxypackage.receiverfactory.Helidon")
       )
     )
   )

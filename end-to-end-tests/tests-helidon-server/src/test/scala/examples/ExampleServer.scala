@@ -21,8 +21,7 @@ import io.helidon.webserver.http.{HttpRouting, ServerRequest, ServerResponse}
     routing.get("/simple-greet/{name}", testGet)
     routing.post("/test-post", testPost)
 
-  val impl   = TestsHelidonFunctionsReceiverFactory.newAvroTestsHelidonFunctions(new TestHelidonFunctionsImpl)
-  val testsHelidonFunctionsRoutes = TestsHelidonFunctionsHelidonRoutes(impl, Avro)
+  val testsHelidonFunctionsRoutes = TestsHelidonFunctionsReceiverFactory.newAvroTestsHelidonFunctionsHelidonRoutes(new TestHelidonFunctionsImpl)
 
   val routeBuilder = HttpRouting.builder()
   routing(routeBuilder)
