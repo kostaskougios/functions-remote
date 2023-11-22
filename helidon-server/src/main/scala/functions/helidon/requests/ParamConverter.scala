@@ -7,4 +7,4 @@ object ParamConverter:
   given ParamConverter[Int]     = _.toInt
   given ParamConverter[Long]    = _.toLong
   given ParamConverter[Boolean] = _.toBoolean
-  given ParamConverter[String]  = identity
+  given ParamConverter[String]  = identity(_)

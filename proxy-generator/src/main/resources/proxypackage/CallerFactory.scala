@@ -14,3 +14,6 @@ object {{className}}:
 {{{IsolatedClassLoader}}}
   {{! ------------------------------------ Http4s transports      ---------------------------------------------- }}
 {{{Http4sTransports}}}
+  {{! ------------------------------------ Helidon transports     ---------------------------------------------- }}
+{{{HelidonTransports}}}
+

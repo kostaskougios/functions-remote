@@ -20,8 +20,8 @@ class EndToEndHelidonSuite extends AnyFunSuite:
       val client    = HelidonClient.newClient(server.port)
       val transport = new HelidonTransport(client)
       val testF     = serializer match
-        case Serializer.Avro => TestsHelidonFunctionsCallerFactory.newAvroTestsHelidonFunctions(transport.transportFunction)
-        case Serializer.Json => TestsHelidonFunctionsCallerFactory.newJsonTestsHelidonFunctions(transport.transportFunction)
+        case Serializer.Avro => TestsHelidonFunctionsCallerFactory.newHelidonAvroTestsHelidonFunctions(transport)
+        case Serializer.Json => TestsHelidonFunctionsCallerFactory.newHelidonJsonTestsHelidonFunctions(transport)
 
       f(testF, impl)
 

@@ -29,6 +29,8 @@ class HelidonTransport(client: WebClient):
   private val arrayOfBytes = classOf[Array[Byte]]
 
   def transportFunction(in: TransportInput): Array[Byte] =
+    if in.argsData.nonEmpty then
+      throw new IllegalArgumentException("argsData has serialized data, did you use the correct helidon factory methods for the caller?")
     val m = method(in.coordinates4)
     val u = fullUri(in) + args(in)
     val r = m.path(u).submit(in.data)
