@@ -8,7 +8,13 @@ class {{className}}(
   receiver: {{exportedType.name}}Receiver{{exportedTypeTypeArgs}},
   serializer: Serializer
 ):
+  // override this to change default route paths
   def pathFor(coordinates: Coordinates3) = s"${coordinates.className}/${coordinates.method}/${coordinates.version}/${serializer.toString}"
+
+  def routes(routing: HttpRouting.Builder):Unit =
+    {{#functions}}
+    {{functionN}}Route(routing)
+    {{/functions}}
 
   {{#functions}}
   private val {{functionN}}Path = pathFor({{methodParams}}.Methods.{{caseClassName}})
