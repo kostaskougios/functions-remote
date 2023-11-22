@@ -14,7 +14,9 @@ class TestHelidonFunctionsImpl extends TestsHelidonFunctions:
 
   override def addLR(a: Int, b: Int): List[Return1] = List(Return1(a + b))
 
-  override def divide(a: Int, b: Int): Either[Int, String] = Left(a + b)
+  override def divide(a: Int, b: Int): Either[Int, String] =
+    try Left(a / b)
+    catch case e: Throwable => Right(e.getMessage)
 
   override def alwaysFails(a: Int): String = throw new IllegalArgumentException(s"this method always fails. a=$a")
 
