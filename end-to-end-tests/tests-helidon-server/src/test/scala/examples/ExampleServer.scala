@@ -22,11 +22,11 @@ import io.helidon.webserver.http.{HttpRouting, ServerRequest, ServerResponse}
     routing.post("/test-post", testPost)
 
   val impl   = TestsHelidonFunctionsReceiverFactory.newAvroTestsHelidonFunctions(new TestHelidonFunctionsImpl)
-  val routes = TestsHelidonFunctionsHelidonRoutes(impl, Avro)
+  val testsHelidonFunctionsRoutes = TestsHelidonFunctionsHelidonRoutes(impl, Avro)
 
   val routeBuilder = HttpRouting.builder()
   routing(routeBuilder)
-  routes.routes(routeBuilder)
+  testsHelidonFunctionsRoutes.routes(routeBuilder)
 
   val server = WebServer.builder.port(8080).routing(routeBuilder).build.start
   System.out.println("WEB server is up! http://localhost:" + server.port + "/simple-greet")
