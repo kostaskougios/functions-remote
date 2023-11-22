@@ -22,10 +22,12 @@ class HelidonTransport(client: WebClient):
       case "TRACE"   => client.trace()
       case "PATCH"   => client.patch()
 
+  private val arrayOfBytes = classOf[Array[Byte]]
+
   def transportFunction(in: TransportInput): Array[Byte] =
     val m = method(in.coordinates4)
     val u = fullUri(in)
-    val r = m.path(u).request(classOf[Array[Byte]])
+    val r = m.path(u).submit(in.data, arrayOfBytes)
     try
       r.entity()
     finally r.close()
