@@ -13,6 +13,9 @@ class {{className}}(
   private val {{functionN}}Path = pathFor({{methodParams}}.Methods.{{caseClassName}})
   def {{functionN}}Route(req: ServerRequest, res: ServerResponse): Unit =
     val in = req.content().as(classOf[Array[Byte]])
+    {{#extras.httpArgs}}
+    val {{name}} = req.path.pathParameters.get("{{name}}")
+    {{/extras.httpArgs}}
     val result = receiver.{{functionN}}WithFrameworkParams{{firstParamsCallAndParens}}(ReceiverInput(in))
     res.send(result)
 

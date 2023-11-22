@@ -5,7 +5,7 @@ import functions.proxygenerator.codegenerators.GenericTypeGenerator.NamingConven
 import functions.proxygenerator.codegenerators.model.Func
 import functions.tastyextractor.model.{EMethod, EType}
 import mustache.integration.MustacheTemplate
-import mustache.integration.model.ResourceTemplatesSourceLocation
+import mustache.integration.model.{Many, ResourceTemplatesSourceLocation}
 
 object HelidonRoutesGenerator:
   object DefaultNamingConventions extends GenericTypeGenerator.NamingConventions:
@@ -20,7 +20,7 @@ object HelidonRoutesGenerator:
     (tpe, method) =>
       val (httpArgs, serializableArgs) = Func.toParams(method)
       RoutesExtras(
-        httpArgs.params.nonEmpty,
+        httpArgs.params.map(p => ReqParam(p.name)),
         httpMethod(method).getOrElse("PUT")
       )
   )
@@ -39,6 +39,8 @@ object HelidonRoutesGenerator:
       case _                                         => None
 
 case class RoutesExtras(
-    hasHttpArgs: Boolean,
+    httpArgs: Many[ReqParam],
     httpMethod: String
 )
+
+case class ReqParam(name: String)
