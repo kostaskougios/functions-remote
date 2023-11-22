@@ -30,7 +30,7 @@ object HelidonRoutesGenerator:
   )
 
   private def toPathParams(params: Seq[Param]): String =
-    if params.isEmpty then "" else "/" + params.map(p => s"{{${p.name}}}").mkString("/")
+    if params.isEmpty then "" else "/" + params.map(p => s"{${p.name}}").mkString("/")
 
   def httpMethod(method: EMethod): Option[String] =
     method.scalaDocs match

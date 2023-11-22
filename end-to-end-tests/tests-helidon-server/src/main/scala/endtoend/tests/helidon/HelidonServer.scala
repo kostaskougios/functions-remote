@@ -8,10 +8,6 @@ object HelidonServer:
   def withServerDo[R](port: Int, routes: HttpRouting.Builder => Unit*)(f: WebServer => R): R =
     LogConfig.configureRuntime()
 
-    val impl       = new TestHelidonFunctionsImpl
-    val avroRoutes = TestsHelidonFunctionsReceiverFactory.newAvroTestsHelidonFunctionsHelidonRoutes(impl)
-    val jsonRoutes = TestsHelidonFunctionsReceiverFactory.newJsonTestsHelidonFunctionsHelidonRoutes(impl)
-
     val routeBuilder = HttpRouting.builder()
     for r <- routes do r(routeBuilder)
 
