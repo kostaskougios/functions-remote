@@ -1,7 +1,6 @@
 package examples
 
-import endtoend.tests.helidon.{TestHelidonFunctionsImpl, TestsHelidonFunctionsHelidonRoutes, TestsHelidonFunctionsReceiverFactory}
-import functions.model.Serializer.Avro
+import endtoend.tests.helidon.{TestHelidonFunctionsImpl, TestsHelidonFunctionsReceiverFactory}
 import io.helidon.logging.common.LogConfig
 import io.helidon.webserver.WebServer
 import io.helidon.webserver.http.{HttpRouting, ServerRequest, ServerResponse}
@@ -21,11 +20,14 @@ import io.helidon.webserver.http.{HttpRouting, ServerRequest, ServerResponse}
     routing.get("/simple-greet/{name}", testGet)
     routing.post("/test-post", testPost)
 
-  val testsHelidonFunctionsRoutes = TestsHelidonFunctionsReceiverFactory.newAvroTestsHelidonFunctionsHelidonRoutes(new TestHelidonFunctionsImpl)
+  val impl       = new TestHelidonFunctionsImpl
+  val avroRoutes = TestsHelidonFunctionsReceiverFactory.newAvroTestsHelidonFunctionsHelidonRoutes(impl)
+  val jsonRoutes = TestsHelidonFunctionsReceiverFactory.newJsonTestsHelidonFunctionsHelidonRoutes(impl)
 
   val routeBuilder = HttpRouting.builder()
   routing(routeBuilder)
-  testsHelidonFunctionsRoutes.routes(routeBuilder)
+  avroRoutes.routes(routeBuilder)
+  jsonRoutes.routes(routeBuilder)
 
   val server = WebServer.builder.port(8080).routing(routeBuilder).build.start
   System.out.println("WEB server is up! http://localhost:" + server.port + "/simple-greet")
