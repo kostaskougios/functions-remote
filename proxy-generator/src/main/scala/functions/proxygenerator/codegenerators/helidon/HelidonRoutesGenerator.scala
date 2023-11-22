@@ -5,7 +5,8 @@ import functions.proxygenerator.codegenerators.GenericTypeGenerator.NamingConven
 import functions.proxygenerator.codegenerators.model.Func
 import functions.tastyextractor.model.{EMethod, EType}
 import mustache.integration.MustacheTemplate
-import mustache.integration.model.{Many, ResourceTemplatesSourceLocation}
+import mustache.integration.model.{Many, Param, ResourceTemplatesSourceLocation}
+
 import scala.language.implicitConversions
 
 object HelidonRoutesGenerator:
@@ -23,9 +24,13 @@ object HelidonRoutesGenerator:
       RoutesExtras(
         httpArgs.params.nonEmpty,
         httpArgs.params.map(p => ReqParam(p.name, p.`type`)),
-        httpMethod(method).getOrElse("put")
+        httpMethod(method).getOrElse("put"),
+        toPathParams(httpArgs.params)
       )
   )
+
+  private def toPathParams(params: Seq[Param]): String =
+    if params.isEmpty then "" else "/" + params.map(p => s"{{${p.name}}}").mkString("/")
 
   def httpMethod(method: EMethod): Option[String] =
     method.scalaDocs match
@@ -43,7 +48,8 @@ object HelidonRoutesGenerator:
 case class RoutesExtras(
     hasHttpArgs: Boolean,
     httpArgs: Many[ReqParam],
-    httpMethod: String
+    httpMethod: String,
+    pathParams: String
 )
 
 case class ReqParam(name: String, tpe: String)

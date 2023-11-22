@@ -14,7 +14,7 @@ class {{className}}(
   private val {{functionN}}Path = pathFor({{methodParams}}.Methods.{{caseClassName}})
 
   def {{functionN}}Route(routing: HttpRouting.Builder): Unit =
-    routing.{{extras.httpMethod}}(s"${{functionN}}Path", {{functionN}}RequestResponse)
+    routing.{{extras.httpMethod}}({{functionN}}Path + "{{extras.pathParams}}", {{functionN}}RequestResponse)
 
   def {{functionN}}RequestResponse(req: ServerRequest, res: ServerResponse): Unit =
     val in = req.content().as(classOf[Array[Byte]])
