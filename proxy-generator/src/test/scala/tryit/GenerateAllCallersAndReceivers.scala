@@ -7,3 +7,4 @@ def generateAllCallersAndReceivers(): Unit =
   generateReceiverAndCallerApp()
   generateCatsExporterAndImporter()
   generateKafkaReceiverAndCallerApp()
+  generateHelidonReceiverAndCallerApp()
