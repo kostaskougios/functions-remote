@@ -1,3 +1,9 @@
+#!/bin/sh
+
+# first lets publish the proxy generator
+sbt clean publishLocal
+
+# then rerun sbt so that it picks up the modified generator and run tests
 sbt clean \
     tests-exports/publishLocal \
     tests-helidon-exports/publishLocal \
