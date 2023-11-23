@@ -2,9 +2,9 @@ package endtoend.tests.helidon
 
 import endtoend.tests.helidon.model.Return1
 import functions.helidon.transport.HelidonTransport
+import functions.helidon.transport.exceptions.RequestFailedException
 import functions.model.Serializer
 import functions.model.Serializer.Avro
-import io.helidon.http.RequestException
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers.*
 
@@ -24,11 +24,6 @@ class EndToEndHelidonSuite extends AnyFunSuite:
         case Serializer.Json => TestsHelidonFunctionsCallerFactory.newHelidonJsonTestsHelidonFunctions(transport)
 
       f(testF, impl)
-
-  test(s"addParams") {
-    withServer(Serializer.Avro): (f, _) =>
-      f.addParams(1, 2L, "3")(4) should be(10)
-  }
 
   for serializer <- Seq(Serializer.Json, Serializer.Avro) do
     test(s"$serializer : noArgs") {
@@ -76,7 +71,7 @@ class EndToEndHelidonSuite extends AnyFunSuite:
 
     test(s"$serializer : alwaysFails") {
       withServer(serializer): (f, _) =>
-        a[RequestException] should be thrownBy f.alwaysFails(1)
+        a[RequestFailedException] should be thrownBy f.alwaysFails(1)
     }
 
     test(s"$serializer : addParamsEmptySecond") {
@@ -110,7 +105,7 @@ class CountingHelidonFunctionsImpl extends TestsHelidonFunctions:
     try Left(a / b)
     catch case e: Throwable => Right(e.getMessage)
 
-  override def alwaysFails(a: Int): String                             = throw new IllegalArgumentException(s"this method always fails. a=$a")
+  override def alwaysFails(a: Int): String                             = throw new RuntimeException(s"this method always fails. a=$a")
   override def addParamsEmptySecond(a: Int, l: Long, s: String)(): Int = a + l.toInt + s.toInt
   override def addParams(a: Int, l: Long, s: String)(b: Int): Int      =
     val r = a + l.toInt + s.toInt + b

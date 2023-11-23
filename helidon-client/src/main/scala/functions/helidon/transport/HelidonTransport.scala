@@ -1,5 +1,6 @@
 package functions.helidon.transport
 
+import functions.helidon.transport.exceptions.RequestFailedException
 import functions.model.{Coordinates4, TransportInput}
 import io.helidon.http.Status
 import io.helidon.webclient.api.{HttpClientRequest, WebClient}
@@ -35,8 +36,8 @@ class HelidonTransport(client: WebClient):
     val u = fullUri(in) + args(in)
     val r = m.path(u).submit(in.data)
     try
-      if r.status() != Status.OK_200 then
-        throw new IllegalStateException(s"Server responded with ${r.status()} for:\nuri = $u\ncoordinates = ${in.coordinates4}")
+      if r.status != Status.OK_200 then
+        throw new RequestFailedException(r.status, s"Server responded with ${r.status()} for:\nuri = $u\ncoordinates = ${in.coordinates4}")
       val e = r.entity()
       if e.hasEntity then e.as(arrayOfBytes) else Array.emptyByteArray
     finally r.close()
