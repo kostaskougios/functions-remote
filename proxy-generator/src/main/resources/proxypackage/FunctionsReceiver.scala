@@ -15,7 +15,7 @@ class {{className}}{{frameworkTypeArgFull}}(
     {{functionN}}ReturnTypeSerializer: {{resultNNoFramework}} => Array[Byte],
     {{/isUnitReturnType}}
   {{/functions}}
-    f: {{exportedTypeFull}}
+    f$: {{exportedTypeFull}}
 ):
 
   {{#functions}}
