@@ -8,8 +8,8 @@ class {{className}}(
   receiver: {{exportedType.name}}Receiver{{exportedTypeTypeArgs}},
   serializer: Serializer
 ):
-  // override this to change default route paths
-  def pathFor(coordinates: Coordinates3) = s"${coordinates.className}/${coordinates.method}/${coordinates.version}/${serializer.toString}"
+  // override this to change default route paths, always start with a /
+  def pathFor(coordinates: Coordinates3) = s"/${coordinates.className}/${coordinates.method}/${coordinates.version}/${serializer.toString}"
 
   def routes(routing: HttpRouting.Builder):Unit =
     {{#functions}}
