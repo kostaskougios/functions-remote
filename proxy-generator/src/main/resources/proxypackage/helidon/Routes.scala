@@ -9,16 +9,13 @@ class {{className}}(
   serializer: Serializer,
   responseProcessor: ResponseProcessor
 ):
-  // override this to change default route paths, always start with a /
-  def pathFor(coordinates: Coordinates3) = s"/${coordinates.className}/${coordinates.method}/${coordinates.version}/${serializer.toString}"
-
   def routes(routing: HttpRouting.Builder):Unit =
     {{#functions}}
     {{functionN}}Route(routing)
     {{/functions}}
 
   {{#functions}}
-  private val {{functionN}}Path = pathFor({{methodParams}}.Methods.{{caseClassName}})
+  private val {{functionN}}Path = responseProcessor.pathFor({{methodParams}}.Methods.{{caseClassName}}.withSerializer(serializer))
 
   def {{functionN}}Route(routing: HttpRouting.Builder): Unit =
     routing.{{extras.httpMethod}}({{functionN}}Path + "{{extras.pathParams}}", {{functionN}}RequestResponse)
