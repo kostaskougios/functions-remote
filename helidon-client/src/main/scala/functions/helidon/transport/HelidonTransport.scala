@@ -1,8 +1,9 @@
 package functions.helidon.transport
 
 import functions.helidon.transport.exceptions.RequestFailedException
-import functions.model.{Coordinates4, TransportInput}
-import io.helidon.http.Status
+import functions.model.Serializer.{Avro, Json}
+import functions.model.TransportInput
+import io.helidon.http.{HeaderNames, Status}
 import io.helidon.webclient.api.{HttpClientRequest, WebClient}
 
 class HelidonTransport(client: WebClient):
@@ -15,8 +16,10 @@ class HelidonTransport(client: WebClient):
   protected def args(input: TransportInput): String =
     if input.args.isEmpty then "" else "/" + input.args.mkString("/")
 
-  protected def method(coords: Coordinates4): HttpClientRequest =
-    coords.properties.getOrElse("HTTP-METHOD", "PUT") match
+  /** override this to customize the http method
+    */
+  protected def method(in: TransportInput): HttpClientRequest =
+    in.coordinates4.properties.getOrElse("HTTP-METHOD", "PUT") match
       case "GET"     => client.get()
       case "PUT"     => client.put()
       case "POST"    => client.post()
@@ -29,12 +32,21 @@ class HelidonTransport(client: WebClient):
 
   private val arrayOfBytes = classOf[Array[Byte]]
 
+  /** Override this to customize http headers
+    */
+  protected def headers(req: HttpClientRequest, in: TransportInput): Unit =
+    in.coordinates4.serializer match
+      case Avro => req.header(HeaderNames.CONTENT_TYPE, "application/avro")
+      case Json => req.header(HeaderNames.CONTENT_TYPE, "application/json")
+
   def transportFunction(in: TransportInput): Array[Byte] =
     if in.argsData.nonEmpty then
       throw new IllegalArgumentException("argsData has serialized data, did you use the correct helidon factory methods for the caller?")
-    val m = method(in.coordinates4)
+    val m = method(in)
     val u = fullUri(in) + args(in)
-    val r = m.path(u).submit(in.data)
+    val p = m.path(u)
+    headers(p, in)
+    val r = p.submit(in.data)
     try
       if r.status != Status.OK_200 then
         throw new RequestFailedException(r.status, s"Server responded with ${r.status()} for:\nuri = $u\ncoordinates = ${in.coordinates4}")
