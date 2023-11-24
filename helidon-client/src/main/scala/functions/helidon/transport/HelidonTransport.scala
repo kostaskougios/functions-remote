@@ -8,6 +8,8 @@ import io.helidon.webclient.api.{HttpClientRequest, WebClient}
 
 class HelidonTransport(client: WebClient):
 
+  // WebClient:  https://helidon.io/docs/v4/#/se/webclient
+
   // override this to change the uri of a request
   protected def fullUri(input: TransportInput): String =
     val coordinates = input.coordinates4
@@ -18,17 +20,17 @@ class HelidonTransport(client: WebClient):
 
   /** override this to customize the http method
     */
-  protected def method(in: TransportInput): HttpClientRequest =
+  protected def method(in: TransportInput, uri: String): HttpClientRequest =
     in.coordinates4.properties.getOrElse("HTTP-METHOD", "PUT") match
-      case "GET"     => client.get()
-      case "PUT"     => client.put()
-      case "POST"    => client.post()
-      case "HEAD"    => client.head()
-      case "DELETE"  => client.delete()
+      case "GET"     => client.get(uri)
+      case "PUT"     => client.put(uri)
+      case "POST"    => client.post(uri)
+      case "HEAD"    => client.head(uri)
+      case "DELETE"  => client.delete(uri)
       case "CONNECT" => ???
-      case "OPTIONS" => client.options()
-      case "TRACE"   => client.trace()
-      case "PATCH"   => client.patch()
+      case "OPTIONS" => client.options(uri)
+      case "TRACE"   => client.trace(uri)
+      case "PATCH"   => client.patch(uri)
 
   private val arrayOfBytes = classOf[Array[Byte]]
 
@@ -42,9 +44,9 @@ class HelidonTransport(client: WebClient):
   def transportFunction(in: TransportInput): Array[Byte] =
     if in.argsData.nonEmpty then
       throw new IllegalArgumentException("argsData has serialized data, did you use the correct helidon factory methods for the caller?")
-    val m = method(in)
+
     val u = fullUri(in) + args(in)
-    val p = m.path(u)
+    val p = method(in, u)
     headers(p, in)
     val r = p.submit(in.data)
     try

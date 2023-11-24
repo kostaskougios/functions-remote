@@ -7,4 +7,5 @@ object HelidonClient:
     WebClient
       .builder()
       .baseUri(s"http://localhost:$serverPort")
+      .keepAlive(true)
       .build()

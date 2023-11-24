@@ -25,6 +25,10 @@ class EndToEndHelidonSuite extends AnyFunSuite:
 
       f(testF, impl)
 
+//  test("doesn't open too many sockets") {
+//    withServer(Serializer.Avro): (f, _) =>
+//      for _ <- 1 to 30_000 do f.add(1, 2)
+//  }
   for serializer <- Seq(Serializer.Json, Serializer.Avro) do
     test(s"$serializer : noArgs") {
       withServer(serializer): (f, i) =>
