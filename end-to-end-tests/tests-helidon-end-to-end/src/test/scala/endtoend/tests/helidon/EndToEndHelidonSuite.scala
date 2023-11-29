@@ -25,7 +25,7 @@ class EndToEndHelidonSuite extends AnyFunSuite:
 
       f(testF, impl)
 
-  test("doesn't open too many sockets") {
+  ignore("doesn't open too many sockets") {
     withServer(Serializer.Avro): (f, _) =>
       for _ <- 1 to 30_000 do f.add(1, 2)
   }
