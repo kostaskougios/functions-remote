@@ -97,7 +97,7 @@ private class StructureExtractorInspector extends Inspector:
 class StructureExtractor:
   def fromJars(jars: List[String]): Seq[EPackage] =
     val inspector = new StructureExtractorInspector
-    TastyInspector.inspectAllTastyFiles(Nil, jars, Nil)(inspector)
+    TastyInspector.inspectAllTastyFiles(Nil, List(jars.head), jars.tail)(inspector)
 
     for
       p <- inspector.packages.toSeq
@@ -105,8 +105,8 @@ class StructureExtractor:
     yield p.copy(types = List(t))
 
   def forDependency(generatorConfig: GeneratorConfig, dep: String): Seq[EPackage] =
-    val jar = generatorConfig.exportJar(dep)
-    fromJars(List(jar))
+    val jars = generatorConfig.exportJar(dep)
+    fromJars(jars.toList)
 
 object StructureExtractor:
   def apply() = new StructureExtractor
