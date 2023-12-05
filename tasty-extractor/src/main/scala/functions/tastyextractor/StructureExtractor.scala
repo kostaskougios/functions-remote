@@ -23,6 +23,9 @@ private class StructureExtractorInspector extends Inspector:
         val args  = at.args.map(eTypeOf)
         val tycon = at.tycon
         EType(tycon.typeSymbol.name, tpe.show, args, None, None, Nil)
+      case c: ConstantType =>
+        // not sure if this works:
+        EType(c.typeSymbol.name, tpe.show, Nil, None, None, Nil)
 
     object MethodTraverser extends TreeAccumulator[List[EMethod]]:
       def foldTree(existing: List[EMethod], tree: Tree)(owner: Symbol): List[EMethod] =
@@ -34,8 +37,9 @@ private class StructureExtractorInspector extends Inspector:
 
         val r = tree match
           case d: DefDef if !d.name.contains("$") && d.name != "<init>" =>
-            val m = EMethod(d.name, d.paramss.map(pc => pc.params.map(paramsCode)), eTypeOf(d.returnTpt.tpe), d.symbol.docstring)
-            List(m)
+            BetterErrors.betterError(s"Error while parsing. Owner: $owner method: ${d.show}"):
+              val m = EMethod(d.name, d.paramss.map(pc => pc.params.map(paramsCode)), eTypeOf(d.returnTpt.tpe), d.symbol.docstring)
+              List(m)
           case _                                                        =>
             Nil
         foldOverTree(existing ++ r, tree)(owner)
