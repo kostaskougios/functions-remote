@@ -101,6 +101,10 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
       runTest(serializer): f =>
         f.addParams(1, 3, "5")(7) should be(16)
 
+    test(s"$serializer: addParamsEmptySecond"):
+      runTest(serializer): f =>
+        f.addParamsEmptySecond(1, 3, "5")() should be(9)
+
 //    test(s"$serializer: calling multiple functions sequentially"):
 //      runTest(serializer): f =>
 //        for i <- 1 to 10000 do
