@@ -55,3 +55,7 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
     test(s"$serializer: add"):
       runTest(serializer): f =>
         f.add(1, 3) should be(4)
+
+    test(s"$serializer: calling multiple functions"):
+      runTest(serializer): f =>
+        for i <- 1 to 1000 do f.add(i, 1) should be(i + 1)
