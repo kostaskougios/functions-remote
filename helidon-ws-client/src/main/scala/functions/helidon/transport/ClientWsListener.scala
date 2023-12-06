@@ -16,21 +16,23 @@ class ClientWsListener(fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis
   private val latchMap = collection.concurrent.TrieMap.empty[Long, CountDownLatch]
   private val dataMap  = collection.concurrent.TrieMap.empty[Long, (Int, Array[Byte])]
 
-  def send(correlationId: Long, coordinates4: Coordinates4, a: BufferData): Array[Byte] =
-    toSend.put(a)
-    val latch                  = new CountDownLatch(1)
+  def send(correlationId: Long, coordinates4: Coordinates4, buf: BufferData): Array[Byte] =
+    toSend.put(buf)
+    val latch = new CountDownLatch(1)
     latchMap.put(correlationId, latch)
-    latch.await(sendResponseTimeoutInMillis, TimeUnit.MILLISECONDS)
-    latchMap -= correlationId
-    val (result, receivedData) = dataMap.getOrElse(
-      correlationId,
-      throw new IllegalStateException(
-        s"No data found for correlationId=$correlationId after waiting for a response for $sendResponseTimeoutInMillis millis for coordinates $coordinates4"
+    try
+      latch.await(sendResponseTimeoutInMillis, TimeUnit.MILLISECONDS)
+      val (result, receivedData) = dataMap.getOrElse(
+        correlationId,
+        throw new IllegalStateException(
+          s"No data found for correlationId=$correlationId after waiting for a response for $sendResponseTimeoutInMillis millis for coordinates $coordinates4"
+        )
       )
-    )
-    dataMap -= correlationId
-    if result == 0 then receivedData
-    else throw new RemoteFunctionFailedException(new String(receivedData, "UTF-8"))
+      if result == 0 then receivedData
+      else throw new RemoteFunctionFailedException(new String(receivedData, "UTF-8"))
+    finally
+      latchMap -= correlationId
+      dataMap -= correlationId
 
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean): Unit =
     val result = buffer.read()
