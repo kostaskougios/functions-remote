@@ -33,7 +33,7 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
 
   def withTransport[R](serverPort: Int, serializer: Serializer)(f: TestsHelidonFunctions => R): R =
     FiberExecutor.withFiberExecutor: executor =>
-      val transport = new HelidonWsTransport(executor)
+      val transport = new HelidonWsTransport(executor, 4000)
       val uri       = URI.create(s"ws://localhost:$serverPort")
       val webClient = WsClient
         .builder()
@@ -105,17 +105,17 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
       runTest(serializer): f =>
         f.addParamsEmptySecond(1, 3, "5")() should be(9)
 
-//    test(s"$serializer: calling multiple functions sequentially"):
-//      runTest(serializer): f =>
-//        for i <- 1 to 10000 do
-//          f.add(i, 1) should be(i + 1)
-//          f.addLR(i, 1) should be(List(Return1(i + 1)))
-//
-//    test(s"$serializer: calling multiple functions concurrently"):
-//      runTest(serializer): f =>
-//        FiberExecutor.withFiberExecutor: executor =>
-//          val fibers = for i <- 1 to 10000 yield executor.submit:
-//            f.add(i, 1) should be(i + 1)
-//            f.addLR(i, 1) should be(List(Return1(i + 1)))
-//
-//          for f <- fibers do f.get()
+    test(s"$serializer: calling multiple functions sequentially"):
+      runTest(serializer): f =>
+        for i <- 1 to 10000 do
+          f.add(i, 1) should be(i + 1)
+          f.addLR(i, 1) should be(List(Return1(i + 1)))
+
+    test(s"$serializer: calling multiple functions concurrently"):
+      runTest(serializer): f =>
+        FiberExecutor.withFiberExecutor: executor =>
+          val fibers = for i <- 1 to 10000 yield executor.submit:
+            f.add(i, 1) should be(i + 1)
+            f.addLR(i, 1) should be(List(Return1(i + 1)))
+
+          for f <- fibers do f.get()

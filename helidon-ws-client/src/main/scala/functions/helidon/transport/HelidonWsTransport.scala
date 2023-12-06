@@ -8,8 +8,8 @@ import io.helidon.websocket.WsListener
 import java.util.concurrent.atomic.AtomicLong
 import scala.util.Using.Releasable
 
-class HelidonWsTransport(fiberExecutor: FiberExecutor):
-  private val wsListener    = new ClientWsListener(fiberExecutor)
+class HelidonWsTransport(fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis: Long):
+  private val wsListener    = new ClientWsListener(fiberExecutor, sendResponseTimeoutInMillis)
   private val correlationId = new AtomicLong(0)
 
   def clientWsListener: WsListener = wsListener

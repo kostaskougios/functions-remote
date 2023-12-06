@@ -6,11 +6,11 @@ import functions.helidon.transport.exceptions.RemoteFunctionFailedException
 import io.helidon.common.buffers.BufferData
 import io.helidon.websocket.{WsListener, WsSession}
 
-import java.util.concurrent.{CountDownLatch, LinkedBlockingQueue}
+import java.util.concurrent.{CountDownLatch, LinkedBlockingQueue, TimeUnit}
 import scala.annotation.tailrec
 import scala.util.Using.Releasable
 
-class ClientWsListener(fiberExecutor: FiberExecutor) extends WsListener:
+class ClientWsListener(fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis: Long) extends WsListener:
   private val toSend   = new LinkedBlockingQueue[BufferData](64)
   private val latchMap = collection.concurrent.TrieMap.empty[Long, CountDownLatch]
   private val dataMap  = collection.concurrent.TrieMap.empty[Long, (Int, Array[Byte])]
@@ -19,8 +19,11 @@ class ClientWsListener(fiberExecutor: FiberExecutor) extends WsListener:
     toSend.put(a)
     val latch                  = new CountDownLatch(1)
     latchMap.put(correlationId, latch)
-    latch.await()
-    val (result, receivedData) = dataMap.getOrElse(correlationId, throw new IllegalStateException(s"No data found for correlationId=$correlationId"))
+    latch.await(sendResponseTimeoutInMillis, TimeUnit.MILLISECONDS)
+    val (result, receivedData) = dataMap.getOrElse(
+      correlationId,
+      throw new IllegalStateException(s"No data found for correlationId=$correlationId after waiting for a response for $sendResponseTimeoutInMillis millis")
+    )
     latchMap -= correlationId
     dataMap -= correlationId
     if result == 0 then receivedData
