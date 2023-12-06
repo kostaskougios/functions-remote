@@ -1,7 +1,7 @@
 package functions.helidon.transport
 
 import functions.fibers.FiberExecutor
-import functions.helidon.transport.TwoWayWsListener.PoisonPill
+import functions.helidon.transport.ClientWsListener.PoisonPill
 import io.helidon.common.buffers.BufferData
 import io.helidon.websocket.{WsListener, WsSession}
 
@@ -10,7 +10,7 @@ import java.util.concurrent.{CountDownLatch, LinkedBlockingQueue}
 import scala.annotation.tailrec
 import scala.util.Using.Releasable
 
-class TwoWayWsListener(fiberExecutor: FiberExecutor) extends WsListener:
+class ClientWsListener(fiberExecutor: FiberExecutor) extends WsListener:
   private val toSend   = new LinkedBlockingQueue[Array[Byte]](64)
   private val latchMap = collection.concurrent.TrieMap.empty[Long, CountDownLatch]
   private val dataMap  = collection.concurrent.TrieMap.empty[Long, Array[Byte]]
@@ -50,7 +50,7 @@ class TwoWayWsListener(fiberExecutor: FiberExecutor) extends WsListener:
     toSend.put(PoisonPill)
     for latch <- latchMap.values do latch.countDown()
 
-object TwoWayWsListener:
+object ClientWsListener:
   val PoisonPill = Array(1.toByte)
 
-  given Releasable[TwoWayWsListener] = twl => twl.close()
+  given Releasable[ClientWsListener] = twl => twl.close()

@@ -19,7 +19,7 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
         .builder()
         .baseUri(uri)
         .build()
-      webClient.connect("/ws-test", transport.wsListener)
+      webClient.connect("/ws-test", transport.clientWsListener)
       try
         f(transport)
       finally transport.close()

@@ -9,10 +9,10 @@ import java.util.concurrent.atomic.AtomicLong
 import scala.util.Using.Releasable
 
 class HelidonWsTransport(fiberExecutor: FiberExecutor):
-  private val twl           = new TwoWayWsListener(fiberExecutor)
+  private val wsListener    = new ClientWsListener(fiberExecutor)
   private val correlationId = new AtomicLong(0)
 
-  def wsListener: WsListener = twl
+  def clientWsListener: WsListener = wsListener
 
   def transportFunction(in: TransportInput): Array[Byte] =
     if in.argsData.nonEmpty then
@@ -29,9 +29,9 @@ class HelidonWsTransport(fiberExecutor: FiberExecutor):
     dos.write(in.data)
     dos.close()
     val data = bos.toByteArray
-    twl.send(corId, data)
+    wsListener.send(corId, data)
 
-  def close(): Unit = twl.close()
+  def close(): Unit = wsListener.close()
 
 object HelidonWsTransport:
   given Releasable[HelidonWsTransport] = _.close()
