@@ -8,6 +8,10 @@ import java.io.{ByteArrayOutputStream, PrintWriter}
 
 class ServerWsListener(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]) extends WsListener:
 
+  private val im = invokerMap.map:
+    case (c4, i) =>
+      (c4.toRawCoordinates, i)
+
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean) =
     val corId          = buffer.readLong()
     val coordsLength   = buffer.readUnsignedInt32()
@@ -17,7 +21,7 @@ class ServerWsListener(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte
     val coordinates4   = Coordinates4.unapply(coordsStr)
     val data           = buffer.readBytes()
     try
-      val f        = invokerMap(coordinates4)
+      val f        = im(coordinates4.toRawCoordinates)
       val response = f(ReceiverInput(data))
       val buf      = BufferData.growing(response.length + 8)
       buf.write(0)
