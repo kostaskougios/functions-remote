@@ -1,6 +1,7 @@
 package endtoend.tests.helidon.ws
 
 import endtoend.tests.helidon.impl.CountingHelidonFunctionsImpl
+import endtoend.tests.helidon.model.Return1
 import endtoend.tests.helidon.{TestsHelidonFunctions, TestsHelidonFunctionsCallerFactory, TestsHelidonFunctionsReceiverFactory}
 import functions.fibers.FiberExecutor
 import functions.helidon.transport.HelidonWsTransport
@@ -56,6 +57,16 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
       runTest(serializer): f =>
         f.add(1, 3) should be(4)
 
-    test(s"$serializer: calling multiple functions"):
+    test(s"$serializer: calling multiple functions sequentially"):
       runTest(serializer): f =>
-        for i <- 1 to 1000 do f.add(i, 1) should be(i + 1)
+        for i <- 1 to 10000 do
+          f.add(i, 1) should be(i + 1)
+          f.addLR(i, 1) should be(List(Return1(i + 1)))
+
+    test(s"$serializer: calling multiple functions concurrently"):
+      runTest(serializer): f =>
+        FiberExecutor.withFiberExecutor: executor =>
+          val fibers = for i <- 1 to 10000 yield executor.submit:
+            f.add(i, 1) should be(i + 1)
+
+          for f <- fibers do f.get()
