@@ -21,13 +21,13 @@ class ClientWsListener(fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis
     val latch                  = new CountDownLatch(1)
     latchMap.put(correlationId, latch)
     latch.await(sendResponseTimeoutInMillis, TimeUnit.MILLISECONDS)
+    latchMap -= correlationId
     val (result, receivedData) = dataMap.getOrElse(
       correlationId,
       throw new IllegalStateException(
         s"No data found for correlationId=$correlationId after waiting for a response for $sendResponseTimeoutInMillis millis for coordinates $coordinates4"
       )
     )
-    latchMap -= correlationId
     dataMap -= correlationId
     if result == 0 then receivedData
     else throw new RemoteFunctionFailedException(new String(receivedData, "UTF-8"))
