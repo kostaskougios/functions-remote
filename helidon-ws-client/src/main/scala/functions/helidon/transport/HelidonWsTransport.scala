@@ -4,9 +4,7 @@ import functions.fibers.FiberExecutor
 import functions.model.TransportInput
 import io.helidon.common.buffers.BufferData
 import io.helidon.websocket.WsListener
-import jdk.internal.util.ByteArray
 
-import java.io.{ByteArrayOutputStream, DataOutputStream}
 import java.util.concurrent.atomic.AtomicLong
 import scala.util.Using.Releasable
 

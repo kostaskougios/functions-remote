@@ -7,6 +7,7 @@ import functions.fibers.FiberExecutor
 import functions.helidon.transport.HelidonWsTransport
 import functions.helidon.ws.ServerWsListener
 import functions.model.Serializer
+import io.helidon.common.buffers.BufferData
 import io.helidon.webclient.websocket.WsClient
 import io.helidon.webserver.WebServer
 import io.helidon.webserver.websocket.WsRouting
@@ -33,7 +34,6 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
   def withTransport[R](serverPort: Int, serializer: Serializer)(f: TestsHelidonFunctions => R): R =
     FiberExecutor.withFiberExecutor: executor =>
       val transport = new HelidonWsTransport(executor)
-
       val uri       = URI.create(s"ws://localhost:$serverPort")
       val webClient = WsClient
         .builder()
@@ -56,6 +56,14 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
     test(s"$serializer: add"):
       runTest(serializer): f =>
         f.add(1, 3) should be(4)
+
+    test(s"$serializer: addLR"):
+      runTest(serializer): f =>
+        f.addLR(2, 3) should be(List(Return1(5)))
+
+    test(s"$serializer: noArgs"):
+      runTest(serializer): f =>
+        f.noArgs() should be(5)
 
     test(s"$serializer: calling multiple functions sequentially"):
       runTest(serializer): f =>

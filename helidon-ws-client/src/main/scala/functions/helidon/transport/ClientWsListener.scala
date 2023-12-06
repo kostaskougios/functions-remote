@@ -2,6 +2,7 @@ package functions.helidon.transport
 
 import functions.fibers.FiberExecutor
 import functions.helidon.transport.ClientWsListener.PoisonPill
+import functions.helidon.transport.exceptions.RemoteFunctionFailedException
 import io.helidon.common.buffers.BufferData
 import io.helidon.websocket.{WsListener, WsSession}
 
@@ -12,24 +13,26 @@ import scala.util.Using.Releasable
 class ClientWsListener(fiberExecutor: FiberExecutor) extends WsListener:
   private val toSend   = new LinkedBlockingQueue[BufferData](64)
   private val latchMap = collection.concurrent.TrieMap.empty[Long, CountDownLatch]
-  private val dataMap  = collection.concurrent.TrieMap.empty[Long, Array[Byte]]
+  private val dataMap  = collection.concurrent.TrieMap.empty[Long, (Int, Array[Byte])]
 
   def send(correlationId: Long, a: BufferData): Array[Byte] =
     toSend.put(a)
-    val latch        = new CountDownLatch(1)
+    val latch                  = new CountDownLatch(1)
     latchMap.put(correlationId, latch)
     latch.await()
-    val receivedData = dataMap.getOrElse(correlationId, throw new IllegalStateException(s"No data found for correlationId=$correlationId"))
+    val (result, receivedData) = dataMap.getOrElse(correlationId, throw new IllegalStateException(s"No data found for correlationId=$correlationId"))
     latchMap -= correlationId
     dataMap -= correlationId
-    receivedData
+    if result == 0 then receivedData
+    else throw new RemoteFunctionFailedException(new String(receivedData, "UTF-8"))
 
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean): Unit =
-    val corId = buffer.readLong()
-    val data  = buffer.readBytes()
+    val result = buffer.read()
+    val corId  = buffer.readLong()
+    val data   = buffer.readBytes()
     latchMap.get(corId) match
       case Some(latch) =>
-        dataMap.put(corId, data)
+        dataMap.put(corId, (result, data))
         latch.countDown()
       case None        =>
         println(s"Correlation id missing: $corId , received data ignored.")

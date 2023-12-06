@@ -3,7 +3,8 @@ package functions.helidon.ws
 import functions.model.{Coordinates4, ReceiverInput}
 import io.helidon.common.buffers.BufferData
 import io.helidon.websocket.{WsListener, WsSession}
-import jdk.internal.util.ByteArray
+
+import java.io.{ByteArrayOutputStream, PrintWriter}
 
 class ServerWsListener(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte]]) extends WsListener:
 
@@ -15,12 +16,26 @@ class ServerWsListener(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte
     val coordsStr      = new String(coordsByteData, "UTF-8")
     val coordinates4   = Coordinates4.unapply(coordsStr)
     val data           = buffer.readBytes()
-    val f              = invokerMap(coordinates4)
-    val response       = f(ReceiverInput(data))
-    val buf            = BufferData.growing(response.length + 8)
-    buf.write(longToBytes(corId))
-    buf.write(response)
-    session.send(buf, true)
+    try
+      val f        = invokerMap(coordinates4)
+      val response = f(ReceiverInput(data))
+      val buf      = BufferData.growing(response.length + 8)
+      buf.write(0)
+      buf.write(longToBytes(corId))
+      buf.write(response)
+      session.send(buf, true)
+    catch
+      case t: Throwable =>
+        val bos  = new ByteArrayOutputStream
+        val w    = new PrintWriter(bos)
+        t.printStackTrace(w)
+        w.close()
+        val data = bos.toByteArray
+        val buf  = BufferData.growing(data.length + 8)
+        buf.write(1)
+        buf.write(longToBytes(corId))
+        buf.write(data)
+        session.send(buf, true)
 
   private def longToBytes(x: Long): Array[Byte] =
     val buffer = new Array[Byte](8)
