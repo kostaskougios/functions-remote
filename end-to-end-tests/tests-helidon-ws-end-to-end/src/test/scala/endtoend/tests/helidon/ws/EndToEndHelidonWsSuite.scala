@@ -8,6 +8,7 @@ import functions.helidon.transport.HelidonWsTransport
 import functions.helidon.transport.exceptions.RemoteFunctionFailedException
 import functions.helidon.ws.ServerWsListener
 import functions.model.Serializer
+import functions.model.Serializer.{Avro, Json}
 import io.helidon.webclient.websocket.WsClient
 import io.helidon.webserver.WebServer
 import io.helidon.webserver.websocket.WsRouting
@@ -35,11 +36,11 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
     FiberExecutor.withFiberExecutor: executor =>
       val transport = new HelidonWsTransport(executor, 4000)
       val uri       = URI.create(s"ws://localhost:$serverPort")
-      val webClient = WsClient
+      val wsClient  = WsClient
         .builder()
         .baseUri(uri)
         .build()
-      webClient.connect("/ws-test", transport.clientWsListener)
+      wsClient.connect("/ws-test", transport.clientWsListener)
       val fun       = serializer match
         case Serializer.Avro => TestsHelidonFunctionsCallerFactory.newAvroTestsHelidonFunctions(transport.transportFunction)
         case Serializer.Json => TestsHelidonFunctionsCallerFactory.newJsonTestsHelidonFunctions(transport.transportFunction)
@@ -53,8 +54,21 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
         f(fun, impl)
 
   def runTest(serializer: Serializer)(f: TestsHelidonFunctions => Unit): Unit =
-    runTest(serializer): (fun, impl) =>
+    runTest(serializer): (fun, _) =>
       f(fun)
+
+  test("aBigMsg"):
+    runTest(Json): f =>
+      val data = 1 to 10000
+      f.aBigMsg(data) should be(data.sum)
+
+  test("add"):
+    runTest(Json): f =>
+      f.add(1, 3) should be(4)
+
+  test("addParamsEmptySecond"):
+    runTest(Json): f =>
+      f.addParamsEmptySecond(1, 3, "5")() should be(9)
 
   for serializer <- Seq(Serializer.Avro, Serializer.Json) do
     test(s"$serializer: add"):
@@ -104,6 +118,11 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
     test(s"$serializer: addParamsEmptySecond"):
       runTest(serializer): f =>
         f.addParamsEmptySecond(1, 3, "5")() should be(9)
+
+    test(s"$serializer:aBigMsg"):
+      runTest(serializer): f =>
+        val data = 1 to 10000
+        f.aBigMsg(data) should be(data.sum)
 
     test(s"$serializer: calling multiple functions sequentially"):
       runTest(serializer): f =>

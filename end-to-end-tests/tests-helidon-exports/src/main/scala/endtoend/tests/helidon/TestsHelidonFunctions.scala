@@ -20,6 +20,8 @@ trait TestsHelidonFunctions:
   def divide(a: Int, b: Int): Either[Int, String]
   def alwaysFails(a: Int): String
 
+  def aBigMsg(in: Seq[Int]): Int
+
   /** Use GET method for this: //> HTTP-GET
     */
   def addParamsEmptySecond(a: Int, l: Long, s: String)(): Int

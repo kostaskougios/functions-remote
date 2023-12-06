@@ -56,6 +56,7 @@ class ClientWsListener(id: Int, fiberExecutor: FiberExecutor, sendResponseTimeou
         if !msg.eq(PoisonPill) then
           session.send(msg, true)
           cont()
+        else session.terminate()
       cont()
 
   def close(): Unit =

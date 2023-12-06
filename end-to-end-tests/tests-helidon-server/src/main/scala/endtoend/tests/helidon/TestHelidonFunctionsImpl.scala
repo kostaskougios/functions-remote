@@ -23,3 +23,5 @@ class TestHelidonFunctionsImpl extends TestsHelidonFunctions:
   override def addParamsEmptySecond(a: Int, l: Long, s: String)(): Int = a + l.toInt + s.toInt
 
   override def addParams(a: Int, l: Long, s: String)(b: Int): Int = a + l.toInt + s.toInt + b
+
+  override def aBigMsg(in: Seq[Int]): Int = in.sum

@@ -32,3 +32,5 @@ class CountingHelidonFunctionsImpl extends TestsHelidonFunctions:
   override def addParams(a: Int, l: Long, s: String)(b: Int): Int      =
     val r = a + l.toInt + s.toInt + b
     r
+
+  override def aBigMsg(in: Seq[Int]): Int = in.sum

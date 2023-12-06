@@ -45,9 +45,10 @@ val CatsEffectsTesting = "org.typelevel"                    %% "cats-effect-test
 val KafkaClient        = "org.apache.kafka"                  % "kafka-clients"                 % "3.6.0"
 val EmbeddedKafka      = "io.github.embeddedkafka"          %% "embedded-kafka"                % "3.6.0" % Test
 
-val HelidonVersion         = "4.0.1"
-val HelidonServer          = "io.helidon.webserver" % "helidon-webserver-http2"     % HelidonVersion
-val HelidonWebClient       = "io.helidon.webclient" % "helidon-webclient-http2"     % HelidonVersion
+val HelidonVersion        = "4.0.1"
+val HelidonServerHttp2    = "io.helidon.webserver" % "helidon-webserver-http2" % HelidonVersion
+val HelidonWebClientHttp2 = "io.helidon.webclient" % "helidon-webclient-http2" % HelidonVersion
+
 val HelidonServerWebSocket = "io.helidon.webserver" % "helidon-webserver-websocket" % HelidonVersion
 val HelidonWebSocketClient = "io.helidon.webclient" % "helidon-webclient-websocket" % HelidonVersion
 
@@ -162,14 +163,14 @@ lazy val fibers = project
 lazy val `helidon-server` = project
   .settings(
     commonSettings,
-    libraryDependencies ++= Seq(ScalaTest, HelidonServer)
+    libraryDependencies ++= Seq(ScalaTest, HelidonServerHttp2)
   )
   .dependsOn(`functions-common`)
 
 lazy val `helidon-client` = project
   .settings(
     commonSettings,
-    libraryDependencies ++= Seq(ScalaTest, HelidonWebClient)
+    libraryDependencies ++= Seq(ScalaTest, HelidonWebClientHttp2)
   )
   .dependsOn(`functions-common`)
 
@@ -348,7 +349,7 @@ lazy val `tests-helidon-server` = project
     receiverJsonSerialization := true,
     receiverAvroSerialization := true,
     receiverHelidonRoutes     := true,
-    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonServer, HelidonServerLogging % Test) ++ Circe
+    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonServerHttp2, HelidonServerLogging % Test) ++ Circe
   )
   .dependsOn(`functions-receiver`, `functions-avro`, `tests-helidon-exports`, `helidon-server`)
   .enablePlugins(FunctionsRemotePlugin)
@@ -361,7 +362,7 @@ lazy val `tests-helidon-client` = project
     callerJsonSerialization      := true,
     callerAvroSerialization      := true,
     callerHelidonClientTransport := true,
-    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonWebClient) ++ Circe
+    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonWebClientHttp2) ++ Circe
   )
   .dependsOn(`functions-caller`, `functions-avro`, `tests-helidon-exports`, `helidon-client`)
   .enablePlugins(FunctionsRemotePlugin)
@@ -373,7 +374,7 @@ lazy val `tests-helidon-ws-server` = project
     receiverExports           := Seq(s"functions.end-to-end-tests:tests-helidon-exports_3:${version.value}"),
     receiverJsonSerialization := true,
     receiverAvroSerialization := true,
-    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonServer, HelidonServerWebSocket, HelidonServerLogging % Test) ++ Circe
+    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonServerHttp2, HelidonServerWebSocket, HelidonServerLogging % Test) ++ Circe
   )
   .dependsOn(`functions-receiver`, `functions-avro`, `tests-helidon-exports`, `helidon-ws-server`)
   .enablePlugins(FunctionsRemotePlugin)
