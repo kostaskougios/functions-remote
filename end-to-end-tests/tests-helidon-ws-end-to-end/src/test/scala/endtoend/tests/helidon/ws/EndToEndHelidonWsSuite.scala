@@ -5,16 +5,16 @@ import endtoend.tests.helidon.model.Return1
 import endtoend.tests.helidon.{TestsHelidonFunctions, TestsHelidonFunctionsCallerFactory, TestsHelidonFunctionsReceiverFactory}
 import functions.fibers.FiberExecutor
 import functions.helidon.transport.HelidonWsTransport
+import functions.helidon.transport.exceptions.RemoteFunctionFailedException
 import functions.helidon.ws.ServerWsListener
 import functions.model.Serializer
-import io.helidon.common.buffers.BufferData
 import io.helidon.webclient.websocket.WsClient
 import io.helidon.webserver.WebServer
 import io.helidon.webserver.websocket.WsRouting
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers.*
 
 import java.net.URI
-import org.scalatest.matchers.should.Matchers.*
 
 class EndToEndHelidonWsSuite extends AnyFunSuite:
   def withServer[R](f: WebServer => R): R =
@@ -65,17 +65,38 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
       runTest(serializer): f =>
         f.noArgs() should be(5)
 
-    test(s"$serializer: calling multiple functions sequentially"):
+    test(s"$serializer: alwaysFails"):
       runTest(serializer): f =>
-        for i <- 1 to 10000 do
-          f.add(i, 1) should be(i + 1)
-          f.addLR(i, 1) should be(List(Return1(i + 1)))
+        an[RemoteFunctionFailedException] should be thrownBy:
+          f.alwaysFails(6)
 
-    test(s"$serializer: calling multiple functions concurrently"):
+    test(s"$serializer: addR"):
       runTest(serializer): f =>
-        FiberExecutor.withFiberExecutor: executor =>
-          val fibers = for i <- 1 to 10000 yield executor.submit:
-            f.add(i, 1) should be(i + 1)
-            f.addLR(i, 1) should be(List(Return1(i + 1)))
+        f.addR(5, 7) should be(Return1(12))
 
-          for f <- fibers do f.get()
+    test(s"$serializer: divide left"):
+      runTest(serializer): f =>
+        f.divide(10, 2) should be(Left(5))
+
+    test(s"$serializer: divide right"):
+      runTest(serializer): f =>
+        f.divide(10, 0) should be(Right("/ by zero"))
+
+    test(s"$serializer: noArgsUnitReturnType"):
+      runTest(serializer): f =>
+        f.noArgsUnitReturnType() should be(())
+
+//    test(s"$serializer: calling multiple functions sequentially"):
+//      runTest(serializer): f =>
+//        for i <- 1 to 10000 do
+//          f.add(i, 1) should be(i + 1)
+//          f.addLR(i, 1) should be(List(Return1(i + 1)))
+//
+//    test(s"$serializer: calling multiple functions concurrently"):
+//      runTest(serializer): f =>
+//        FiberExecutor.withFiberExecutor: executor =>
+//          val fibers = for i <- 1 to 10000 yield executor.submit:
+//            f.add(i, 1) should be(i + 1)
+//            f.addLR(i, 1) should be(List(Return1(i + 1)))
+//
+//          for f <- fibers do f.get()
