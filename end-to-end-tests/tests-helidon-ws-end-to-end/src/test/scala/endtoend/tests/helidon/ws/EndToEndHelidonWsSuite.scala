@@ -97,6 +97,10 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
         f.unitResult(1, 3) should be(())
         impl.unitResultC.get() should be(1)
 
+    test(s"$serializer: addParams"):
+      runTest(serializer): f =>
+        f.addParams(1, 3, "5")(7) should be(16)
+
 //    test(s"$serializer: calling multiple functions sequentially"):
 //      runTest(serializer): f =>
 //        for i <- 1 to 10000 do
