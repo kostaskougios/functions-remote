@@ -24,9 +24,9 @@ class KafkaEndToEndSuite extends AnyFunSuite with EmbeddedKafka with BeforeAndAf
   props.setProperty("auto.commit.interval.ms", "1000")
   props.put("auto.offset.reset", "earliest")
 
-  override protected def afterAll() = EmbeddedKafka.stop()
+  override protected def afterAll(): Unit = EmbeddedKafka.stop()
 
-  override protected def beforeAll() =
+  override protected def beforeAll(): Unit =
     val config = EmbeddedKafkaConfig(kafkaPort = 7101, zooKeeperPort = 7102)
     EmbeddedKafka.start()(config)
 

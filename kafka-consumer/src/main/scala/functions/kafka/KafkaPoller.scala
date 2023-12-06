@@ -8,6 +8,9 @@ import java.time.Duration
 import scala.util.Using.Releasable
 
 class KafkaPoller(consumer: KafkaConsumer[Array[Byte], Array[Byte]], invokeMap: Map[Coordinates4, ReceiverInput => Array[Byte]]):
+  private val im = invokeMap.map: (c4, i) =>
+    (c4.toRawCoordinates, i)
+
   def poll(duration: Duration): Unit =
     val r = consumer.poll(duration)
     r.iterator.asScala.foreach(execute)
@@ -16,8 +19,7 @@ class KafkaPoller(consumer: KafkaConsumer[Array[Byte], Array[Byte]], invokeMap: 
 
   protected def execute(cr: ConsumerRecord[Array[Byte], Array[Byte]]) =
     val coordinatesRaw = coordinatesFrom(cr)
-    val coordinates    = Coordinates4(coordinatesRaw)
-    val f              = invokeMap(coordinates)
+    val f              = im(coordinatesRaw)
     f(ReceiverInput(cr.value(), cr.key()))
 
   /** Closes the KafkaConsumer

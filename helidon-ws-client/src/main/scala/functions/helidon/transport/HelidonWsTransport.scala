@@ -26,7 +26,7 @@ class HelidonWsTransport(fiberExecutor: FiberExecutor, sendResponseTimeoutInMill
     buf.write(in.data)
     buf.writeInt32(in.argsData.length)
     buf.write(in.argsData)
-    wsListener.send(corId, buf)
+    wsListener.send(corId, in.coordinates4, buf)
 
   def close(): Unit = wsListener.close()
 
