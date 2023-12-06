@@ -15,17 +15,17 @@ class HelidonWsTransport(fiberExecutor: FiberExecutor):
   def clientWsListener: WsListener = wsListener
 
   def transportFunction(in: TransportInput): Array[Byte] =
-    if in.argsData.nonEmpty then
-      throw new IllegalArgumentException("argsData has serialized data, did you use the correct helidon factory methods for the caller?")
-
     val coordsData = in.coordinates4.toRawCoordinatesBytes
     val corId      = correlationId.incrementAndGet()
 
-    val buf = BufferData.growing(in.argsData.length + coordsData.length + 32)
+    val buf = BufferData.growing(in.data.length + in.argsData.length + coordsData.length + 32)
     buf.write(longToBytes(corId))
     buf.writeUnsignedInt32(coordsData.length)
     buf.write(coordsData)
+    buf.writeInt32(in.data.length)
     buf.write(in.data)
+    buf.writeInt32(in.argsData.length)
+    buf.write(in.argsData)
     wsListener.send(corId, buf)
 
   def close(): Unit = wsListener.close()
