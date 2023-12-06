@@ -11,15 +11,15 @@ import java.util.concurrent.{CountDownLatch, LinkedBlockingQueue, TimeUnit}
 import scala.annotation.tailrec
 import scala.util.Using.Releasable
 
-class ClientWsListener(fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis: Long) extends WsListener:
+class ClientWsListener(id: Int, fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis: Long) extends WsListener:
   private val toSend   = new LinkedBlockingQueue[BufferData](64)
   private val latchMap = collection.concurrent.TrieMap.empty[Long, CountDownLatch]
   private val dataMap  = collection.concurrent.TrieMap.empty[Long, (Int, Array[Byte])]
 
   def send(correlationId: Long, coordinates4: Coordinates4, buf: BufferData): Array[Byte] =
-    toSend.put(buf)
     val latch = new CountDownLatch(1)
     latchMap.put(correlationId, latch)
+    toSend.put(buf)
     try
       latch.await(sendResponseTimeoutInMillis, TimeUnit.MILLISECONDS)
       val (result, receivedData) = dataMap.getOrElse(
@@ -35,15 +35,19 @@ class ClientWsListener(fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis
       dataMap -= correlationId
 
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean): Unit =
-    val result = buffer.read()
-    val corId  = buffer.readLong()
-    val data   = buffer.readBytes()
-    latchMap.get(corId) match
-      case Some(latch) =>
-        dataMap.put(corId, (result, data))
-        latch.countDown()
-      case None        =>
-        println(s"Correlation id missing: $corId , received data ignored.")
+    try
+      val receivedId = buffer.readInt32()
+      if receivedId != id then throw new IllegalStateException(s"Received an invalid client id : $receivedId , it should be my id of $id")
+      val result     = buffer.read()
+      val corId      = buffer.readLong()
+      val data       = buffer.readBytes()
+      latchMap.get(corId) match
+        case Some(latch) =>
+          dataMap.put(corId, (result, data))
+          latch.countDown()
+        case None        =>
+          println(s"Correlation id missing: $corId , received data ignored.")
+    catch case t: Throwable => t.printStackTrace()
 
   override def onOpen(session: WsSession): Unit =
     fiberExecutor.submit:

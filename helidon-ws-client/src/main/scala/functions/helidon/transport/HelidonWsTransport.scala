@@ -6,10 +6,12 @@ import io.helidon.common.buffers.BufferData
 import io.helidon.websocket.WsListener
 
 import java.util.concurrent.atomic.AtomicLong
+import scala.util.Random
 import scala.util.Using.Releasable
 
 class HelidonWsTransport(fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis: Long):
-  private val wsListener    = new ClientWsListener(fiberExecutor, sendResponseTimeoutInMillis)
+  private val myId          = Random.nextInt()
+  private val wsListener    = new ClientWsListener(myId, fiberExecutor, sendResponseTimeoutInMillis)
   private val correlationId = new AtomicLong(0)
 
   def clientWsListener: WsListener = wsListener
@@ -19,6 +21,7 @@ class HelidonWsTransport(fiberExecutor: FiberExecutor, sendResponseTimeoutInMill
     val corId      = correlationId.incrementAndGet()
 
     val buf = BufferData.growing(in.data.length + in.argsData.length + coordsData.length + 32)
+    buf.writeInt32(myId)
     buf.write(longToBytes(corId))
     buf.writeUnsignedInt32(coordsData.length)
     buf.write(coordsData)

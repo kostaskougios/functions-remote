@@ -13,6 +13,7 @@ class ServerWsListener(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte
       (c4.toRawCoordinates, i)
 
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean) =
+    val receiverId     = buffer.readInt32()
     val corId          = buffer.readLong()
     val coordsLength   = buffer.readUnsignedInt32()
     val coordsByteData = new Array[Byte](coordsLength.toInt)
@@ -28,7 +29,8 @@ class ServerWsListener(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte
     try
       val f        = im(coordinates4.toRawCoordinates)
       val response = f(ReceiverInput(data, arg))
-      val buf      = BufferData.growing(response.length + 8)
+      val buf      = BufferData.growing(response.length + 12)
+      buf.writeInt32(receiverId)
       buf.write(0)
       buf.write(longToBytes(corId))
       buf.write(response)
@@ -40,7 +42,8 @@ class ServerWsListener(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte
         t.printStackTrace(w)
         w.close()
         val data = bos.toByteArray
-        val buf  = BufferData.growing(data.length + 8)
+        val buf  = BufferData.growing(data.length + 12)
+        buf.writeInt32(receiverId)
         buf.write(1)
         buf.write(longToBytes(corId))
         buf.write(data)
