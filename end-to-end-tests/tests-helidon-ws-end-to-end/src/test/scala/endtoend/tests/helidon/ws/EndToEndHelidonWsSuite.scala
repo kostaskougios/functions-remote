@@ -1,20 +1,38 @@
 package endtoend.tests.helidon.ws
 
-import org.scalatest.funsuite.AnyFunSuite
-import endtoend.tests.helidon.TestsHelidonFunctionsCallerFactory
+import endtoend.tests.helidon.impl.CountingHelidonFunctionsImpl
+import endtoend.tests.helidon.{TestsHelidonFunctionsCallerFactory, TestsHelidonFunctionsReceiverFactory}
 import functions.fibers.FiberExecutor
 import functions.helidon.transport.HelidonWsTransport
+import functions.helidon.ws.ServerWsListener
 import io.helidon.webclient.websocket.WsClient
+import io.helidon.webserver.WebServer
+import io.helidon.webserver.websocket.WsRouting
+import org.scalatest.funsuite.AnyFunSuite
 
 import java.net.URI
+import org.scalatest.matchers.should.Matchers.*
 
 class EndToEndHelidonWsSuite extends AnyFunSuite:
-  def withTransport[R](f: HelidonWsTransport => R): R =
+  def withServer[R](f: WebServer => R): R =
+    val impl      = new CountingHelidonFunctionsImpl
+    val invokeMap = TestsHelidonFunctionsReceiverFactory.invokerMap(impl)
+    val listener  = new ServerWsListener(invokeMap)
+
+    val wsB    = WsRouting.builder().endpoint("/ws-test", listener)
+    val server = WebServer.builder
+      .port(0)
+      .addRouting(wsB)
+      .build
+      .start
+    try f(server)
+    finally server.stop()
+
+  def withTransport[R](serverPort: Int)(f: HelidonWsTransport => R): R =
     FiberExecutor.withFiberExecutor: executor =>
-      val port      = 7210
       val transport = new HelidonWsTransport(executor)
 
-      val uri       = URI.create(s"ws://localhost:$port")
+      val uri       = URI.create(s"ws://localhost:$serverPort")
       val webClient = WsClient
         .builder()
         .baseUri(uri)
@@ -25,5 +43,7 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
       finally transport.close()
 
   test("calls function"):
-    withTransport: transport =>
-      val avroF = TestsHelidonFunctionsCallerFactory.newAvroTestsHelidonFunctions(transport.transportFunction)
+    withServer: server =>
+      withTransport(server.port): transport =>
+        val avroF = TestsHelidonFunctionsCallerFactory.newAvroTestsHelidonFunctions(transport.transportFunction)
+        avroF.add(1, 3) should be(4)
