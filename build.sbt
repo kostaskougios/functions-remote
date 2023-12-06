@@ -45,10 +45,13 @@ val CatsEffectsTesting = "org.typelevel"                    %% "cats-effect-test
 val KafkaClient        = "org.apache.kafka"                  % "kafka-clients"                 % "3.6.0"
 val EmbeddedKafka      = "io.github.embeddedkafka"          %% "embedded-kafka"                % "3.6.0" % Test
 
-val HelidonVersion       = "4.0.1"
-val HelidonServer        = "io.helidon.webserver" % "helidon-webserver-http2" % HelidonVersion
-val HelidonClient        = "io.helidon.webclient" % "helidon-webclient-http2" % HelidonVersion
-val HelidonServerLogging = "io.helidon.logging"   % "helidon-logging-jul"     % HelidonVersion
+val HelidonVersion         = "4.0.1"
+val HelidonServer          = "io.helidon.webserver" % "helidon-webserver-http2"     % HelidonVersion
+val HelidonWebClient       = "io.helidon.webclient" % "helidon-webclient-http2"     % HelidonVersion
+val HelidonServerWebSocket = "io.helidon.webserver" % "helidon-webserver-websocket" % HelidonVersion
+val HelidonWebSocketClient = "io.helidon.webclient" % "helidon-webclient-websocket" % HelidonVersion
+
+val HelidonServerLogging = "io.helidon.logging" % "helidon-logging-jul" % HelidonVersion
 
 // ----------------------- modules --------------------------------
 
@@ -166,9 +169,23 @@ lazy val `helidon-server` = project
 lazy val `helidon-client` = project
   .settings(
     commonSettings,
-    libraryDependencies ++= Seq(ScalaTest, HelidonClient)
+    libraryDependencies ++= Seq(ScalaTest, HelidonWebClient)
   )
   .dependsOn(`functions-common`)
+
+lazy val `helidon-ws-client` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest, HelidonWebSocketClient)
+  )
+  .dependsOn(`functions-common`, fibers)
+
+lazy val `helidon-ws-server` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest, HelidonServerWebSocket)
+  )
+  .dependsOn(`functions-common`, fibers)
 
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
@@ -344,9 +361,33 @@ lazy val `tests-helidon-client` = project
     callerJsonSerialization      := true,
     callerAvroSerialization      := true,
     callerHelidonClientTransport := true,
-    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonClient) ++ Circe
+    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonWebClient) ++ Circe
   )
   .dependsOn(`functions-caller`, `functions-avro`, `tests-helidon-exports`, `helidon-client`)
+  .enablePlugins(FunctionsRemotePlugin)
+
+lazy val `tests-helidon-ws-server` = project
+  .in(file("end-to-end-tests/tests-helidon-ws-server"))
+  .settings(
+    endToEndTestsSettings,
+    receiverExports           := Seq(s"functions.end-to-end-tests:tests-helidon-exports_3:${version.value}"),
+    receiverJsonSerialization := true,
+    receiverAvroSerialization := true,
+    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonServer, HelidonServerWebSocket, HelidonServerLogging % Test) ++ Circe
+  )
+  .dependsOn(`functions-receiver`, `functions-avro`, `tests-helidon-exports`, `helidon-ws-server`)
+  .enablePlugins(FunctionsRemotePlugin)
+
+lazy val `tests-helidon-ws-client` = project
+  .in(file("end-to-end-tests/tests-helidon-ws-client"))
+  .settings(
+    endToEndTestsSettings,
+    callerExports           := Seq(s"functions.end-to-end-tests:tests-helidon-exports_3:${version.value}"),
+    callerJsonSerialization := true,
+    callerAvroSerialization := true,
+    libraryDependencies ++= Seq(Avro4s, ScalaTest, HelidonWebSocketClient) ++ Circe
+  )
+  .dependsOn(`functions-caller`, `functions-avro`, `tests-helidon-exports`, `helidon-ws-client`)
   .enablePlugins(FunctionsRemotePlugin)
 
 lazy val `tests-helidon-end-to-end` = project
@@ -356,3 +397,11 @@ lazy val `tests-helidon-end-to-end` = project
     libraryDependencies ++= Seq(ScalaTest)
   )
   .dependsOn(`tests-helidon-server`, `tests-helidon-client`)
+
+lazy val `tests-helidon-ws-end-to-end` = project
+  .in(file("end-to-end-tests/tests-helidon-ws-end-to-end"))
+  .settings(
+    endToEndTestsSettings,
+    libraryDependencies ++= Seq(ScalaTest)
+  )
+  .dependsOn(`tests-helidon-ws-server`, `tests-helidon-ws-client`)

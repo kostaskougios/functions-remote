@@ -1,8 +1,9 @@
 package functions.model
 
 case class Coordinates4(className: String, method: String, version: String, serializer: Serializer, properties: Map[String, Any]):
-  def toCoordinatesNoSerializer: String = s"$className:$method:$version"
-  def toRawCoordinates: String          = s"$toCoordinatesNoSerializer:$serializer"
+  def toCoordinatesNoSerializer: String  = s"$className:$method:$version"
+  def toRawCoordinates: String           = s"$toCoordinatesNoSerializer:$serializer"
+  def toRawCoordinatesBytes: Array[Byte] = toRawCoordinates.getBytes("UTF-8")
 
 case class Coordinates3(className: String, method: String, version: String, properties: Map[String, Any]):
   def withSerializer(serializer: Serializer): Coordinates4 = Coordinates4(className, method, version, serializer, properties)
