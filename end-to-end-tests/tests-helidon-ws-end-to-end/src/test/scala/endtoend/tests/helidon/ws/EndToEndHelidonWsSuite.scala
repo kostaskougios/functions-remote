@@ -17,7 +17,7 @@ import org.scalatest.matchers.should.Matchers.*
 import java.net.URI
 
 class EndToEndHelidonWsSuite extends AnyFunSuite:
-  def withServer[R](f: WebServer => R): R =
+  def withServer[R](f: (WebServer, CountingHelidonFunctionsImpl) => R): R =
     val impl      = new CountingHelidonFunctionsImpl
     val invokeMap = TestsHelidonFunctionsReceiverFactory.invokerMap(impl)
     val listener  = new ServerWsListener(invokeMap)
@@ -28,7 +28,7 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
       .addRouting(wsB)
       .build
       .start
-    try f(server)
+    try f(server, impl)
     finally server.stop()
 
   def withTransport[R](serverPort: Int, serializer: Serializer)(f: TestsHelidonFunctions => R): R =
@@ -47,10 +47,14 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
         f(fun)
       finally transport.close()
 
+  def runTest(serializer: Serializer)(f: (TestsHelidonFunctions, CountingHelidonFunctionsImpl) => Unit): Unit =
+    withServer: (server, impl) =>
+      withTransport(server.port, serializer): fun =>
+        f(fun, impl)
+
   def runTest(serializer: Serializer)(f: TestsHelidonFunctions => Unit): Unit =
-    withServer: server =>
-      withTransport(server.port, serializer): transport =>
-        f(transport)
+    runTest(serializer): (fun, impl) =>
+      f(fun)
 
   for serializer <- Seq(Serializer.Avro, Serializer.Json) do
     test(s"$serializer: add"):
@@ -62,8 +66,9 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
         f.addLR(2, 3) should be(List(Return1(5)))
 
     test(s"$serializer: noArgs"):
-      runTest(serializer): f =>
+      runTest(serializer): (f, impl) =>
         f.noArgs() should be(5)
+        impl.noArgsC.get() should be(1)
 
     test(s"$serializer: alwaysFails"):
       runTest(serializer): f =>
@@ -83,8 +88,14 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
         f.divide(10, 0) should be(Right("/ by zero"))
 
     test(s"$serializer: noArgsUnitReturnType"):
-      runTest(serializer): f =>
+      runTest(serializer): (f, impl) =>
         f.noArgsUnitReturnType() should be(())
+        impl.noArgsUnitReturnTypeC.get() should be(1)
+
+    test(s"$serializer: unitResult"):
+      runTest(serializer): (f, impl) =>
+        f.unitResult(1, 3) should be(())
+        impl.unitResultC.get() should be(1)
 
 //    test(s"$serializer: calling multiple functions sequentially"):
 //      runTest(serializer): f =>
