@@ -68,5 +68,6 @@ class EndToEndHelidonWsSuite extends AnyFunSuite:
         FiberExecutor.withFiberExecutor: executor =>
           val fibers = for i <- 1 to 10000 yield executor.submit:
             f.add(i, 1) should be(i + 1)
+            f.addLR(i, 1) should be(List(Return1(i + 1)))
 
           for f <- fibers do f.get()
