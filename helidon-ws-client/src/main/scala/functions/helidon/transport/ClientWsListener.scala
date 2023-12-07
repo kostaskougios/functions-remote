@@ -66,4 +66,4 @@ class ClientWsListener(id: Int, fiberExecutor: FiberExecutor, sendResponseTimeou
 object ClientWsListener:
   private val PoisonPill = BufferData.create("*poisonpill*")
 
-  given Releasable[ClientWsListener] = twl => twl.close()
+  given Releasable[ClientWsListener] = _.close()

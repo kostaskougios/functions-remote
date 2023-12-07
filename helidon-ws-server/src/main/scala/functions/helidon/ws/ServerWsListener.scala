@@ -12,7 +12,7 @@ class ServerWsListener(invokerMap: Map[Coordinates4, ReceiverInput => Array[Byte
     case (c4, i) =>
       (c4.toRawCoordinates, i)
 
-  override def onMessage(session: WsSession, buffer: BufferData, last: Boolean) =
+  override def onMessage(session: WsSession, buffer: BufferData, last: Boolean): Unit =
     val receiverId     = buffer.readInt32()
     val corId          = buffer.readLong()
     val coordsLength   = buffer.readUnsignedInt32()
