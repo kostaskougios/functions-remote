@@ -10,7 +10,7 @@ class InOutMessageProtocol(invokerMap: InvokerMap):
     case (c4, i) =>
       (c4.toRawCoordinates, i)
 
-  def incoming(buffer: BufferData): BufferData =
+  def listener(buffer: BufferData): BufferData =
     val receiverId     = buffer.readInt32()
     val corId          = buffer.readLong()
     val coordsLength   = buffer.readUnsignedInt32()
