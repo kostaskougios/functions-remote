@@ -48,6 +48,7 @@ val KafkaClient        = "org.apache.kafka"                  % "kafka-clients"  
 val EmbeddedKafka      = "io.github.embeddedkafka"          %% "embedded-kafka"                % "3.6.0" % Test
 
 val HelidonVersion        = "4.0.1"
+val HelidonCommonBuffers  = "io.helidon.common"    % "helidon-common-buffers"  % HelidonVersion
 val HelidonServerHttp2    = "io.helidon.webserver" % "helidon-webserver-http2" % HelidonVersion
 val HelidonWebClientHttp2 = "io.helidon.webclient" % "helidon-webclient-http2" % HelidonVersion
 
@@ -176,19 +177,26 @@ lazy val `helidon-client` = project
   )
   .dependsOn(`functions-common`)
 
+lazy val `helidon-ws-client-server-common` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(ScalaTest, HelidonCommonBuffers)
+  )
+  .dependsOn(`functions-common`, fibers)
+
 lazy val `helidon-ws-client` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(ScalaTest, HelidonWebSocketClient)
   )
-  .dependsOn(`functions-common`, fibers)
+  .dependsOn(`functions-common`, `helidon-ws-client-server-common`, fibers)
 
 lazy val `helidon-ws-server` = project
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(ScalaTest, HelidonServerWebSocket)
   )
-  .dependsOn(`functions-common`, fibers)
+  .dependsOn(`functions-common`, `helidon-ws-client-server-common`, fibers)
 
 // ----------------------- end to end test modules --------------------------------
 val endToEndTestsSettings = Seq(
