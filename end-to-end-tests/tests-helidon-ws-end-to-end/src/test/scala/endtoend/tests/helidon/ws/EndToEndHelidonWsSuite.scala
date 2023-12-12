@@ -5,8 +5,8 @@ import endtoend.tests.helidon.model.Return1
 import endtoend.tests.helidon.{TestsHelidonFunctions, TestsHelidonFunctionsCallerFactory, TestsHelidonFunctionsReceiverFactory}
 import functions.fibers.FiberExecutor
 import functions.helidon.transport.HelidonWsTransport
-import functions.helidon.transport.exceptions.RemoteFunctionFailedException
 import functions.helidon.ws.ServerWsListener
+import functions.helidon.ws.transport.exceptions.RemoteFunctionFailedException
 import functions.model.Serializer
 import functions.model.Serializer.{Avro, Json}
 import io.helidon.webclient.websocket.WsClient

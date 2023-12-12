@@ -49,6 +49,7 @@ val EmbeddedKafka      = "io.github.embeddedkafka"          %% "embedded-kafka" 
 
 val HelidonVersion        = "4.0.1"
 val HelidonCommonBuffers  = "io.helidon.common"    % "helidon-common-buffers"  % HelidonVersion
+val HelidonWebSocket      = "io.helidon.websocket" % "helidon-websocket"       % HelidonVersion
 val HelidonServerHttp2    = "io.helidon.webserver" % "helidon-webserver-http2" % HelidonVersion
 val HelidonWebClientHttp2 = "io.helidon.webclient" % "helidon-webclient-http2" % HelidonVersion
 
@@ -180,7 +181,7 @@ lazy val `helidon-client` = project
 lazy val `helidon-ws-client-server-common` = project
   .settings(
     commonSettings,
-    libraryDependencies ++= Seq(ScalaTest, HelidonCommonBuffers)
+    libraryDependencies ++= Seq(ScalaTest, HelidonWebSocket)
   )
   .dependsOn(`functions-common`, fibers)
 
