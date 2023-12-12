@@ -20,7 +20,7 @@ class HelidonWsTransport(fiberExecutor: FiberExecutor, sendResponseTimeoutInMill
   def transportFunction(in: TransportInput): Array[Byte] =
     val coordsData = in.coordinates4.toRawCoordinatesBytes
     val corId      = correlationId.incrementAndGet()
-    val buf        = protocol.transport(myId, corId, in.data, in.argsData, coordsData)
+    val buf        = protocol.clientTransport(myId, corId, in.data, in.argsData, coordsData)
     wsListener.send(corId, in.coordinates4, buf)
 
   def close(): Unit = wsListener.close()

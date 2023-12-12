@@ -9,5 +9,5 @@ class ServerWsListener(invokerMap: InvokerMap) extends WsListener:
   private val protocol = new InOutMessageProtocol(invokerMap)
 
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean): Unit =
-    val out = protocol.listener(buffer)
+    val out = protocol.serverListener(buffer)
     session.send(out, true)

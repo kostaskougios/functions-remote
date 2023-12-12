@@ -10,7 +10,7 @@ class InOutMessageProtocol(invokerMap: InvokerMap):
     case (c4, i) =>
       (c4.toRawCoordinates, i)
 
-  def listener(buffer: BufferData): BufferData =
+  def serverListener(buffer: BufferData): BufferData =
     val receiverId     = buffer.readInt32()
     val corId          = buffer.readLong()
     val coordsLength   = buffer.readUnsignedInt32()
@@ -47,7 +47,7 @@ class InOutMessageProtocol(invokerMap: InvokerMap):
         buf.write(data)
         buf
 
-  def transport(myId: Int, corId: Long, data: Array[Byte], argsData: Array[Byte], coordsData: Array[Byte]): BufferData =
+  def clientTransport(myId: Int, corId: Long, data: Array[Byte], argsData: Array[Byte], coordsData: Array[Byte]): BufferData =
     val buf = BufferData.growing(data.length + argsData.length + coordsData.length + 32)
     buf.writeInt32(myId)
     buf.write(longToBytes(corId))
