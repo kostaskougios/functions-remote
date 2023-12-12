@@ -20,40 +20,39 @@ import java.net.URI
 import scala.util.Using
 
 class EndToEndHelidonWsSuite extends AnyFunSuite:
-  def withServer[R](f: (WebServer, CountingHelidonFunctionsImpl) => R): R =
-    FiberExecutor.withFiberExecutor: executor =>
-      val impl      = new CountingHelidonFunctionsImpl
-      val invokeMap = TestsHelidonFunctionsReceiverFactory.invokerMap(impl)
-      Using.resource(ServerWsListener(invokeMap, executor)): listener =>
-        val wsB    = WsRouting.builder().endpoint("/ws-test", listener)
-        val server = WebServer.builder
-          .port(0)
-          .addRouting(wsB)
-          .build
-          .start
-        try f(server, impl)
-        finally server.stop()
+  def withServer[R](executor: FiberExecutor)(f: (WebServer, CountingHelidonFunctionsImpl) => R): R =
+    val impl      = new CountingHelidonFunctionsImpl
+    val invokeMap = TestsHelidonFunctionsReceiverFactory.invokerMap(impl)
+    Using.resource(ServerWsListener(invokeMap, executor)): listener =>
+      val wsB    = WsRouting.builder().endpoint("/ws-test", listener)
+      val server = WebServer.builder
+        .port(0)
+        .addRouting(wsB)
+        .build
+        .start
+      try f(server, impl)
+      finally server.stop()
 
-  def withTransport[R](serverPort: Int, serializer: Serializer)(f: TestsHelidonFunctions => R): R =
-    FiberExecutor.withFiberExecutor: executor =>
-      val transport = new HelidonWsTransport(executor, 4000)
-      val uri       = URI.create(s"ws://localhost:$serverPort")
-      val wsClient  = WsClient
-        .builder()
-        .baseUri(uri)
-        .build()
-      wsClient.connect("/ws-test", transport.clientWsListener)
-      val fun       = serializer match
-        case Serializer.Avro => TestsHelidonFunctionsCallerFactory.newAvroTestsHelidonFunctions(transport.transportFunction)
-        case Serializer.Json => TestsHelidonFunctionsCallerFactory.newJsonTestsHelidonFunctions(transport.transportFunction)
-      try
-        f(fun)
-      finally transport.close()
+  def withTransport[R](serverPort: Int, serializer: Serializer, executor: FiberExecutor)(f: TestsHelidonFunctions => R): R =
+    val transport = new HelidonWsTransport(executor, 4000)
+    val uri       = URI.create(s"ws://localhost:$serverPort")
+    val wsClient  = WsClient
+      .builder()
+      .baseUri(uri)
+      .build()
+    wsClient.connect("/ws-test", transport.clientWsListener)
+    val fun       = serializer match
+      case Serializer.Avro => TestsHelidonFunctionsCallerFactory.newAvroTestsHelidonFunctions(transport.transportFunction)
+      case Serializer.Json => TestsHelidonFunctionsCallerFactory.newJsonTestsHelidonFunctions(transport.transportFunction)
+    try
+      f(fun)
+    finally transport.close()
 
   def runTest(serializer: Serializer)(f: (TestsHelidonFunctions, CountingHelidonFunctionsImpl) => Unit): Unit =
-    withServer: (server, impl) =>
-      withTransport(server.port, serializer): fun =>
-        f(fun, impl)
+    FiberExecutor.withFiberExecutor: executor =>
+      withServer(executor): (server, impl) =>
+        withTransport(server.port, serializer, executor): fun =>
+          f(fun, impl)
 
   def runTest(serializer: Serializer)(f: TestsHelidonFunctions => Unit): Unit =
     runTest(serializer): (fun, _) =>
