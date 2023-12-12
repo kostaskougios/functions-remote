@@ -17,6 +17,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers.*
 
 import java.net.URI
+import java.util.concurrent.TimeUnit
 import scala.util.Using
 
 class EndToEndHelidonWsSuite extends AnyFunSuite:

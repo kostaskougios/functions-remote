@@ -1,6 +1,6 @@
 package functions.fibers
 
-import java.util.concurrent.{Callable, CountDownLatch, ExecutorService, Executors}
+import java.util.concurrent.{Callable, CompletableFuture, CountDownLatch, ExecutorService, Executors}
 import scala.util.Using.Releasable
 
 // https://wiki.openjdk.org/display/loom/Getting+started
@@ -8,7 +8,8 @@ import scala.util.Using.Releasable
 class FiberExecutor private (executorService: ExecutorService):
   def submit[R](f: => R): Fiber[R] =
     val c: Callable[R] = () => f
-    Fiber(executorService.submit(c))
+    val fiber          = executorService.submit(c)
+    Fiber(fiber)
 
   def two[A, B](fiber1: TwoFibers[A, B] => A, fiber2: TwoFibers[A, B] => B): TwoFibers[A, B] =
     val l                              = new CountDownLatch(3)

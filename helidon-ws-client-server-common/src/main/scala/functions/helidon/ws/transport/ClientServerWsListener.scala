@@ -37,20 +37,21 @@ class ClientServerWsListener(protocol: InOutMessageProtocol, fiberExecutor: Fibe
       dataMap -= correlationId
 
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean): Unit =
-    try
-      protocol.listenerReceived(buffer) match
-        case Left(out)                                =>
-          // act as a server: do a call
-          session.send(out, true)
-        case Right(RfWsResponse(result, corId, data)) =>
-          // act as a client: respond to a call
-          latchMap.get(corId) match
-            case Some(latch) =>
-              dataMap.put(corId, (result, data))
-              latch.countDown()
-            case None        =>
-              println(s"Correlation id missing: $corId , received data ignored.")
-    catch case t: Throwable => t.printStackTrace()
+    fiberExecutor.submit:
+      try
+        protocol.listenerReceived(buffer) match
+          case Left(out)                                =>
+            // act as a server: do a call
+            toSend.put(out)
+          case Right(RfWsResponse(result, corId, data)) =>
+            // act as a client: respond to a call
+            latchMap.get(corId) match
+              case Some(latch) =>
+                dataMap.put(corId, (result, data))
+                latch.countDown()
+              case None        =>
+                println(s"Correlation id missing: $corId , received data ignored.")
+      catch case t: Throwable => t.printStackTrace()
 
   override def onOpen(session: WsSession): Unit =
     fiberExecutor.submit:
