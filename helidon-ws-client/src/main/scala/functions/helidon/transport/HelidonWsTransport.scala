@@ -3,7 +3,6 @@ package functions.helidon.transport
 import functions.fibers.FiberExecutor
 import functions.helidon.ws.InOutMessageProtocol
 import functions.model.TransportInput
-import io.helidon.common.buffers.BufferData
 import io.helidon.websocket.WsListener
 
 import java.util.concurrent.atomic.AtomicLong
@@ -25,13 +24,6 @@ class HelidonWsTransport(fiberExecutor: FiberExecutor, sendResponseTimeoutInMill
     wsListener.send(corId, in.coordinates4, buf)
 
   def close(): Unit = wsListener.close()
-
-  private def longToBytes(x: Long): Array[Byte] =
-    val buffer = new Array[Byte](8)
-    for (i <- 0 until 8)
-      // Shift the long value 8*(7-i) bits to the right and take the lowest 8 bits
-      buffer(i) = (x >> (8 * (7 - i))).toByte
-    buffer
 
 object HelidonWsTransport:
   given Releasable[HelidonWsTransport] = _.close()
