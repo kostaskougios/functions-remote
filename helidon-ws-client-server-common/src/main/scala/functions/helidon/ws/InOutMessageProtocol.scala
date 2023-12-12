@@ -1,5 +1,6 @@
 package functions.helidon.ws
 
+import functions.helidon.ws.model.RfWsResponse
 import functions.model.*
 import io.helidon.common.buffers.BufferData
 
@@ -10,6 +11,13 @@ class InOutMessageProtocol(invokerMap: InvokerMap, myId: Int = Random.nextInt())
   private val im = invokerMap.map:
     case (c4, i) =>
       (c4.toRawCoordinates, i)
+
+  def listener(buffer: BufferData) =
+    buffer.read() match
+      case 100 =>
+        // a call to a function
+        serverListener(buffer)
+      case 200 =>
 
   def serverListener(buffer: BufferData): BufferData =
     val receiverId     = buffer.readInt32()
@@ -48,13 +56,13 @@ class InOutMessageProtocol(invokerMap: InvokerMap, myId: Int = Random.nextInt())
         buf.write(data)
         buf
 
-  def clientListener(buffer: BufferData): (Int, Long, Array[Byte]) =
+  def clientListener(buffer: BufferData): RfWsResponse =
     val receivedId = buffer.readInt32()
     if receivedId != myId then throw new IllegalStateException(s"Received an invalid client id : $receivedId , it should be my id of $myId")
     val result     = buffer.read()
     val corId      = buffer.readLong()
     val data       = buffer.readBytes()
-    (result, corId, data)
+    RfWsResponse(result, corId, data)
 
   def clientTransport(corId: Long, data: Array[Byte], argsData: Array[Byte], coordsData: Array[Byte]): BufferData =
     val buf = BufferData.growing(data.length + argsData.length + coordsData.length + 32)

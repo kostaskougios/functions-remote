@@ -4,6 +4,7 @@ import functions.fibers.FiberExecutor
 import functions.helidon.transport.ClientWsListener.PoisonPill
 import functions.helidon.transport.exceptions.RemoteFunctionFailedException
 import functions.helidon.ws.InOutMessageProtocol
+import functions.helidon.ws.model.RfWsResponse
 import functions.model.Coordinates4
 import io.helidon.common.buffers.BufferData
 import io.helidon.websocket.{WsListener, WsSession}
@@ -37,7 +38,7 @@ class ClientWsListener(protocol: InOutMessageProtocol, fiberExecutor: FiberExecu
 
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean): Unit =
     try
-      val (result, corId, data) = protocol.clientListener(buffer)
+      val RfWsResponse(result, corId, data) = protocol.clientListener(buffer)
       latchMap.get(corId) match
         case Some(latch) =>
           dataMap.put(corId, (result, data))
