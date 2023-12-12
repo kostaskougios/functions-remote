@@ -2,7 +2,7 @@ package functions.helidon.transport
 
 import functions.fibers.FiberExecutor
 import functions.helidon.ws.InOutMessageProtocol
-import functions.helidon.ws.transport.ClientWsListener
+import functions.helidon.ws.transport.ClientServerWsListener
 import functions.model.TransportInput
 import io.helidon.websocket.WsListener
 
@@ -11,7 +11,7 @@ import scala.util.Using.Releasable
 
 class HelidonWsTransport(fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis: Long):
   private val protocol      = new InOutMessageProtocol(Map.empty)
-  private val wsListener    = new ClientWsListener(protocol, fiberExecutor, sendResponseTimeoutInMillis)
+  private val wsListener    = new ClientServerWsListener(protocol, fiberExecutor, sendResponseTimeoutInMillis)
   private val correlationId = new AtomicLong(0)
 
   def clientWsListener: WsListener = wsListener

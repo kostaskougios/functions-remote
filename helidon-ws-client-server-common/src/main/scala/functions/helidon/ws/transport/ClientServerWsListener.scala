@@ -1,7 +1,7 @@
 package functions.helidon.ws.transport
 
 import functions.fibers.FiberExecutor
-import ClientWsListener.PoisonPill
+import ClientServerWsListener.PoisonPill
 import functions.helidon.ws.InOutMessageProtocol
 import functions.helidon.ws.model.RfWsResponse
 import functions.helidon.ws.transport.exceptions.RemoteFunctionFailedException
@@ -13,7 +13,7 @@ import java.util.concurrent.{CountDownLatch, LinkedBlockingQueue, TimeUnit}
 import scala.annotation.tailrec
 import scala.util.Using.Releasable
 
-class ClientWsListener(protocol: InOutMessageProtocol, fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis: Long) extends WsListener:
+class ClientServerWsListener(protocol: InOutMessageProtocol, fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis: Long) extends WsListener:
   private val toSend   = new LinkedBlockingQueue[BufferData](64)
   private val latchMap = collection.concurrent.TrieMap.empty[Long, CountDownLatch]
   private val dataMap  = collection.concurrent.TrieMap.empty[Long, (Int, Array[Byte])]
@@ -38,13 +38,18 @@ class ClientWsListener(protocol: InOutMessageProtocol, fiberExecutor: FiberExecu
 
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean): Unit =
     try
-      val RfWsResponse(result, corId, data) = protocol.clientListener(buffer)
-      latchMap.get(corId) match
-        case Some(latch) =>
-          dataMap.put(corId, (result, data))
-          latch.countDown()
-        case None        =>
-          println(s"Correlation id missing: $corId , received data ignored.")
+      protocol.listener(buffer) match
+        case Left(out)                                =>
+          // act as a server: do a call
+          session.send(out, true)
+        case Right(RfWsResponse(result, corId, data)) =>
+          // act as a client: respond to a call
+          latchMap.get(corId) match
+            case Some(latch) =>
+              dataMap.put(corId, (result, data))
+              latch.countDown()
+            case None        =>
+              println(s"Correlation id missing: $corId , received data ignored.")
     catch case t: Throwable => t.printStackTrace()
 
   override def onOpen(session: WsSession): Unit =
@@ -61,7 +66,7 @@ class ClientWsListener(protocol: InOutMessageProtocol, fiberExecutor: FiberExecu
     toSend.put(PoisonPill)
     for latch <- latchMap.values do latch.countDown()
 
-object ClientWsListener:
+object ClientServerWsListener:
   private val PoisonPill = BufferData.create("*poisonpill*")
 
-  given Releasable[ClientWsListener] = _.close()
+  given Releasable[ClientServerWsListener] = _.close()

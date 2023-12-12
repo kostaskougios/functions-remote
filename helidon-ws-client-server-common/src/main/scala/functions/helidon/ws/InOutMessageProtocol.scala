@@ -12,14 +12,17 @@ class InOutMessageProtocol(invokerMap: InvokerMap, myId: Int = Random.nextInt())
     case (c4, i) =>
       (c4.toRawCoordinates, i)
 
-  def listener(buffer: BufferData) =
+  def listener(buffer: BufferData): Either[BufferData, RfWsResponse] =
     buffer.read() match
       case 100 =>
         // a call to a function
-        serverListener(buffer)
+        Left(serverListener(buffer))
       case 200 =>
+        // return value of a call
+        Right(clientListener(buffer))
+      case x   => throw new IllegalStateException(s"invalid data received : $x")
 
-  def serverListener(buffer: BufferData): BufferData =
+  private def serverListener(buffer: BufferData): BufferData =
     val receiverId     = buffer.readInt32()
     val corId          = buffer.readLong()
     val coordsLength   = buffer.readUnsignedInt32()
@@ -37,6 +40,7 @@ class InOutMessageProtocol(invokerMap: InvokerMap, myId: Int = Random.nextInt())
       val f        = im(coordinates4.toRawCoordinates)
       val response = f(ReceiverInput(data, arg))
       val buf      = BufferData.growing(response.length + 12)
+      buf.write(200)
       buf.writeInt32(receiverId)
       buf.write(0)
       buf.write(longToBytes(corId))
@@ -50,13 +54,14 @@ class InOutMessageProtocol(invokerMap: InvokerMap, myId: Int = Random.nextInt())
         w.close()
         val data = bos.toByteArray
         val buf  = BufferData.growing(data.length + 12)
+        buf.write(200)
         buf.writeInt32(receiverId)
         buf.write(1)
         buf.write(longToBytes(corId))
         buf.write(data)
         buf
 
-  def clientListener(buffer: BufferData): RfWsResponse =
+  private def clientListener(buffer: BufferData): RfWsResponse =
     val receivedId = buffer.readInt32()
     if receivedId != myId then throw new IllegalStateException(s"Received an invalid client id : $receivedId , it should be my id of $myId")
     val result     = buffer.read()
@@ -66,6 +71,7 @@ class InOutMessageProtocol(invokerMap: InvokerMap, myId: Int = Random.nextInt())
 
   def clientTransport(corId: Long, data: Array[Byte], argsData: Array[Byte], coordsData: Array[Byte]): BufferData =
     val buf = BufferData.growing(data.length + argsData.length + coordsData.length + 32)
+    buf.write(100) // a call
     buf.writeInt32(myId)
     buf.write(longToBytes(corId))
     buf.writeUnsignedInt32(coordsData.length)

@@ -6,6 +6,7 @@ import endtoend.tests.helidon.{TestsHelidonFunctions, TestsHelidonFunctionsCalle
 import functions.fibers.FiberExecutor
 import functions.helidon.transport.HelidonWsTransport
 import functions.helidon.ws.ServerWsListener
+import functions.helidon.ws.transport.ClientServerWsListener
 import functions.helidon.ws.transport.exceptions.RemoteFunctionFailedException
 import functions.model.Serializer
 import functions.model.Serializer.{Avro, Json}
@@ -16,21 +17,22 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers.*
 
 import java.net.URI
+import scala.util.Using
 
 class EndToEndHelidonWsSuite extends AnyFunSuite:
   def withServer[R](f: (WebServer, CountingHelidonFunctionsImpl) => R): R =
-    val impl      = new CountingHelidonFunctionsImpl
-    val invokeMap = TestsHelidonFunctionsReceiverFactory.invokerMap(impl)
-    val listener  = new ServerWsListener(invokeMap)
-
-    val wsB    = WsRouting.builder().endpoint("/ws-test", listener)
-    val server = WebServer.builder
-      .port(0)
-      .addRouting(wsB)
-      .build
-      .start
-    try f(server, impl)
-    finally server.stop()
+    FiberExecutor.withFiberExecutor: executor =>
+      val impl      = new CountingHelidonFunctionsImpl
+      val invokeMap = TestsHelidonFunctionsReceiverFactory.invokerMap(impl)
+      Using.resource(ServerWsListener(invokeMap, executor)): listener =>
+        val wsB    = WsRouting.builder().endpoint("/ws-test", listener)
+        val server = WebServer.builder
+          .port(0)
+          .addRouting(wsB)
+          .build
+          .start
+        try f(server, impl)
+        finally server.stop()
 
   def withTransport[R](serverPort: Int, serializer: Serializer)(f: TestsHelidonFunctions => R): R =
     FiberExecutor.withFiberExecutor: executor =>
