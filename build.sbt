@@ -10,6 +10,8 @@ ThisBuild / scalaVersion := scala3Version
 
 ThisBuild / scalacOptions ++= Seq("-unchecked", "-feature", "-deprecation", "-Xmax-inlines", "64")
 
+ThisBuild / resolvers += "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"
+
 // ----------------------- dependencies --------------------------------
 
 val Scala3Compiler = "org.scala-lang" %% "scala3-compiler"        % scala3Version
@@ -50,7 +52,7 @@ val HelidonServerHttp2    = "io.helidon.webserver" % "helidon-webserver-http2" %
 val HelidonWebClientHttp2 = "io.helidon.webclient" % "helidon-webclient-http2" % HelidonVersion
 
 val HelidonServerWebSocket = "io.helidon.webserver" % "helidon-webserver-websocket" % HelidonVersion
-val HelidonWebSocketClient = "io.helidon.webclient" % "helidon-webclient-websocket" % HelidonVersion
+val HelidonWebSocketClient = "io.helidon.webclient" % "helidon-webclient-websocket" % "4.0.2-SNAPSHOT" // FIXME
 
 val HelidonServerLogging = "io.helidon.logging" % "helidon-logging-jul" % HelidonVersion
 
