@@ -4,8 +4,9 @@ import functions.model.*
 import io.helidon.common.buffers.BufferData
 
 import java.io.{ByteArrayOutputStream, PrintWriter}
+import scala.util.Random
 
-class InOutMessageProtocol(invokerMap: InvokerMap):
+class InOutMessageProtocol(invokerMap: InvokerMap, myId: Int = Random.nextInt()):
   private val im = invokerMap.map:
     case (c4, i) =>
       (c4.toRawCoordinates, i)
@@ -47,7 +48,15 @@ class InOutMessageProtocol(invokerMap: InvokerMap):
         buf.write(data)
         buf
 
-  def clientTransport(myId: Int, corId: Long, data: Array[Byte], argsData: Array[Byte], coordsData: Array[Byte]): BufferData =
+  def clientListener(buffer: BufferData): (Int, Long, Array[Byte]) =
+    val receivedId = buffer.readInt32()
+    if receivedId != myId then throw new IllegalStateException(s"Received an invalid client id : $receivedId , it should be my id of $myId")
+    val result     = buffer.read()
+    val corId      = buffer.readLong()
+    val data       = buffer.readBytes()
+    (result, corId, data)
+
+  def clientTransport(corId: Long, data: Array[Byte], argsData: Array[Byte], coordsData: Array[Byte]): BufferData =
     val buf = BufferData.growing(data.length + argsData.length + coordsData.length + 32)
     buf.writeInt32(myId)
     buf.write(longToBytes(corId))

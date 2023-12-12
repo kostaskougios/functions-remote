@@ -3,6 +3,7 @@ package functions.helidon.transport
 import functions.fibers.FiberExecutor
 import functions.helidon.transport.ClientWsListener.PoisonPill
 import functions.helidon.transport.exceptions.RemoteFunctionFailedException
+import functions.helidon.ws.InOutMessageProtocol
 import functions.model.Coordinates4
 import io.helidon.common.buffers.BufferData
 import io.helidon.websocket.{WsListener, WsSession}
@@ -11,7 +12,7 @@ import java.util.concurrent.{CountDownLatch, LinkedBlockingQueue, TimeUnit}
 import scala.annotation.tailrec
 import scala.util.Using.Releasable
 
-class ClientWsListener(id: Int, fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis: Long) extends WsListener:
+class ClientWsListener(protocol: InOutMessageProtocol, fiberExecutor: FiberExecutor, sendResponseTimeoutInMillis: Long) extends WsListener:
   private val toSend   = new LinkedBlockingQueue[BufferData](64)
   private val latchMap = collection.concurrent.TrieMap.empty[Long, CountDownLatch]
   private val dataMap  = collection.concurrent.TrieMap.empty[Long, (Int, Array[Byte])]
@@ -36,11 +37,7 @@ class ClientWsListener(id: Int, fiberExecutor: FiberExecutor, sendResponseTimeou
 
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean): Unit =
     try
-      val receivedId = buffer.readInt32()
-      if receivedId != id then throw new IllegalStateException(s"Received an invalid client id : $receivedId , it should be my id of $id")
-      val result     = buffer.read()
-      val corId      = buffer.readLong()
-      val data       = buffer.readBytes()
+      val (result, corId, data) = protocol.clientListener(buffer)
       latchMap.get(corId) match
         case Some(latch) =>
           dataMap.put(corId, (result, data))
