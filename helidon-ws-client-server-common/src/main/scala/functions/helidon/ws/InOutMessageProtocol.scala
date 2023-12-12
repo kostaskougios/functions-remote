@@ -12,7 +12,7 @@ class InOutMessageProtocol(invokerMap: InvokerMap, myId: Int = Random.nextInt())
     case (c4, i) =>
       (c4.toRawCoordinates, i)
 
-  def listener(buffer: BufferData): Either[BufferData, RfWsResponse] =
+  def listenerReceived(buffer: BufferData): Either[BufferData, RfWsResponse] =
     buffer.read() match
       case 100 =>
         // a call to a function

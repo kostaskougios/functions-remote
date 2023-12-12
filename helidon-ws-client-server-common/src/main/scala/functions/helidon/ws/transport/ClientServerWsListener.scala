@@ -38,7 +38,7 @@ class ClientServerWsListener(protocol: InOutMessageProtocol, fiberExecutor: Fibe
 
   override def onMessage(session: WsSession, buffer: BufferData, last: Boolean): Unit =
     try
-      protocol.listener(buffer) match
+      protocol.listenerReceived(buffer) match
         case Left(out)                                =>
           // act as a server: do a call
           session.send(out, true)
