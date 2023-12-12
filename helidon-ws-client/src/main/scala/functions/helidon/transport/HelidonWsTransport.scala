@@ -1,6 +1,7 @@
 package functions.helidon.transport
 
 import functions.fibers.FiberExecutor
+import functions.helidon.ws.InOutMessageProtocol
 import functions.model.TransportInput
 import io.helidon.common.buffers.BufferData
 import io.helidon.websocket.WsListener
@@ -13,22 +14,14 @@ class HelidonWsTransport(fiberExecutor: FiberExecutor, sendResponseTimeoutInMill
   private val myId          = Random.nextInt()
   private val wsListener    = new ClientWsListener(myId, fiberExecutor, sendResponseTimeoutInMillis)
   private val correlationId = new AtomicLong(0)
+  private val protocol      = new InOutMessageProtocol(Map.empty)
 
   def clientWsListener: WsListener = wsListener
 
   def transportFunction(in: TransportInput): Array[Byte] =
     val coordsData = in.coordinates4.toRawCoordinatesBytes
     val corId      = correlationId.incrementAndGet()
-
-    val buf = BufferData.growing(in.data.length + in.argsData.length + coordsData.length + 32)
-    buf.writeInt32(myId)
-    buf.write(longToBytes(corId))
-    buf.writeUnsignedInt32(coordsData.length)
-    buf.write(coordsData)
-    buf.writeInt32(in.data.length)
-    buf.write(in.data)
-    buf.writeInt32(in.argsData.length)
-    buf.write(in.argsData)
+    val buf        = protocol.transport(myId, corId, in.data, in.argsData, coordsData)
     wsListener.send(corId, in.coordinates4, buf)
 
   def close(): Unit = wsListener.close()

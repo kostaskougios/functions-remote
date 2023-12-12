@@ -47,6 +47,18 @@ class InOutMessageProtocol(invokerMap: InvokerMap):
         buf.write(data)
         buf
 
+  def transport(myId: Int, corId: Long, data: Array[Byte], argsData: Array[Byte], coordsData: Array[Byte]): BufferData =
+    val buf = BufferData.growing(data.length + argsData.length + coordsData.length + 32)
+    buf.writeInt32(myId)
+    buf.write(longToBytes(corId))
+    buf.writeUnsignedInt32(coordsData.length)
+    buf.write(coordsData)
+    buf.writeInt32(data.length)
+    buf.write(data)
+    buf.writeInt32(argsData.length)
+    buf.write(argsData)
+    buf
+
   private def longToBytes(x: Long): Array[Byte] =
     val buffer = new Array[Byte](8)
     for (i <- 0 until 8)
