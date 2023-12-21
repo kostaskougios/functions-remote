@@ -41,14 +41,14 @@ val CatsEffectsTesting = "org.typelevel"                    %% "cats-effect-test
 val KafkaClient        = "org.apache.kafka"                  % "kafka-clients"                 % "3.6.0"
 val EmbeddedKafka      = "io.github.embeddedkafka"          %% "embedded-kafka"                % "3.6.0" % Test
 
-val HelidonVersion        = "4.0.1"
+val HelidonVersion        = "4.0.2"
 val HelidonCommonBuffers  = "io.helidon.common"    % "helidon-common-buffers"  % HelidonVersion
 val HelidonWebSocket      = "io.helidon.websocket" % "helidon-websocket"       % HelidonVersion
 val HelidonServerHttp2    = "io.helidon.webserver" % "helidon-webserver-http2" % HelidonVersion
 val HelidonWebClientHttp2 = "io.helidon.webclient" % "helidon-webclient-http2" % HelidonVersion
 
 val HelidonServerWebSocket = "io.helidon.webserver" % "helidon-webserver-websocket" % HelidonVersion
-val HelidonWebSocketClient = "io.helidon.webclient" % "helidon-webclient-websocket" % "4.0.2-SNAPSHOT" // FIXME
+val HelidonWebSocketClient = "io.helidon.webclient" % "helidon-webclient-websocket" % HelidonVersion
 
 val HelidonServerLogging = "io.helidon.logging" % "helidon-logging-jul" % HelidonVersion
 
