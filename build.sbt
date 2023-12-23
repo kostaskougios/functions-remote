@@ -1,5 +1,5 @@
 val scala3Version = "3.3.1"
-ThisBuild / version      := "0.51-SNAPSHOT"
+ThisBuild / version      := "0.51"
 ThisBuild / organization := "io.github.kostaskougios"
 name                     := "functions-remote"
 ThisBuild / scalaVersion := scala3Version
